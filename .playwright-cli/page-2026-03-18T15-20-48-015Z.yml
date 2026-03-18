@@ -1,0 +1,300 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "CR CryptoRebate" [active] [ref=e5] [cursor=pointer]:
+          - /url: /zh
+          - generic [ref=e6]: CR
+          - generic [ref=e7]: CryptoRebate
+        - navigation [ref=e8]:
+          - link "交易所" [ref=e9] [cursor=pointer]:
+            - /url: /zh/exchanges
+          - link "费率计算器" [ref=e10] [cursor=pointer]:
+            - /url: /zh/calculator
+          - link "关于返佣" [ref=e11] [cursor=pointer]:
+            - /url: /zh/about
+        - generic [ref=e12]:
+          - button "English" [ref=e13]
+          - button [ref=e14]:
+            - img
+    - main [ref=e15]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - heading "交易手续费，最高省 70%" [level=1] [ref=e142]
+          - paragraph [ref=e143]: 通过 CryptoRebate 注册全球主流交易所，享受手续费返佣优惠。简单注册，持续省钱。
+          - generic [ref=e144]:
+            - link "浏览交易所" [ref=e145] [cursor=pointer]:
+              - /url: /zh/exchanges
+              - button "浏览交易所" [ref=e146]:
+                - text: 浏览交易所
+                - img
+            - link "计算能省多少" [ref=e147] [cursor=pointer]:
+              - /url: /zh/calculator
+              - button "计算能省多少" [ref=e148]
+        - generic [ref=e151]:
+          - heading "你能省多少？" [level=3] [ref=e152]
+          - generic [ref=e153]:
+            - text: 月交易量 (USD)
+            - generic [ref=e154]:
+              - group [ref=e155]:
+                - slider [ref=e160]: "10000"
+              - generic [ref=e161]:
+                - generic [ref=e162]: $
+                - textbox [ref=e163]: 10,000
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]: 交易所
+              - generic [ref=e167]: 返佣比例
+              - generic [ref=e168]: 年省金额
+            - generic [ref=e169]:
+              - generic [ref=e170]: Binance
+              - generic [ref=e171]: 20%
+              - generic [ref=e172]: $24
+            - generic [ref=e173]:
+              - generic [ref=e174]: OKX
+              - generic [ref=e175]: 20%
+              - generic [ref=e176]: $22
+            - generic [ref=e177]:
+              - generic [ref=e178]: Bybit
+              - generic [ref=e179]: 33%
+              - generic [ref=e180]: $40
+            - generic [ref=e181]:
+              - generic [ref=e182]: Bitget
+              - generic [ref=e183]: 20-45%
+              - generic [ref=e184]: $24
+            - generic [ref=e185]:
+              - generic [ref=e186]: Gate.io
+              - generic [ref=e187]: 20-70%
+              - generic [ref=e188]: $24
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - heading "精选交易所" [level=2] [ref=e191]
+            - paragraph [ref=e192]: 全球最受欢迎的加密货币交易平台，精选返佣最优方案。
+          - generic [ref=e193]:
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - img "Binance" [ref=e198]
+                  - generic [ref=e199]:
+                    - heading "Binance" [level=3] [ref=e200]
+                    - generic [ref=e201]:
+                      - generic [ref=e202]: 最受欢迎
+                      - generic [ref=e203]: 交易量最大
+                - generic [ref=e204]:
+                  - generic [ref=e205]: 返佣比例
+                  - generic [ref=e206]: 20%
+              - generic [ref=e207]:
+                - generic [ref=e208]:
+                  - text: 现货费率
+                  - paragraph [ref=e209]: 0.10% / 0.10%
+                - generic [ref=e210]:
+                  - text: 合约费率
+                  - paragraph [ref=e211]: 0.020% / 0.050%
+              - generic [ref=e212]:
+                - link "查看详情" [ref=e213] [cursor=pointer]:
+                  - /url: /zh/exchanges/binance
+                  - button "查看详情" [ref=e214]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e215] [cursor=pointer]:
+                  - /url: https://www.binance.com/join?ref=XIAOYI
+                  - button "立即注册" [ref=e216]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e218]:
+              - generic [ref=e219]:
+                - generic [ref=e220]:
+                  - img "OKX" [ref=e221]
+                  - generic [ref=e222]:
+                    - heading "OKX" [level=3] [ref=e223]
+                    - generic [ref=e224]:
+                      - generic [ref=e225]: 低手续费
+                      - generic [ref=e226]: Web3钱包
+                - generic [ref=e227]:
+                  - generic [ref=e228]: 返佣比例
+                  - generic [ref=e229]: 20%
+              - generic [ref=e230]:
+                - generic [ref=e231]:
+                  - text: 现货费率
+                  - paragraph [ref=e232]: 0.08% / 0.10%
+                - generic [ref=e233]:
+                  - text: 合约费率
+                  - paragraph [ref=e234]: 0.020% / 0.050%
+              - generic [ref=e235]:
+                - link "查看详情" [ref=e236] [cursor=pointer]:
+                  - /url: /zh/exchanges/okx
+                  - button "查看详情" [ref=e237]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e238] [cursor=pointer]:
+                  - /url: https://www.okx.com/join/XIAOYICLUB
+                  - button "立即注册" [ref=e239]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e241]:
+              - generic [ref=e242]:
+                - generic [ref=e243]:
+                  - img "Bybit" [ref=e244]
+                  - generic [ref=e245]:
+                    - heading "Bybit" [level=3] [ref=e246]
+                    - generic [ref=e247]:
+                      - generic [ref=e248]: 合约之王
+                      - generic [ref=e249]: 上币快
+                - generic [ref=e250]:
+                  - generic [ref=e251]: 返佣比例
+                  - generic [ref=e252]: 33%
+              - generic [ref=e253]:
+                - generic [ref=e254]:
+                  - text: 现货费率
+                  - paragraph [ref=e255]: 0.10% / 0.10%
+                - generic [ref=e256]:
+                  - text: 合约费率
+                  - paragraph [ref=e257]: 0.020% / 0.055%
+              - generic [ref=e258]:
+                - link "查看详情" [ref=e259] [cursor=pointer]:
+                  - /url: /zh/exchanges/bybit
+                  - button "查看详情" [ref=e260]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e261] [cursor=pointer]:
+                  - /url: https://partner.bybit.com/b/XIAOYI
+                  - button "立即注册" [ref=e262]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e264]:
+              - generic [ref=e265]:
+                - generic [ref=e266]:
+                  - img "Bitget" [ref=e267]
+                  - generic [ref=e268]:
+                    - heading "Bitget" [level=3] [ref=e269]
+                    - generic [ref=e270]:
+                      - generic [ref=e271]: 高返佣
+                      - generic [ref=e272]: 跟单交易
+                - generic [ref=e273]:
+                  - generic [ref=e274]: 返佣比例
+                  - generic [ref=e275]: 20-45%
+              - generic [ref=e276]:
+                - generic [ref=e277]:
+                  - text: 现货费率
+                  - paragraph [ref=e278]: 0.10% / 0.10%
+                - generic [ref=e279]:
+                  - text: 合约费率
+                  - paragraph [ref=e280]: 0.020% / 0.060%
+              - generic [ref=e281]:
+                - link "查看详情" [ref=e282] [cursor=pointer]:
+                  - /url: /zh/exchanges/bitget
+                  - button "查看详情" [ref=e283]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e284] [cursor=pointer]:
+                  - /url: https://partner.bitget.com/bg/xiaoyi
+                  - button "立即注册" [ref=e285]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e287]:
+              - generic [ref=e288]:
+                - generic [ref=e289]:
+                  - img "Gate.io" [ref=e290]
+                  - generic [ref=e291]:
+                    - heading "Gate.io" [level=3] [ref=e292]
+                    - generic [ref=e293]:
+                      - generic [ref=e294]: 币种最多
+                      - generic [ref=e295]: 高返佣
+                - generic [ref=e296]:
+                  - generic [ref=e297]: 返佣比例
+                  - generic [ref=e298]: 20-70%
+              - generic [ref=e299]:
+                - generic [ref=e300]:
+                  - text: 现货费率
+                  - paragraph [ref=e301]: 0.10% / 0.10%
+                - generic [ref=e302]:
+                  - text: 合约费率
+                  - paragraph [ref=e303]: 0.015% / 0.050%
+              - generic [ref=e304]:
+                - link "查看详情" [ref=e305] [cursor=pointer]:
+                  - /url: /zh/exchanges/gate
+                  - button "查看详情" [ref=e306]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e307] [cursor=pointer]:
+                  - /url: https://www.gate.tv/share/xiaoyi
+                  - button "立即注册" [ref=e308]:
+                    - text: 立即注册
+                    - img
+        - generic [ref=e309]:
+          - heading "为什么选择 CryptoRebate" [level=2] [ref=e310]
+          - generic [ref=e311]:
+            - generic [ref=e313]:
+              - img [ref=e314]
+              - heading "透明返佣" [level=3] [ref=e316]
+              - paragraph [ref=e317]: 清晰展示每家交易所的真实返佣比例和手续费，不藏任何隐性费用。
+            - generic [ref=e319]:
+              - img [ref=e320]
+              - heading "专业评测" [level=3] [ref=e322]
+              - paragraph [ref=e323]: 每家交易所都有真实的优缺点分析，帮你做出明智选择。
+            - generic [ref=e325]:
+              - img [ref=e326]
+              - heading "全球覆盖" [level=3] [ref=e329]
+              - paragraph [ref=e330]: 支持全球主流交易所，无论你在哪里都能找到最优方案。
+            - generic [ref=e332]:
+              - img [ref=e333]
+              - heading "持续更新" [level=3] [ref=e338]
+              - paragraph [ref=e339]: 实时跟踪各交易所费率和活动变动，确保你获得最新优惠。
+        - generic [ref=e340]:
+          - heading "常见问题" [level=2] [ref=e341]
+          - region [ref=e343]:
+            - heading "什么是交易所返佣？" [level=3] [ref=e345]:
+              - button "什么是交易所返佣？" [ref=e346]:
+                - text: 什么是交易所返佣？
+                - img
+            - heading "使用返佣链接注册会多收费吗？" [level=3] [ref=e348]:
+              - button "使用返佣链接注册会多收费吗？" [ref=e349]:
+                - text: 使用返佣链接注册会多收费吗？
+                - img
+            - heading "返佣多久到账？" [level=3] [ref=e351]:
+              - button "返佣多久到账？" [ref=e352]:
+                - text: 返佣多久到账？
+                - img
+            - heading "支持哪些交易所？" [level=3] [ref=e354]:
+              - button "支持哪些交易所？" [ref=e355]:
+                - text: 支持哪些交易所？
+                - img
+    - contentinfo [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: CR
+              - generic [ref=e114]: CryptoRebate
+            - paragraph [ref=e115]: 全球加密货币交易所返佣平台 — 通过 CryptoRebate 注册交易所，享受最高手续费返佣。
+          - generic [ref=e116]:
+            - heading "交易所" [level=3] [ref=e117]
+            - list [ref=e118]:
+              - listitem [ref=e119]:
+                - link "Binance" [ref=e120] [cursor=pointer]:
+                  - /url: /zh/exchanges/binance
+              - listitem [ref=e121]:
+                - link "OKX" [ref=e122] [cursor=pointer]:
+                  - /url: /zh/exchanges/okx
+              - listitem [ref=e123]:
+                - link "Bybit" [ref=e124] [cursor=pointer]:
+                  - /url: /zh/exchanges/bybit
+              - listitem [ref=e125]:
+                - link "Bitget" [ref=e126] [cursor=pointer]:
+                  - /url: /zh/exchanges/bitget
+              - listitem [ref=e127]:
+                - link "Gate.io" [ref=e128] [cursor=pointer]:
+                  - /url: /zh/exchanges/gate
+          - generic [ref=e129]:
+            - heading "了解更多" [level=3] [ref=e130]
+            - list [ref=e131]:
+              - listitem [ref=e132]:
+                - link "费率计算器" [ref=e133] [cursor=pointer]:
+                  - /url: /zh/calculator
+              - listitem [ref=e134]:
+                - link "关于返佣" [ref=e135] [cursor=pointer]:
+                  - /url: /zh/about
+        - generic [ref=e136]:
+          - paragraph [ref=e137]: 风险提示：加密货币交易存在风险，请谨慎投资。本站信息仅供参考，不构成投资建议。
+          - paragraph [ref=e138]: © 2026 CryptoRebate. All rights reserved.
+  - alert [ref=e139]: CryptoRebate — 加密货币交易所返佣平台

@@ -55,22 +55,18 @@ export function ExchangeCard({ exchange }: { exchange: Exchange }) {
         </div>
 
         <div className="mt-4 flex items-center gap-2">
-          <Link href={`/exchanges/${exchange.slug}`} className="flex-1">
-            <Button variant="outline" className="w-full gap-1.5 text-sm">
-              {t("exchanges.viewDetails")}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Button>
+          <Link href={`/exchanges/${exchange.slug}`} className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent transition-colors">
+            {t("exchanges.viewDetails")}
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <a
             href={exchange.referralLink}
             target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1"
+            rel="noopener noreferrer nofollow sponsored"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md bg-cta px-3 py-2 text-sm font-semibold text-black hover:bg-cta-hover transition-colors"
           >
-            <Button className="w-full gap-1.5 bg-cta text-sm font-semibold text-black hover:bg-cta-hover">
-              {t("exchanges.register")}
-              <ExternalLink className="h-3.5 w-3.5" />
-            </Button>
+            {t("exchanges.register")}
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
       </CardContent>

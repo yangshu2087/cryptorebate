@@ -1,0 +1,154 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "CR CryptoRebate" [ref=e5] [cursor=pointer]:
+          - /url: /zh
+          - generic [ref=e6]: CR
+          - generic [ref=e7]: CryptoRebate
+        - navigation [ref=e8]:
+          - link "交易所" [ref=e9] [cursor=pointer]:
+            - /url: /zh/exchanges
+          - link "费率计算器" [ref=e10] [cursor=pointer]:
+            - /url: /zh/calculator
+          - link "关于返佣" [ref=e11] [cursor=pointer]:
+            - /url: /zh/about
+        - generic [ref=e12]:
+          - button "English" [ref=e13]
+          - button [ref=e14]:
+            - img
+    - main [ref=e15]:
+      - generic [ref=e16]:
+        - heading "手续费计算器" [level=1] [ref=e17]
+        - paragraph [ref=e18]: 输入你的月交易量，对比各交易所的实际手续费和返佣节省。
+        - generic [ref=e20]:
+          - generic [ref=e22]:
+            - generic [ref=e23]:
+              - text: 交易类型
+              - tablist [ref=e25]:
+                - tab "现货" [selected] [ref=e26]
+                - tab "合约" [ref=e27]
+            - generic [ref=e28]:
+              - text: 月交易量 (USD)
+              - generic [ref=e29]:
+                - group [ref=e30]:
+                  - slider [ref=e35]: "50000"
+                - generic [ref=e36]:
+                  - generic [ref=e37]: $
+                  - textbox [ref=e38]: 50,000
+          - generic [ref=e39]:
+            - heading "对比结果" [level=2] [ref=e40]
+            - generic [ref=e41]:
+              - generic [ref=e43]:
+                - generic [ref=e44]:
+                  - generic [ref=e45]:
+                    - generic [ref=e46]: Bybit
+                    - generic [ref=e47]:
+                      - img
+                      - text: 推荐
+                  - generic [ref=e48]: 33%
+                - generic [ref=e49]:
+                  - generic [ref=e50]:
+                    - text: 月手续费
+                    - paragraph [ref=e51]: $50.00
+                  - generic [ref=e52]:
+                    - text: 月返佣
+                    - paragraph [ref=e53]: "-$16.50"
+                  - generic [ref=e54]:
+                    - text: 年节省
+                    - paragraph [ref=e55]: $198
+              - generic [ref=e57]:
+                - generic [ref=e58]:
+                  - generic [ref=e60]: Binance
+                  - generic [ref=e61]: 20%
+                - generic [ref=e62]:
+                  - generic [ref=e63]:
+                    - text: 月手续费
+                    - paragraph [ref=e64]: $50.00
+                  - generic [ref=e65]:
+                    - text: 月返佣
+                    - paragraph [ref=e66]: "-$10.00"
+                  - generic [ref=e67]:
+                    - text: 年节省
+                    - paragraph [ref=e68]: $120
+              - generic [ref=e70]:
+                - generic [ref=e71]:
+                  - generic [ref=e73]: Bitget
+                  - generic [ref=e74]: 20-45%
+                - generic [ref=e75]:
+                  - generic [ref=e76]:
+                    - text: 月手续费
+                    - paragraph [ref=e77]: $50.00
+                  - generic [ref=e78]:
+                    - text: 月返佣
+                    - paragraph [ref=e79]: "-$10.00"
+                  - generic [ref=e80]:
+                    - text: 年节省
+                    - paragraph [ref=e81]: $120
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - generic [ref=e86]: Gate.io
+                  - generic [ref=e87]: 20-70%
+                - generic [ref=e88]:
+                  - generic [ref=e89]:
+                    - text: 月手续费
+                    - paragraph [ref=e90]: $50.00
+                  - generic [ref=e91]:
+                    - text: 月返佣
+                    - paragraph [ref=e92]: "-$10.00"
+                  - generic [ref=e93]:
+                    - text: 年节省
+                    - paragraph [ref=e94]: $120
+              - generic [ref=e96]:
+                - generic [ref=e97]:
+                  - generic [ref=e99]: OKX
+                  - generic [ref=e100]: 20%
+                - generic [ref=e101]:
+                  - generic [ref=e102]:
+                    - text: 月手续费
+                    - paragraph [ref=e103]: $45.00
+                  - generic [ref=e104]:
+                    - text: 月返佣
+                    - paragraph [ref=e105]: "-$9.00"
+                  - generic [ref=e106]:
+                    - text: 年节省
+                    - paragraph [ref=e107]: $108
+    - contentinfo [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: CR
+              - generic [ref=e114]: CryptoRebate
+            - paragraph [ref=e115]: 全球加密货币交易所返佣平台 — 通过 CryptoRebate 注册交易所，享受最高手续费返佣。
+          - generic [ref=e116]:
+            - heading "交易所" [level=3] [ref=e117]
+            - list [ref=e118]:
+              - listitem [ref=e119]:
+                - link "Binance" [ref=e120] [cursor=pointer]:
+                  - /url: /zh/exchanges/binance
+              - listitem [ref=e121]:
+                - link "OKX" [ref=e122] [cursor=pointer]:
+                  - /url: /zh/exchanges/okx
+              - listitem [ref=e123]:
+                - link "Bybit" [ref=e124] [cursor=pointer]:
+                  - /url: /zh/exchanges/bybit
+              - listitem [ref=e125]:
+                - link "Bitget" [ref=e126] [cursor=pointer]:
+                  - /url: /zh/exchanges/bitget
+              - listitem [ref=e127]:
+                - link "Gate.io" [ref=e128] [cursor=pointer]:
+                  - /url: /zh/exchanges/gate
+          - generic [ref=e129]:
+            - heading "了解更多" [level=3] [ref=e130]
+            - list [ref=e131]:
+              - listitem [ref=e132]:
+                - link "费率计算器" [ref=e133] [cursor=pointer]:
+                  - /url: /zh/calculator
+              - listitem [ref=e134]:
+                - link "关于返佣" [ref=e135] [cursor=pointer]:
+                  - /url: /zh/about
+        - generic [ref=e136]:
+          - paragraph [ref=e137]: 风险提示：加密货币交易存在风险，请谨慎投资。本站信息仅供参考，不构成投资建议。
+          - paragraph [ref=e138]: © 2026 CryptoRebate. All rights reserved.
+  - alert [ref=e139]

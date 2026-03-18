@@ -1,0 +1,285 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "CR CryptoRebate" [ref=e5] [cursor=pointer]:
+          - /url: /zh
+          - generic [ref=e6]: CR
+          - generic [ref=e7]: CryptoRebate
+        - navigation [ref=e8]:
+          - link "交易所" [ref=e9] [cursor=pointer]:
+            - /url: /zh/exchanges
+          - link "费率计算器" [ref=e10] [cursor=pointer]:
+            - /url: /zh/calculator
+          - link "关于返佣" [ref=e11] [cursor=pointer]:
+            - /url: /zh/about
+        - generic [ref=e12]:
+          - button "English" [ref=e13]
+          - button [ref=e14]:
+            - img
+    - main [ref=e15]:
+      - generic [ref=e356]:
+        - link "返回列表" [ref=e357] [cursor=pointer]:
+          - /url: /zh/exchanges
+          - img [ref=e358]
+          - text: 返回列表
+        - generic [ref=e360]:
+          - generic [ref=e361]:
+            - img "Binance" [ref=e362]
+            - generic [ref=e363]:
+              - heading "Binance" [level=1] [ref=e364]
+              - generic [ref=e365]:
+                - generic [ref=e366]: 最受欢迎
+                - generic [ref=e367]: 交易量最大
+                - generic [ref=e368]: 新手友好
+          - generic [ref=e369]:
+            - generic [ref=e370]:
+              - generic [ref=e371]: "邀请码:"
+              - code [ref=e372]: XIAOYI
+              - button "复制" [ref=e373]:
+                - img
+                - text: 复制
+            - link "立即注册" [ref=e374] [cursor=pointer]:
+              - /url: https://www.binance.com/join?ref=XIAOYI
+              - button "立即注册" [ref=e375]:
+                - text: 立即注册
+                - img
+        - generic [ref=e376]:
+          - generic [ref=e377]:
+            - img [ref=e378]
+            - generic [ref=e380]: 成立于 2017
+          - generic [ref=e381]:
+            - img [ref=e382]
+            - generic [ref=e385]: Cayman Islands
+          - generic [ref=e386]:
+            - img [ref=e387]
+            - generic [ref=e389]: 1,800 交易对
+        - separator [ref=e390]
+        - paragraph [ref=e391]: Binance（币安）是全球交易量最大的加密货币交易所，提供超过 1800 个交易对。平台安全性高，产品线丰富，包括现货、合约、期权、质押等服务。适合从新手到专业交易者的各类用户。
+        - generic [ref=e393]:
+          - heading "返佣比例" [level=2] [ref=e394]
+          - generic [ref=e395]:
+            - generic [ref=e396]:
+              - text: 现货返佣
+              - paragraph [ref=e397]: 20%
+            - generic [ref=e398]:
+              - text: 合约返佣
+              - paragraph [ref=e399]: 10%
+        - generic [ref=e401]:
+          - heading "现货费率 & 合约费率" [level=2] [ref=e402]
+          - generic [ref=e403]:
+            - table [ref=e404]:
+              - rowgroup [ref=e405]:
+                - row "挂单 吃单" [ref=e406]:
+                  - columnheader [ref=e407]
+                  - columnheader "挂单" [ref=e408]
+                  - columnheader "吃单" [ref=e409]
+              - rowgroup [ref=e410]:
+                - row "现货费率 0.10% 0.10%" [ref=e411]:
+                  - cell "现货费率" [ref=e412]
+                  - cell "0.10%" [ref=e413]
+                  - cell "0.10%" [ref=e414]
+                - row "合约费率 0.020% 0.050%" [ref=e415]:
+                  - cell "合约费率" [ref=e416]
+                  - cell "0.020%" [ref=e417]
+                  - cell "0.050%" [ref=e418]
+            - paragraph [ref=e419]: "* BNB 挂单: 25% discount"
+        - generic [ref=e420]:
+          - generic [ref=e422]:
+            - heading "Pros" [level=3] [ref=e423]
+            - list [ref=e424]:
+              - listitem [ref=e425]:
+                - img [ref=e426]
+                - generic [ref=e428]: 全球交易量第一，流动性最好
+              - listitem [ref=e429]:
+                - img [ref=e430]
+                - generic [ref=e432]: 产品线最全（现货/合约/期权/理财/NFT）
+              - listitem [ref=e433]:
+                - img [ref=e434]
+                - generic [ref=e436]: BNB 持有者享手续费 25% 折扣
+              - listitem [ref=e437]:
+                - img [ref=e438]
+                - generic [ref=e440]: 安全基金 SAFU 保障用户资产
+          - generic [ref=e442]:
+            - heading "Cons" [level=3] [ref=e443]
+            - list [ref=e444]:
+              - listitem [ref=e445]:
+                - img [ref=e446]
+                - generic [ref=e449]: 部分地区限制访问
+              - listitem [ref=e450]:
+                - img [ref=e451]
+                - generic [ref=e454]: KYC 验证流程较严格
+              - listitem [ref=e455]:
+                - img [ref=e456]
+                - generic [ref=e459]: 客服响应速度一般
+        - paragraph [ref=e462]: 适合所有类型的交易者，尤其是需要大交易量和丰富产品的用户。
+        - generic [ref=e463]:
+          - heading "Binance Registration Guide" [level=2] [ref=e464]
+          - generic [ref=e465]:
+            - generic [ref=e466]:
+              - generic [ref=e467]: "1"
+              - paragraph [ref=e468]: 点击注册链接，进入 Binance 注册页面
+            - generic [ref=e469]:
+              - generic [ref=e470]: "2"
+              - paragraph [ref=e471]: 输入邮箱或手机号，设置密码
+            - generic [ref=e472]:
+              - generic [ref=e473]: "3"
+              - paragraph [ref=e474]: 完成邮箱/手机验证
+            - generic [ref=e475]:
+              - generic [ref=e476]: "4"
+              - paragraph [ref=e477]: 进行 KYC 身份认证（需要身份证/护照）
+            - generic [ref=e478]:
+              - generic [ref=e479]: "5"
+              - paragraph [ref=e480]: 认证完成后即可开始交易，返佣自动生效
+          - link "立即注册 Binance" [ref=e481] [cursor=pointer]:
+            - /url: https://www.binance.com/join?ref=XIAOYI
+            - button "立即注册 Binance" [ref=e482]:
+              - text: 立即注册 Binance
+              - img
+        - generic [ref=e483]:
+          - heading "FAQ" [level=2] [ref=e484]
+          - region [ref=e485]:
+            - heading "Binance 手续费是多少？" [level=3] [ref=e487]:
+              - button "Binance 手续费是多少？" [ref=e488]:
+                - text: Binance 手续费是多少？
+                - img
+            - heading "Binance 支持哪些入金方式？" [level=3] [ref=e490]:
+              - button "Binance 支持哪些入金方式？" [ref=e491]:
+                - text: Binance 支持哪些入金方式？
+                - img
+            - heading "通过邀请码注册有什么优惠？" [level=3] [ref=e493]:
+              - button "通过邀请码注册有什么优惠？" [ref=e494]:
+                - text: 通过邀请码注册有什么优惠？
+                - img
+        - generic [ref=e495]:
+          - heading "你可能也感兴趣" [level=2] [ref=e496]
+          - generic [ref=e497]:
+            - generic [ref=e499]:
+              - generic [ref=e500]:
+                - generic [ref=e501]:
+                  - img "OKX" [ref=e502]
+                  - generic [ref=e503]:
+                    - heading "OKX" [level=3] [ref=e504]
+                    - generic [ref=e505]:
+                      - generic [ref=e506]: 低手续费
+                      - generic [ref=e507]: Web3钱包
+                - generic [ref=e508]:
+                  - generic [ref=e509]: 返佣比例
+                  - generic [ref=e510]: 20%
+              - generic [ref=e511]:
+                - generic [ref=e512]:
+                  - text: 现货费率
+                  - paragraph [ref=e513]: 0.08% / 0.10%
+                - generic [ref=e514]:
+                  - text: 合约费率
+                  - paragraph [ref=e515]: 0.020% / 0.050%
+              - generic [ref=e516]:
+                - link "查看详情" [ref=e517] [cursor=pointer]:
+                  - /url: /zh/exchanges/okx
+                  - button "查看详情" [ref=e518]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e519] [cursor=pointer]:
+                  - /url: https://www.okx.com/join/XIAOYICLUB
+                  - button "立即注册" [ref=e520]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e522]:
+              - generic [ref=e523]:
+                - generic [ref=e524]:
+                  - img "Bybit" [ref=e525]
+                  - generic [ref=e526]:
+                    - heading "Bybit" [level=3] [ref=e527]
+                    - generic [ref=e528]:
+                      - generic [ref=e529]: 合约之王
+                      - generic [ref=e530]: 上币快
+                - generic [ref=e531]:
+                  - generic [ref=e532]: 返佣比例
+                  - generic [ref=e533]: 33%
+              - generic [ref=e534]:
+                - generic [ref=e535]:
+                  - text: 现货费率
+                  - paragraph [ref=e536]: 0.10% / 0.10%
+                - generic [ref=e537]:
+                  - text: 合约费率
+                  - paragraph [ref=e538]: 0.020% / 0.055%
+              - generic [ref=e539]:
+                - link "查看详情" [ref=e540] [cursor=pointer]:
+                  - /url: /zh/exchanges/bybit
+                  - button "查看详情" [ref=e541]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e542] [cursor=pointer]:
+                  - /url: https://partner.bybit.com/b/XIAOYI
+                  - button "立即注册" [ref=e543]:
+                    - text: 立即注册
+                    - img
+            - generic [ref=e545]:
+              - generic [ref=e546]:
+                - generic [ref=e547]:
+                  - img "Bitget" [ref=e548]
+                  - generic [ref=e549]:
+                    - heading "Bitget" [level=3] [ref=e550]
+                    - generic [ref=e551]:
+                      - generic [ref=e552]: 高返佣
+                      - generic [ref=e553]: 跟单交易
+                - generic [ref=e554]:
+                  - generic [ref=e555]: 返佣比例
+                  - generic [ref=e556]: 20-45%
+              - generic [ref=e557]:
+                - generic [ref=e558]:
+                  - text: 现货费率
+                  - paragraph [ref=e559]: 0.10% / 0.10%
+                - generic [ref=e560]:
+                  - text: 合约费率
+                  - paragraph [ref=e561]: 0.020% / 0.060%
+              - generic [ref=e562]:
+                - link "查看详情" [ref=e563] [cursor=pointer]:
+                  - /url: /zh/exchanges/bitget
+                  - button "查看详情" [ref=e564]:
+                    - text: 查看详情
+                    - img
+                - link "立即注册" [ref=e565] [cursor=pointer]:
+                  - /url: https://partner.bitget.com/bg/xiaoyi
+                  - button "立即注册" [ref=e566]:
+                    - text: 立即注册
+                    - img
+    - contentinfo [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: CR
+              - generic [ref=e114]: CryptoRebate
+            - paragraph [ref=e115]: 全球加密货币交易所返佣平台 — 通过 CryptoRebate 注册交易所，享受最高手续费返佣。
+          - generic [ref=e116]:
+            - heading "交易所" [level=3] [ref=e117]
+            - list [ref=e118]:
+              - listitem [ref=e119]:
+                - link "Binance" [ref=e120] [cursor=pointer]:
+                  - /url: /zh/exchanges/binance
+              - listitem [ref=e121]:
+                - link "OKX" [ref=e122] [cursor=pointer]:
+                  - /url: /zh/exchanges/okx
+              - listitem [ref=e123]:
+                - link "Bybit" [ref=e124] [cursor=pointer]:
+                  - /url: /zh/exchanges/bybit
+              - listitem [ref=e125]:
+                - link "Bitget" [ref=e126] [cursor=pointer]:
+                  - /url: /zh/exchanges/bitget
+              - listitem [ref=e127]:
+                - link "Gate.io" [ref=e128] [cursor=pointer]:
+                  - /url: /zh/exchanges/gate
+          - generic [ref=e129]:
+            - heading "了解更多" [level=3] [ref=e130]
+            - list [ref=e131]:
+              - listitem [ref=e132]:
+                - link "费率计算器" [ref=e133] [cursor=pointer]:
+                  - /url: /zh/calculator
+              - listitem [ref=e134]:
+                - link "关于返佣" [ref=e135] [cursor=pointer]:
+                  - /url: /zh/about
+        - generic [ref=e136]:
+          - paragraph [ref=e137]: 风险提示：加密货币交易存在风险，请谨慎投资。本站信息仅供参考，不构成投资建议。
+          - paragraph [ref=e138]: © 2026 CryptoRebate. All rights reserved.
+  - alert [ref=e139]: Binance 注册返佣 — CryptoRebate

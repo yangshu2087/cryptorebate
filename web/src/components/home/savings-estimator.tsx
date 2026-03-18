@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { exchanges } from "@/data/exchanges";
+import { calculateSavings } from "@/lib/rebate";
 
 export function SavingsEstimator() {
   const t = useTranslations("home");
@@ -21,19 +22,22 @@ export function SavingsEstimator() {
   };
 
   const calculations = exchanges.map((ex) => {
-    const avgFee = (ex.fees.spotMaker + ex.fees.spotTaker) / 2;
-    const rebatePercent = parseInt(ex.spotRebate) / 100;
-    const monthlyFee = volume * avgFee;
-    const monthlyRebate = monthlyFee * rebatePercent;
-    const yearlySavings = monthlyRebate * 12;
+    const result = calculateSavings(
+      volume,
+      ex.fees.spotMaker,
+      ex.fees.spotTaker,
+      ex.spotRebate
+    );
     return {
       name: ex.name,
       rebate: ex.spotRebate,
-      yearlySavings,
+      yearlyMin: result.yearlyMin,
+      yearlyMax: result.yearlyMax,
+      isRange: result.isRange,
     };
   });
 
-  const bestSavings = Math.max(...calculations.map((c) => c.yearlySavings));
+  const bestSavings = Math.max(...calculations.map((c) => c.yearlyMax));
 
   return (
     <Card className="border-brand/20 bg-card">
@@ -77,7 +81,7 @@ export function SavingsEstimator() {
             <div
               key={calc.name}
               className={`grid grid-cols-3 gap-2 items-center rounded-lg px-2 py-2 text-sm transition-colors ${
-                calc.yearlySavings === bestSavings
+                calc.yearlyMax === bestSavings
                   ? "bg-brand/10 font-semibold"
                   : ""
               }`}
@@ -85,11 +89,17 @@ export function SavingsEstimator() {
               <span>{calc.name}</span>
               <span className="text-center text-brand">{calc.rebate}</span>
               <span className="text-right font-medium">
-                ${calc.yearlySavings.toFixed(0)}
+                {calc.isRange
+                  ? `$${calc.yearlyMin.toFixed(0)}-${calc.yearlyMax.toFixed(0)}`
+                  : `$${calc.yearlyMin.toFixed(0)}`}
               </span>
             </div>
           ))}
         </div>
+
+        <p className="mt-4 text-xs text-muted-foreground">
+          * 基于现货挂单/吃单均价估算，实际费用取决于 VIP 等级和平台币折扣
+        </p>
       </CardContent>
     </Card>
   );

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+
 import { ArrowRight, UserPlus, TrendingUp, Wallet, DollarSign, AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -32,6 +32,7 @@ export async function generateMetadata({
 
 export default function AboutPage() {
   const t = useTranslations("about");
+  const tc = useTranslations("common");
 
   const steps = [
     { icon: UserPlus, text: t("step1") },
@@ -89,14 +90,12 @@ export default function AboutPage() {
 
       {/* CTA */}
       <div className="mt-8 flex gap-3">
-        <Link href="/exchanges">
-          <Button className="gap-2 bg-brand text-white hover:bg-brand-dark">
-            Browse Exchanges
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+        <Link href="/exchanges" className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark transition-colors">
+          {tc("getStarted")}
+          <ArrowRight className="h-4 w-4" />
         </Link>
-        <Link href="/calculator">
-          <Button variant="outline">Calculate Savings</Button>
+        <Link href="/calculator" className="inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+          {tc("learnMore")}
         </Link>
       </div>
 

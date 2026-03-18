@@ -135,11 +135,9 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
             <code className="font-mono font-semibold">{exchange.referralCode}</code>
             <CopyButton text={exchange.referralCode} />
           </div>
-          <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer">
-            <Button className="w-full gap-2 bg-cta font-semibold text-black hover:bg-cta-hover sm:w-auto">
-              {t("exchanges.register")}
-              <ExternalLink className="h-4 w-4" />
-            </Button>
+          <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer nofollow sponsored" className="inline-flex items-center gap-2 rounded-md bg-cta px-4 py-2 font-semibold text-black hover:bg-cta-hover transition-colors">
+            {t("exchanges.register")}
+            <ExternalLink className="h-4 w-4" />
           </a>
         </div>
       </div>
@@ -218,7 +216,7 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
             </table>
             {exchange.fees.tokenName && (
               <p className="mt-3 text-xs text-muted-foreground">
-                * {exchange.fees.tokenName} {t("exchanges.maker")}: {((exchange.fees.tokenDiscount || 0) * 100).toFixed(0)}% discount
+                * {t("exchanges.tokenDiscount", { token: exchange.fees.tokenName, percent: String(((exchange.fees.tokenDiscount || 0) * 100).toFixed(0)) })}
               </p>
             )}
           </div>
@@ -229,7 +227,7 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
       <div className="mt-8 grid gap-6 md:grid-cols-2">
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-semibold text-green-500">Pros</h3>
+            <h3 className="font-semibold text-green-500">{t("exchanges.pros")}</h3>
             <ul className="mt-3 space-y-2">
               {pros.map((pro, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
@@ -242,7 +240,7 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
         </Card>
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-semibold text-red-500">Cons</h3>
+            <h3 className="font-semibold text-red-500">{t("exchanges.cons")}</h3>
             <ul className="mt-3 space-y-2">
               {cons.map((con, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
@@ -265,7 +263,7 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
       {/* Tutorial */}
       <section className="mt-10">
         <h2 className="text-xl font-bold">
-          {exchange.name} Registration Guide
+          {t("exchanges.registrationGuide", { name: exchange.name })}
         </h2>
         <div className="mt-4 space-y-3">
           {tutorial.map((step, i) => (
@@ -277,17 +275,15 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
             </div>
           ))}
         </div>
-        <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer" className="mt-6 block">
-          <Button className="w-full gap-2 bg-cta font-semibold text-black hover:bg-cta-hover sm:w-auto">
-            {t("exchanges.register")} {exchange.name}
-            <ExternalLink className="h-4 w-4" />
-          </Button>
+        <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer nofollow sponsored" className="mt-6 inline-flex items-center gap-2 rounded-md bg-cta px-6 py-2.5 font-semibold text-black hover:bg-cta-hover transition-colors">
+          {t("exchanges.register")} {exchange.name}
+          <ExternalLink className="h-4 w-4" />
         </a>
       </section>
 
       {/* FAQ */}
       <section className="mt-10">
-        <h2 className="text-xl font-bold">FAQ</h2>
+        <h2 className="text-xl font-bold">{t("exchanges.faqTitle")}</h2>
         <Accordion className="mt-4">
           {faq.map((item, i) => (
             <AccordionItem key={i} value={`faq-${i}`}>
