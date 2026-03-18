@@ -40,7 +40,6 @@ export async function generateMetadata({
 
 export default function HomePage() {
   const t = useTranslations("home");
-  const tc = useTranslations("common");
 
   const whyItems = [
     { icon: Shield, titleKey: "why1Title" as const, descKey: "why1Desc" as const },

@@ -47,8 +47,6 @@ export function CalculatorForm() {
     })
     .sort((a, b) => b.yearlySavings - a.yearlySavings);
 
-  const best = results[0];
-
   return (
     <div className="space-y-6">
       {/* Controls */}
