@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "siteName": "CryptoRebate",
+    "siteDescription": "Global crypto exchange rebate platform — Register through CryptoRebate for the highest trading fee rebates.",
+    "homeTitle": "CryptoRebate — Crypto Exchange Rebate Platform",
+    "exchangesTitle": "Exchange List — CryptoRebate",
+    "exchangesDescription": "Compare trading fees and rebate rates across top crypto exchanges to find the best platform for you.",
+    "calculatorTitle": "Fee Calculator — CryptoRebate",
+    "calculatorDescription": "Enter your monthly trading volume to calculate actual fees and rebate savings across exchanges.",
+    "aboutTitle": "About Rebates — CryptoRebate",
+    "aboutDescription": "Learn what crypto exchange rebates are, how they work, and how to save money with CryptoRebate.",
+    "exchangeDetailTitle": "{name} Registration Rebate — CryptoRebate",
+    "exchangeDetailDescription": "Register on {name} through CryptoRebate for {rebate} trading fee rebate with our step-by-step guide."
+  },
+  "nav": {
+    "home": "Home",
+    "exchanges": "Exchanges",
+    "calculator": "Fee Calculator",
+    "about": "About Rebates",
+    "language": "中文"
+  },
+  "home": {
+    "heroTitle": "Save Up to 70% on Trading Fees",
+    "heroSubtitle": "Register on top crypto exchanges through CryptoRebate and enjoy trading fee rebates. Simple signup, ongoing savings.",
+    "ctaBrowse": "Browse Exchanges",
+    "ctaCalculator": "Calculate Savings",
+    "estimatorTitle": "How Much Can You Save?",
+    "estimatorMonthlyVolume": "Monthly Volume (USD)",
+    "estimatorYearlySavings": "Yearly Savings",
+    "estimatorExchange": "Exchange",
+    "estimatorRebate": "Rebate Rate",
+    "estimatorSavings": "Yearly Savings",
+    "featuredTitle": "Featured Exchanges",
+    "featuredSubtitle": "Top global crypto exchanges with the best rebate offers.",
+    "whyTitle": "Why Choose CryptoRebate",
+    "why1Title": "Transparent Rebates",
+    "why1Desc": "Clear display of real rebate rates and fees for every exchange. No hidden costs.",
+    "why2Title": "Expert Reviews",
+    "why2Desc": "Honest pros and cons analysis for each exchange to help you make informed decisions.",
+    "why3Title": "Global Coverage",
+    "why3Desc": "Supporting major exchanges worldwide, find the best deal wherever you are.",
+    "why4Title": "Always Updated",
+    "why4Desc": "Real-time tracking of exchange rate changes and promotions to ensure you get the latest offers.",
+    "faqTitle": "FAQ",
+    "faq1Q": "What is an exchange rebate?",
+    "faq1A": "An exchange rebate means a portion of the trading fees you pay is returned to you through a referral link. By registering through CryptoRebate, you can continuously enjoy this benefit.",
+    "faq2Q": "Does using a rebate link cost extra?",
+    "faq2A": "No. Fees with a rebate link are the same as direct registration, or even lower. Rebates are rewards from the exchange to referrers and don't increase your costs.",
+    "faq3Q": "How long until rebates arrive?",
+    "faq3A": "Settlement periods vary by exchange, typically instant or daily. Check each exchange's specific rebate rules for details.",
+    "faq4Q": "Which exchanges are supported?",
+    "faq4A": "Currently supporting Binance, OKX, Bybit, Bitget, and Gate.io, with more exchanges being added."
+  },
+  "exchanges": {
+    "title": "Exchange List",
+    "subtitle": "Compare fees and rebate rates to find the best exchange for you.",
+    "sortBy": "Sort By",
+    "sortByRebate": "Rebate Rate",
+    "sortByFees": "Trading Fees",
+    "sortByPopularity": "Popularity",
+    "filterType": "Trade Type",
+    "filterAll": "All",
+    "filterSpot": "Spot",
+    "filterFutures": "Futures",
+    "spotFees": "Spot Fees",
+    "futuresFees": "Futures Fees",
+    "rebateRate": "Rebate Rate",
+    "spotRebate": "Spot Rebate",
+    "futuresRebate": "Futures Rebate",
+    "maker": "Maker",
+    "taker": "Taker",
+    "viewDetails": "View Details",
+    "register": "Register Now",
+    "referralCode": "Referral Code",
+    "copyCode": "Copy",
+    "copied": "Copied",
+    "tradingPairs": "Trading Pairs",
+    "founded": "Founded",
+    "headquarters": "Headquarters",
+
+    "binance": {
+      "description": "Binance is the world's largest crypto exchange by trading volume, offering over 1,800 trading pairs. The platform provides comprehensive services including spot, futures, options, staking, and more. Suitable for beginners to professional traders.",
+      "pros": ["#1 global trading volume with best liquidity", "Most comprehensive product line (spot/futures/options/earn/NFT)", "25% fee discount for BNB holders", "SAFU fund protecting user assets"],
+      "cons": ["Restricted in some regions", "Strict KYC verification process", "Customer support response can be slow"],
+      "bestFor": "Ideal for all types of traders, especially those needing high volume and diverse products.",
+      "tutorial": ["Click the registration link to visit Binance signup page", "Enter email or phone number, set password", "Complete email/phone verification", "Complete KYC identity verification (ID/passport required)", "Start trading after verification, rebate activates automatically"],
+      "faq": [
+        { "q": "What are Binance's fees?", "a": "Spot trading: Maker/Taker both 0.1%; Futures: Maker 0.02%/Taker 0.05%. Use BNB for 25% discount." },
+        { "q": "What deposit methods does Binance support?", "a": "Bank transfer, credit/debit cards, P2P trading, and crypto deposits." },
+        { "q": "What benefits does the referral code provide?", "a": "Registering with our code XIAOYI gives you trading fee rebates at no additional cost." }
+      ]
+    },
+    "okx": {
+      "description": "OKX is one of the world's leading crypto exchanges, known for technical excellence and innovation. Features an industry-leading Web3 wallet alongside comprehensive spot, futures, and options trading. Professional interface suited for experienced traders.",
+      "pros": ["Industry-leading Web3 wallet experience", "Deep futures order book with low slippage", "Fee discounts for OKB holders", "Highly stable tech infrastructure, minimal downtime"],
+      "cons": ["Complex interface may overwhelm beginners", "Conservative listing approach", "Some features restricted to advanced users"],
+      "bestFor": "Best for experienced traders and Web3 users who value DeFi and on-chain interactions.",
+      "tutorial": ["Click the registration link to visit OKX signup page", "Enter email or phone number, set password", "Complete verification code", "Complete KYC identity verification", "Start trading after verification, rebate binds automatically"],
+      "faq": [
+        { "q": "What are OKX's fees?", "a": "Spot: Maker 0.08%/Taker 0.1%; Futures: Maker 0.02%/Taker 0.05%. Additional discounts with OKB." },
+        { "q": "How does the OKX Web3 wallet work?", "a": "OKX has a built-in Web3 wallet supporting multi-chain assets, DEX trading, and NFT marketplace." },
+        { "q": "Is OKX safe?", "a": "OKX regularly publishes Proof of Reserves, uses multi-signature cold wallets, and has a strong security track record." }
+      ]
+    },
+    "bybit": {
+      "description": "Bybit is a globally renowned derivatives exchange that has evolved into a comprehensive trading platform. Known for fast listings and excellent copy trading features, it has seen rapid user growth. Clean interface ideal for futures traders.",
+      "pros": ["Smooth futures trading with deep liquidity", "Fast new token listings", "Well-developed copy trading system", "Clean, intuitive interface"],
+      "cons": ["Fewer spot pairs compared to Binance", "Service restrictions in some regions", "Customer support could improve"],
+      "bestFor": "Great for futures traders and those looking for new token opportunities. Copy trading also suits beginners.",
+      "tutorial": ["Click the registration link to visit Bybit signup page", "Enter email or phone number, set password", "Complete verification", "Complete KYC verification (Level 1 sufficient for trading)", "Start trading after verification, enjoy 33% rebate"],
+      "faq": [
+        { "q": "What are Bybit's fees?", "a": "Spot: Maker/Taker both 0.1%; Futures: Maker 0.02%/Taker 0.055%." },
+        { "q": "How does Bybit copy trading work?", "a": "Browse top traders in the Copy Trading section, set your investment amount and risk parameters to auto-follow trades." },
+        { "q": "Which regions does Bybit support?", "a": "Bybit supports most regions globally, with restrictions in the US, Mainland China, and some other areas." }
+      ]
+    },
+    "bitget": {
+      "description": "Bitget is one of the fastest-growing crypto exchanges, famous for copy trading. Offers competitive rebate rates and a $300M protection fund for user security. User-friendly for beginners seeking high rebates.",
+      "pros": ["High rebate rates (20-45% spot/futures)", "Industry-leading copy trading system", "$300M Protection Fund", "Beginner-friendly interface"],
+      "cons": ["Lower volume and liquidity vs top 3 exchanges", "Shorter track record, still building brand recognition", "Limited advanced features"],
+      "bestFor": "Ideal for users seeking high rebates and copy trading enthusiasts. Very beginner-friendly.",
+      "tutorial": ["Click the registration link to visit Bitget signup page", "Enter email or phone number, set password", "Complete verification", "Complete KYC identity verification", "Start trading after verification, enjoy 20-45% rebate"],
+      "faq": [
+        { "q": "What are Bitget's fees?", "a": "Spot: Maker/Taker both 0.1%; Futures: Maker 0.02%/Taker 0.06%." },
+        { "q": "Why are Bitget's rebates so high?", "a": "Bitget offers higher referral rebates as part of their growth strategy to expand their user base." },
+        { "q": "What is Bitget's Protection Fund?", "a": "Bitget maintains a $300M Protection Fund to safeguard user assets in extreme market conditions." }
+      ]
+    },
+    "gate": {
+      "description": "Gate.io is one of the longest-running crypto exchanges, founded in 2013. Known for having the most trading pairs (2,800+), it's ideal for trading new and niche tokens. Competitive rebate rates with a proven track record.",
+      "pros": ["Most trading pairs in the industry (2,800+)", "Fast listings with broad new project coverage", "High rebate rate (20-70%)", "10+ years of operation, veteran exchange"],
+      "cons": ["Information-heavy interface, may overwhelm beginners", "Lower liquidity on some small-cap tokens", "Relaxed KYC requirements (double-edged sword)"],
+      "bestFor": "Perfect for traders interested in new and niche tokens, and those seeking high rebates.",
+      "tutorial": ["Click the registration link to visit Gate.io signup page", "Enter email, set password", "Complete email verification", "KYC is optional (not required)", "Start trading immediately, rebate activates automatically"],
+      "faq": [
+        { "q": "What are Gate.io's fees?", "a": "Spot: Maker/Taker both 0.1%; Futures: Maker 0.015%/Taker 0.05%. Use GT token for 25% discount." },
+        { "q": "Does Gate.io require KYC?", "a": "KYC is optional. You can trade without KYC but withdrawal limits apply. Complete KYC to unlock higher limits." },
+        { "q": "Is Gate.io safe?", "a": "Operating for 10+ years with regular Proof of Reserves, hot/cold wallet separation, and a strong security record." }
+      ]
+    }
+  },
+  "calculator": {
+    "title": "Fee Calculator",
+    "subtitle": "Enter your monthly trading volume to compare actual fees and rebate savings across exchanges.",
+    "monthlyVolume": "Monthly Volume (USD)",
+    "tradeType": "Trade Type",
+    "spot": "Spot",
+    "futures": "Futures",
+    "results": "Comparison Results",
+    "exchange": "Exchange",
+    "monthlyFee": "Monthly Fee",
+    "monthlyRebate": "Monthly Rebate",
+    "yearlySavings": "Yearly Savings",
+    "recommended": "Recommended",
+    "noVolume": "Enter a trading volume to see comparison results"
+  },
+  "about": {
+    "title": "What Are Crypto Exchange Rebates?",
+    "subtitle": "Learn how rebates work and how CryptoRebate helps you save money.",
+    "whatTitle": "What is a Rebate?",
+    "whatDesc": "When you trade on a crypto exchange, you pay trading fees. By registering through a referral link, the exchange returns a portion of those fees — that's a rebate. Register through CryptoRebate's links to continuously enjoy this benefit.",
+    "howTitle": "How Does It Work?",
+    "step1": "Register on an exchange through CryptoRebate's link",
+    "step2": "Trade crypto as you normally would",
+    "step3": "The exchange automatically returns part of your fees",
+    "step4": "Rebates are deposited directly to your exchange account",
+    "costTitle": "Does It Cost Extra?",
+    "costDesc": "Absolutely not. Fees with a rebate link are identical to direct registration. Rebates are the exchange's reward mechanism for referrers and never increase your trading costs.",
+    "riskTitle": "Risk Disclosure",
+    "riskDesc": "CryptoRebate only provides exchange information comparison and registration links. We do not provide investment advice. Crypto trading carries significant risk — please make decisions based on your own circumstances. We have referral partnerships with exchanges and earn commission when users trade through our links.",
+    "faqTitle": "FAQ",
+    "faq1Q": "What's the difference between rebates and fee discounts?",
+    "faq1A": "Fee discounts directly reduce your trading rate. Rebates return a portion of fees after trading. Both save you money, and some exchanges offer both.",
+    "faq2Q": "Will rebates affect my trading experience?",
+    "faq2A": "No. After registering through a rebate link, your trading experience is identical to direct registration with all features available.",
+    "faq3Q": "I already have an exchange account. Can I still get rebates?",
+    "faq3A": "Usually a new account is needed to bind the rebate relationship. Consider registering with a new email. Some exchanges support binding referral codes to existing accounts — check each exchange's rules."
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "backToList": "Back to List",
+    "share": "Share",
+    "disclaimer": "Risk Warning: Crypto trading involves risk. Please invest carefully. Information on this site is for reference only and does not constitute investment advice.",
+    "copyright": "© {year} CryptoRebate. All rights reserved.",
+    "relatedExchanges": "You May Also Like"
+  },
+  "tags": {
+    "most-popular": "Most Popular",
+    "highest-volume": "Highest Volume",
+    "beginner-friendly": "Beginner Friendly",
+    "low-fees": "Low Fees",
+    "web3-wallet": "Web3 Wallet",
+    "professional": "Professional",
+    "futures-leader": "Futures Leader",
+    "fast-listing": "Fast Listings",
+    "copy-trading": "Copy Trading",
+    "high-rebate": "High Rebate",
+    "most-tokens": "Most Tokens",
+    "veteran": "Veteran Exchange"
+  }
+}
