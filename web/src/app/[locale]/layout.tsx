@@ -16,6 +16,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "CryptoRebate",
   description: "Global crypto exchange rebate platform",
+  verification: {
+    google: "ybX7Q1e18lnsXk9Y8CDG6NGcVw18YU7g878nJtKv1fE",
+  },
 };
 
 export function generateStaticParams() {
