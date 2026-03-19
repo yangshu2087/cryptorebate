@@ -10,11 +10,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CopyButton } from "@/components/shared/copy-button";
 import { ExchangeCard } from "@/components/exchanges/exchange-card";
+import { FAQJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { exchanges, getExchangeBySlug, getAllExchangeSlugs } from "@/data/exchanges";
 import {
   ArrowLeft,
@@ -24,6 +24,11 @@ import {
   Calendar,
   MapPin,
   BarChart3,
+  Shield,
+  Clock,
+  AlertTriangle,
+  Zap,
+  Layers,
 } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -72,16 +77,23 @@ async function ExchangeDetailContent({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const exchange = getExchangeBySlug(slug);
   if (!exchange) notFound();
 
-  return <ExchangeDetailView exchange={exchange} />;
+  return <ExchangeDetailView exchange={exchange} locale={locale} />;
 }
 
-function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typeof getExchangeBySlug>> }) {
+function ExchangeDetailView({
+  exchange,
+  locale,
+}: {
+  exchange: NonNullable<ReturnType<typeof getExchangeBySlug>>;
+  locale: string;
+}) {
   const t = useTranslations();
   const slug = exchange.slug;
+  const localizedBaseUrl = `https://cryptorebate.app/${locale}`;
 
   const description = t(`exchanges.${slug}.description`);
   const pros = t.raw(`exchanges.${slug}.pros`) as string[];
@@ -183,6 +195,81 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
               <p className="mt-1 text-3xl font-bold text-brand">
                 {exchange.futuresRebate}
               </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Info */}
+      <Card className="mt-6">
+        <CardContent className="p-6">
+          <h2 className="text-lg font-semibold">{t("exchanges.quickInfo")}</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.regionRestrictions")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.regionRestrictions.length > 0
+                    ? exchange.regionRestrictions.join(", ")
+                    : t("exchanges.noRestrictions")}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Shield className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.kycDifficulty")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.kycDifficulty === "easy"
+                    ? t("exchanges.kycEasy")
+                    : exchange.kycDifficulty === "moderate"
+                      ? t("exchanges.kycModerate")
+                      : t("exchanges.kycStrict")}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Zap className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.rebateActivation")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.rebateAutoActivate
+                    ? t("exchanges.rebateAutoYes")
+                    : t("exchanges.rebateAutoNo")}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-purple-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.rebateSettlement")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.rebateSettlement === "instant"
+                    ? t("exchanges.settlementInstant")
+                    : t("exchanges.settlementDaily")}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Layers className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.platformTokenStack")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.platformTokenStacking && exchange.fees.tokenName
+                    ? t("exchanges.tokenStackYes", { token: exchange.fees.tokenName })
+                    : t("exchanges.tokenStackNo")}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-gray-500" />
+              <div>
+                <span className="text-sm font-medium">{t("exchanges.lastReviewed")}</span>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {exchange.lastReviewed}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -309,6 +396,15 @@ function ExchangeDetailView({ exchange }: { exchange: NonNullable<ReturnType<typ
           ))}
         </div>
       </section>
+
+      <FAQJsonLd items={faq} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: t("nav.home"), url: localizedBaseUrl },
+          { name: t("nav.exchanges"), url: `${localizedBaseUrl}/exchanges` },
+          { name: exchange.name, url: `${localizedBaseUrl}/exchanges/${exchange.slug}` },
+        ]}
+      />
     </div>
   );
 }

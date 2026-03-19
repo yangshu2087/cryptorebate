@@ -29,4 +29,10 @@ export interface Exchange {
   kyc: "required" | "optional" | "none";
   tags: string[];
   order: number;
+  regionRestrictions: string[];
+  kycDifficulty: "easy" | "moderate" | "strict";
+  rebateAutoActivate: boolean;
+  rebateSettlement: "daily" | "instant";
+  platformTokenStacking: boolean;
+  lastReviewed: string;
 }

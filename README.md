@@ -1,4 +1,4 @@
-# 007 返佣导航平台 / cryptorebate
+# 007 全球加密货币返佣平台 / cryptorebate
 
 - 中文名：全球加密货币返佣平台
 - 英文名：cryptorebate
@@ -28,14 +28,14 @@
 已完成首轮可运行 Web P0，并新增生产化数据链路：Postgres 持久化点击归因、交易所同步任务（Binance/OKX/Bybit/Bitget/Gate）、dashboard 真数据聚合、每周实验种子任务（CTA/模板/排序）、72h 保守模式风险切换脚本、Vercel/Cloudflare 部署配置。
 
 ## 关键产物
-- `projects/007-rebatepilot/PRD-v1.md`
-- `projects/007-rebatepilot/information-architecture-v1.md`
-- `projects/007-rebatepilot/growth-and-seo-v1.md`
-- `projects/007-rebatepilot/revenue-tracking-v1.md`
-- `projects/007-rebatepilot/risk-guardrails-v1.md`
-- `projects/007-rebatepilot/launch-plan-p0-v1.md`
-- `projects/007-rebatepilot/INDEX.md`
-- `projects/007-rebatepilot/web/README.md`
+- `projects/007-cryptorebate/PRD-v1.md`
+- `projects/007-cryptorebate/information-architecture-v1.md`
+- `projects/007-cryptorebate/growth-and-seo-v1.md`
+- `projects/007-cryptorebate/revenue-tracking-v1.md`
+- `projects/007-cryptorebate/risk-guardrails-v1.md`
+- `projects/007-cryptorebate/launch-plan-p0-v1.md`
+- `projects/007-cryptorebate/INDEX.md`
+- `projects/007-cryptorebate/web/README.md`
 
 ## 下一步
 进入上线前冲刺：补齐生产环境 `DATABASE_URL + 5 家真实 referral 链接`，执行 `db:migrate -> sync:exchanges -> sync:metrics -> seed:weekly-experiments`，先上 Vercel，再按周推进内容与转化实验，稳定后再评估 App 范围。

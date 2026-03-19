@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,6 +44,8 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <WebsiteJsonLd locale={locale} />
+        <OrganizationJsonLd />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
