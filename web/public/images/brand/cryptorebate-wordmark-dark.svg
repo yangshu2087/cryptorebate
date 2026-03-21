@@ -1,0 +1,43 @@
+<svg width="980" height="260" viewBox="0 0 980 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="crBlueDark" x1="28" y1="28" x2="186" y2="194" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5D77FF" />
+      <stop offset="1" stop-color="#3D5BF5" />
+    </linearGradient>
+    <linearGradient id="crGoldDark" x1="73" y1="54" x2="146" y2="151" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8D86A" />
+      <stop offset="1" stop-color="#E3B742" />
+    </linearGradient>
+  </defs>
+
+  <g>
+    <rect x="28" y="28" width="166" height="166" rx="45" fill="white" stroke="url(#crBlueDark)" stroke-width="16" />
+    <rect x="71" y="117" width="22" height="43" rx="7" fill="url(#crBlueDark)" />
+    <rect x="104" y="93" width="22" height="67" rx="7" fill="url(#crBlueDark)" />
+    <rect x="137" y="65" width="22" height="95" rx="7" fill="url(#crBlueDark)" />
+    <path d="M80 182C81.4 136.5 102.5 100 141.5 75.5L136.3 60.6L182 74.2L153.3 111L149.3 95.7C119 117.8 106 145.5 105 182H80Z" fill="url(#crGoldDark)" />
+  </g>
+
+  <text
+    x="245"
+    y="114"
+    fill="#5D77FF"
+    font-family="'Avenir Next', Avenir, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="92"
+    font-weight="700"
+    letter-spacing="-1.5"
+  >
+    Crypto
+  </text>
+  <text
+    x="245"
+    y="200"
+    fill="#F8FAFF"
+    font-family="'Avenir Next', Avenir, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="92"
+    font-weight="700"
+    letter-spacing="-1.5"
+  >
+    Rebate
+  </text>
+</svg>

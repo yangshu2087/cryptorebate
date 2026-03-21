@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { exchanges } from "@/data/exchanges";
 import { calculateSavings } from "@/lib/rebate";
 
+const MAX_MONTHLY_VOLUME = 100000000;
+
 export function SavingsEstimator() {
   const t = useTranslations("home");
   const [volume, setVolume] = useState(10000);
@@ -18,7 +20,7 @@ export function SavingsEstimator() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value.replace(/,/g, "")) || 0;
-    setVolume(Math.min(val, 1000000));
+    setVolume(Math.min(val, MAX_MONTHLY_VOLUME));
   };
 
   const calculations = exchanges.map((ex) => {
@@ -37,8 +39,6 @@ export function SavingsEstimator() {
     };
   });
 
-  const bestSavings = Math.max(...calculations.map((c) => c.yearlyMax));
-
   return (
     <Card className="border-brand/20 bg-card">
       <CardContent className="p-6">
@@ -52,12 +52,12 @@ export function SavingsEstimator() {
             <Slider
               value={[volume]}
               onValueChange={handleSliderChange}
-              max={500000}
+              max={MAX_MONTHLY_VOLUME}
               min={1000}
               step={1000}
               className="flex-1"
             />
-            <div className="relative w-32">
+            <div className="relative w-44">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                 $
               </span>
@@ -80,11 +80,7 @@ export function SavingsEstimator() {
           {calculations.map((calc) => (
             <div
               key={calc.name}
-              className={`grid grid-cols-3 gap-2 items-center rounded-lg px-2 py-2 text-sm transition-colors ${
-                calc.yearlyMax === bestSavings
-                  ? "bg-brand/10 font-semibold"
-                  : ""
-              }`}
+              className="grid grid-cols-3 gap-2 items-center rounded-lg px-2 py-2 text-sm transition-colors"
             >
               <span>{calc.name}</span>
               <span className="text-center text-brand">{calc.rebate}</span>
@@ -98,7 +94,7 @@ export function SavingsEstimator() {
         </div>
 
         <p className="mt-4 text-xs text-muted-foreground">
-          * 基于现货挂单/吃单均价估算，实际费用取决于 VIP 等级和平台币折扣
+          {t("estimatorNote")}
         </p>
       </CardContent>
     </Card>

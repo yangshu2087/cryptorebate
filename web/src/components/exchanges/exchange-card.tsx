@@ -14,13 +14,15 @@ export function ExchangeCard({ exchange }: { exchange: Exchange }) {
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Image
-              src={exchange.logo}
-              alt={exchange.name}
-              width={40}
-              height={40}
-              className="rounded-lg"
-            />
+            <div className="flex h-10 w-10 items-center justify-center">
+              <Image
+                src={exchange.logo}
+                alt={exchange.name}
+                width={40}
+                height={40}
+                className="h-10 w-10 object-contain"
+              />
+            </div>
             <div>
               <h3 className="font-semibold text-base">{exchange.name}</h3>
               <div className="mt-0.5 flex flex-wrap gap-1.5">

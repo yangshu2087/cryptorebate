@@ -1,21 +1,31 @@
-# 007 全球加密货币返佣平台 / cryptorebate / INDEX
+# 007 cryptorebate / INDEX
 
-## 用法
-- 先看 `README.md` 抓项目全貌
-- 再看 `PRD-v1.md`、`information-architecture-v1.md`、`growth-and-seo-v1.md`、`revenue-tracking-v1.md`、`risk-guardrails-v1.md`
-- Web P0 + 数据持久化同步已落地，代码入口见 `projects/007-cryptorebate/web/README.md`
+## 建议阅读顺序
+1. `README.md`（当前状态与上线口径）
+2. `PRD-v1.md`（产品边界）
+3. `web/README.md`（工程与部署）
+4. 品牌封口文档（`brand-assets-usage.md`、`logo-redesign-brief.md`、`logo-wordmark-spec.md`）
 
-## 相关文档与产物
-- `projects/007-cryptorebate/README.md`
-- `projects/007-cryptorebate/PRD-v1.md`
-- `projects/007-cryptorebate/information-architecture-v1.md`
-- `projects/007-cryptorebate/growth-and-seo-v1.md`
-- `projects/007-cryptorebate/revenue-tracking-v1.md`
-- `projects/007-cryptorebate/risk-guardrails-v1.md`
-- `projects/007-cryptorebate/launch-plan-p0-v1.md`
-- `projects/007-cryptorebate/web/README.md`
+## 核心产物
+- `README.md`
+- `PRD-v1.md`
+- `information-architecture-v1.md`
+- `growth-and-seo-v1.md`
+- `revenue-tracking-v1.md`
+- `risk-guardrails-v1.md`
+- `launch-plan-p0-v1.md`
+- `brand-assets-usage.md`
+- `logo-redesign-brief.md`
+- `logo-generation-prompts.md`
+- `logo-wordmark-spec.md`
+- `web/README.md`
 
-## 备注
-- 先做 Web，后续再扩 App。
-- 重点不是做大而全，而是做“清晰、可信、可转化”的返佣产品。
-- 上线前最关键动作：填充真实 referral 链接与数据库密钥，完成首次 `sync:metrics` 真数据导入。
+## 当前执行口径
+- 站点默认语言：`en`（保留 `zh` 与其他多语言）
+- 数据质量门禁：`npm run check` + GitHub Actions
+- 域名策略：`www.cryptorebate.app` 永久 301 到 `cryptorebate.app`
+
+## 当前覆盖快照
+- 交易所（7）：Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi/HTX
+- 语种（11）：en、zh、zh-tw、ja、ko、ru、es、pt、vi、th、hi
+- 品牌资产主路径：`web/public/images/brand/*`

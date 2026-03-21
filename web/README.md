@@ -8,7 +8,7 @@ Live at: **https://cryptorebate.app**
 
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS v4 + shadcn/ui
-- **i18n**: next-intl with `[locale]` routing (zh / en)
+- **i18n**: next-intl with `[locale]` routing (`en`, `zh`, `zh-tw`, `ja`, `ko`, `ru`, `es`, `pt`, `vi`, `th`, `hi`)
 - **Theming**: next-themes (light / dark mode)
 - **Deployment**: Vercel
 
@@ -38,21 +38,53 @@ Exchange data lives in `src/data/exchanges.ts` as a static TypeScript array. Eac
 - Feature flags (spot, futures, options, copy trading, staking)
 - KYC requirements and tags
 
+Current supported exchanges (7):
+- Binance
+- OKX
+- Bybit
+- Bitget
+- Gate.io
+- KuCoin
+- Huobi / HTX
+
 ### Adding or Updating an Exchange
 
 1. Add or edit the exchange object in `src/data/exchanges.ts`
-2. Add the exchange logo to `public/images/exchanges/{slug}.png`
-3. Add translation strings under `exchanges.{slug}` in both `messages/zh.json` and `messages/en.json` (description, pros, cons, bestFor, tutorial steps, FAQ)
+2. Add the exchange logo to `public/images/exchanges/` (recommended: `{slug}.png` or `{slug}.svg`)
+3. Add translation strings under `exchanges.{slug}` in **all locale files** under `messages/` (description, pros, cons, bestFor, tutorial steps, FAQ)
 4. The exchange detail page at `/exchanges/[slug]` renders automatically from the data
 
 ## i18n
 
 Message files are at:
 
-- `messages/zh.json` (Chinese)
-- `messages/en.json` (English)
+- `messages/en.json`
+- `messages/zh.json`
+- `messages/zh-tw.json`
+- `messages/ja.json`
+- `messages/ko.json`
+- `messages/ru.json`
+- `messages/es.json`
+- `messages/pt.json`
+- `messages/vi.json`
+- `messages/th.json`
+- `messages/hi.json`
+
+Default locale is `en`.
 
 All user-visible text must be in message files. Use `useTranslations` (client) or `getTranslations` (server/metadata) from next-intl.
+
+## Brand Assets
+
+Primary brand assets are under `public/images/brand/`:
+- `cryptorebate-mark.svg`
+- `cryptorebate-wordmark.svg`
+- `cryptorebate-wordmark-dark.svg`
+- `cryptorebate-wordmark-monochrome.svg`
+
+Usage and guardrails are documented in project root:
+- `../brand-assets-usage.md`
+- `../logo-wordmark-spec.md`
 
 ## Development
 
@@ -71,6 +103,22 @@ Deploy on Vercel with the following configuration:
 - **Framework Preset**: Next.js (auto-detected)
 - **Build Command**: default (`next build`)
 - **Output Directory**: default (`.next`)
+- **Domain Redirect**: `www.cryptorebate.app` is forced to `https://cryptorebate.app` by `vercel.json` (301)
+
+Quick deploy commands:
+
+```bash
+npm run check
+npm run deploy:vercel
+```
+
+## Data Quality Gates
+
+- `npm run check` runs lint + test + build in one command
+- `npm run test` includes schema checks for exchange data
+- Logo paths are validated against files under `public/`
+- Referral links are validated as URLs and checked against an approved partner-domain allowlist
+- GitHub Actions workflow `.github/workflows/quality-gates.yml` enforces these checks on `push` and `pull_request`
 
 ## SEO Notes
 

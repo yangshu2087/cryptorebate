@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { CalculatorForm } from "@/components/calculator/calculator-form";
+import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -10,12 +11,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const title = t("calculatorTitle");
+  const description = t("calculatorDescription");
   return {
-    title: t("calculatorTitle"),
-    description: t("calculatorDescription"),
+    title,
+    description,
     alternates: {
-      canonical: `https://cryptorebate.app/${locale}/calculator`,
-      languages: { zh: "/zh/calculator", en: "/en/calculator" },
+      canonical: getLocalizedUrl(locale, "/calculator"),
+      languages: getLocaleAlternates("/calculator"),
+    },
+    openGraph: {
+      title,
+      description,
+      url: getLocalizedUrl(locale, "/calculator"),
+      locale: getOpenGraphLocale(locale),
+      images: [
+        {
+          url: `/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      title,
+      description,
+      images: [`/${locale}/twitter-image`],
     },
   };
 }

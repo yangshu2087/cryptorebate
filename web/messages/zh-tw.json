@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "siteName": "CryptoRebate",
+    "siteTagline": "先拿到更好的返佣，再註冊交易所",
+    "siteDescription": "整合交易所返佣活動、邀請碼與費率資訊，幫你在註冊前更快找到更划算的方案，少走彎路，長期交易更省。",
+    "homeTitle": "CryptoRebate — 交易所返佣碼比較平台",
+    "exchangesTitle": "交易所列表 — CryptoRebate",
+    "exchangesDescription": "比較主流交易所最新返佣比例、邀請碼與手續費，快速找到更適合自己的平台。",
+    "calculatorTitle": "手續費計算器 — CryptoRebate",
+    "calculatorDescription": "輸入每月交易量，估算最新返佣比例下的手續費返還與節省金額。",
+    "aboutTitle": "返佣是什麼 — CryptoRebate",
+    "aboutDescription": "了解加密貨幣交易所返佣的運作方式，以及如何透過 CryptoRebate 節省交易成本。",
+    "disclosureTitle": "合作披露 — CryptoRebate",
+    "disclosureDescription": "了解 CryptoRebate 的合作關係、收入模式，以及我們對透明度的承諾。",
+    "legalTitle": "隱私政策與使用條款 — CryptoRebate",
+    "legalDescription": "CryptoRebate 的隱私政策、資料收集說明與使用條款。",
+    "exchangeDetailTitle": "{name} 註冊返佣 — CryptoRebate",
+    "exchangeDetailDescription": "透過 CryptoRebate 註冊 {name}，使用最新邀請碼取得 {rebate} 手續費返佣，並查看完整註冊教學。"
+  },
+  "nav": {
+    "home": "首頁",
+    "exchanges": "交易所",
+    "calculator": "手續費計算器",
+    "about": "返佣說明",
+    "disclosure": "合作披露",
+    "legal": "隱私與條款",
+    "language": "語言"
+  },
+  "home": {
+    "heroBadge": "CryptoRebate · 註冊前先找更優返佣",
+    "heroTitle": "先拿到更好的返佣，再註冊交易所",
+    "heroSubtitle": "整合交易所返佣活動、邀請碼與費率資訊，幫你在註冊前更快找到更划算的方案，少走彎路，長期交易更省。",
+    "brandCardSubtitle": "把分散的返佣入口，變成更划算的註冊選擇",
+    "brandCardDescription": "CryptoRebate 幫你更快發現、比較並篩選返佣方案，不用自己到處找邀請碼和活動頁，也能先選好更合適的註冊入口。",
+    "ctaBrowse": "查看交易所",
+    "ctaCalculator": "試算節省",
+    "estimatorTitle": "你能省下多少？",
+    "estimatorMonthlyVolume": "每月交易量 (USD)",
+    "estimatorYearlySavings": "年節省金額",
+    "estimatorExchange": "交易所",
+    "estimatorRebate": "返佣比例",
+    "estimatorSavings": "年節省金額",
+    "estimatorNote": "* 依現貨掛單/吃單平均費率估算，未計入 VIP 等級折扣與平台幣抵扣。",
+    "featuredTitle": "精選交易所",
+    "featuredSubtitle": "7 家主流交易所，邀請碼與返佣比例已同步更新。",
+    "whyTitle": "為什麼選擇 CryptoRebate",
+    "why1Title": "透明返佣",
+    "why1Desc": "清楚展示各交易所最新返佣比例、邀請碼與手續費，沒有隱藏成本。",
+    "why2Title": "專業評測",
+    "why2Desc": "每家交易所都提供真實優缺點分析，幫助你做出更合適的選擇。",
+    "why3Title": "全球覆蓋",
+    "why3Desc": "涵蓋多家主流國際交易所，無論你在哪個市場都能快速比較。",
+    "why4Title": "定期核驗",
+    "why4Desc": "我們會定期檢查手續費、返佣比例與活動規則，盡量保持資訊最新。",
+    "comparisonTitle": "交易所比較",
+    "comparisonSubtitle": "快速比較費率、返佣與平台特色。",
+    "comparisonExchange": "交易所",
+    "comparisonSpotFee": "現貨費率",
+    "comparisonFuturesFee": "合約費率",
+    "comparisonRebate": "返佣比例",
+    "comparisonPairs": "交易對",
+    "comparisonKYC": "KYC",
+    "comparisonAction": "註冊",
+    "kycRequired": "必須",
+    "kycOptional": "可選",
+    "personaTitle": "找到最適合你的交易所",
+    "personaSubtitle": "不確定哪家交易所更適合你？從這裡開始。",
+    "persona1Title": "新手入門",
+    "persona1Desc": "剛接觸加密貨幣？可先選擇介面友善、流程簡單、支援跟單的交易所。",
+    "persona1Recommend": "推薦：Binance、KuCoin、Bitget",
+    "persona2Title": "合約交易者",
+    "persona2Desc": "若你需要深度流動性與專業工具，這幾家在衍生品交易上更具優勢。",
+    "persona2Recommend": "推薦：Bybit、OKX、Huobi",
+    "persona3Title": "高返佣需求",
+    "persona3Desc": "想最大化節省手續費？以下平台目前提供更高比例的返佣活動。",
+    "persona3Recommend": "推薦：KuCoin（60%）、Bybit（33%）、Huobi（30%）",
+    "persona4Title": "山寨幣獵人",
+    "persona4Desc": "若你偏好新幣、長尾幣與更多標的，這些交易所會更值得優先比較。",
+    "persona4Recommend": "推薦：Gate.io、KuCoin",
+    "faqTitle": "常見問題",
+    "faq1Q": "什麼是交易所返佣？",
+    "faq1A": "交易所返佣是指你支付的手續費中，有一部分會透過推薦活動返還給你。透過 CryptoRebate 註冊，可持續享有這類優惠。",
+    "faq2Q": "使用返佣連結註冊會更貴嗎？",
+    "faq2A": "不會。透過返佣連結註冊通常不會提高你的交易成本，有些平台甚至還會提供額外折扣。",
+    "faq3Q": "返佣多久會入帳？",
+    "faq3A": "不同交易所的結算週期不同，常見為即時或每日結算，實際仍以各平台最新規則為準。",
+    "faq4Q": "目前支援哪些交易所？",
+    "faq4A": "目前支援 Binance、OKX、Bybit、Bitget、Gate.io、KuCoin 與 Huobi，之後也會繼續擴充。"
+  },
+  "exchanges": {
+    "title": "交易所列表",
+    "subtitle": "比較手續費、返佣比例與邀請碼，快速找到適合你的平台。",
+    "sortBy": "排序方式",
+    "sortByRebate": "返佣比例",
+    "sortByFees": "交易手續費",
+    "sortByPopularity": "熱門程度",
+    "filterType": "交易類型",
+    "filterAll": "全部",
+    "filterSpot": "現貨",
+    "filterFutures": "合約",
+    "spotFees": "現貨費率",
+    "futuresFees": "合約費率",
+    "rebateRate": "返佣比例",
+    "spotRebate": "現貨返佣",
+    "futuresRebate": "合約返佣",
+    "maker": "Maker",
+    "taker": "Taker",
+    "viewDetails": "查看詳情",
+    "register": "立即註冊",
+    "referralCode": "邀請碼",
+    "copyCode": "複製",
+    "copied": "已複製",
+    "tradingPairs": "交易對",
+    "founded": "成立於",
+    "headquarters": "總部",
+    "pros": "優點",
+    "cons": "缺點",
+    "registrationGuide": "{name} 註冊教學",
+    "faqTitle": "常見問題",
+    "tokenDiscount": "使用 {token} 支付可再享 {percent}% 折扣",
+    "regionRestrictions": "地區限制",
+    "noRestrictions": "暫無主要限制",
+    "kycDifficulty": "KYC 難度",
+    "kycEasy": "容易 - 基本身分驗證即可",
+    "kycModerate": "中等 - 需證件與自拍驗證",
+    "kycStrict": "較嚴格 - 需完整文件審核",
+    "rebateActivation": "返佣綁定",
+    "rebateAutoYes": "註冊後自動生效",
+    "rebateAutoNo": "需手動啟用",
+    "rebateSettlement": "結算週期",
+    "settlementInstant": "即時",
+    "settlementDaily": "每日",
+    "platformTokenStack": "平台幣折扣可疊加",
+    "tokenStackYes": "可以，可與 {token} 折扣疊加",
+    "tokenStackNo": "無可疊加的平台幣折扣",
+    "lastReviewed": "最近檢查",
+    "quickInfo": "快速資訊",
+    "binance": {
+      "description": "Binance 是全球交易量最大的加密貨幣交易所之一，提供完整的現貨、合約、期權、理財與質押產品，流動性與深度都非常強。",
+      "pros": [
+        "全球交易量領先，流動性極佳",
+        "產品線非常完整",
+        "持有 BNB 可再享手續費折扣",
+        "安全機制成熟，品牌認知度高"
+      ],
+      "cons": [
+        "部分地區無法使用",
+        "KYC 要求較嚴格",
+        "客服回應速度有時較慢"
+      ],
+      "bestFor": "適合大多數交易者，特別是希望兼顧安全性、深度與完整產品線的使用者。",
+      "tutorial": [
+        "點擊連結前往 Binance 註冊頁",
+        "輸入電子郵件或手機並設定密碼",
+        "完成驗證碼與基本安全設定",
+        "依地區要求完成 KYC 驗證",
+        "開始交易並保持 cryptore 返佣生效"
+      ],
+      "faq": [
+        {
+          "q": "Binance 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.1%；合約 Maker 0.02%、Taker 0.05%。使用 BNB 還可進一步降低有效費率。"
+        },
+        {
+          "q": "cryptore 邀請碼有什麼效果？",
+          "a": "使用 cryptore 註冊可維持 20% 手續費返佣活動生效。"
+        },
+        {
+          "q": "Binance 適合新手嗎？",
+          "a": "適合。雖然功能很多，但整體產品成熟、資源完整，對新手與進階用戶都相對友善。"
+        }
+      ]
+    },
+    "okx": {
+      "description": "OKX 以技術能力與 Web3 錢包體驗聞名，現貨、合約與鏈上功能整合度高，適合需要專業工具與多場景操作的用戶。",
+      "pros": [
+        "Web3 錢包體驗優秀",
+        "合約深度與撮合穩定",
+        "可搭配 OKB 折扣",
+        "適合進階交易者"
+      ],
+      "cons": [
+        "介面較專業，新手上手較慢",
+        "部分地區使用受限",
+        "部分功能門檻較高"
+      ],
+      "bestFor": "適合偏好專業介面、合約交易與鏈上工具整合的使用者。",
+      "tutorial": [
+        "點擊連結前往 OKX 註冊頁",
+        "使用電子郵件或手機建立帳號",
+        "完成驗證碼與安全設定",
+        "完成身分驗證以取得完整權限",
+        "開始交易並保持 cryptore 返佣生效"
+      ],
+      "faq": [
+        {
+          "q": "OKX 的手續費是多少？",
+          "a": "現貨 Maker 0.08%、Taker 0.1%；合約 Maker 0.02%、Taker 0.05%。持有 OKB 可進一步降低費率。"
+        },
+        {
+          "q": "OKX 的返佣比例是多少？",
+          "a": "目前透過 cryptore 連結註冊可維持 20% 返佣活動。"
+        },
+        {
+          "q": "OKX 比較適合哪類使用者？",
+          "a": "較適合偏好專業介面、合約深度與 Web3 功能整合的使用者。"
+        }
+      ]
+    },
+    "bybit": {
+      "description": "Bybit 以衍生品交易、流暢的介面與跟單功能聞名，近年成長快速，對合約交易者與進階用戶特別有吸引力。",
+      "pros": [
+        "合約交易體驗流暢",
+        "返佣比例目前為 33%",
+        "跟單系統成熟",
+        "新幣與熱門標的上線速度快"
+      ],
+      "cons": [
+        "部分地區有限制",
+        "現貨深度不如 Binance",
+        "客服品質偶有波動"
+      ],
+      "bestFor": "適合偏重合約交易、想要更高返佣，或想使用跟單功能的用戶。",
+      "tutorial": [
+        "點擊連結前往 Bybit 註冊頁",
+        "使用電子郵件或手機建立帳號",
+        "完成基本驗證",
+        "依需求完成 KYC 以取得完整產品權限",
+        "開始交易並保持 33% 返佣活動生效"
+      ],
+      "faq": [
+        {
+          "q": "Bybit 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.1%；合約 Maker 0.02%、Taker 0.055%。"
+        },
+        {
+          "q": "Bybit 的返佣比例是多少？",
+          "a": "目前透過 cryptoreba 連結註冊可維持 33% 返佣活動。"
+        },
+        {
+          "q": "Bybit 適合做合約嗎？",
+          "a": "適合。Bybit 在衍生品深度、介面與速度上一直有不錯口碑。"
+        }
+      ]
+    },
+    "bitget": {
+      "description": "Bitget 以跟單交易與新手友善著稱，目前透過 CryptoRebate 註冊可穩定保持 20% 固定返佣活動。",
+      "pros": [
+        "固定 20% 返佣活動",
+        "跟單交易功能成熟",
+        "介面友善，適合新手",
+        "保護基金規模具一定辨識度"
+      ],
+      "cons": [
+        "整體深度不如頭部平台",
+        "品牌歷史較短",
+        "部分進階工具相對有限"
+      ],
+      "bestFor": "適合想要固定返佣、同時看重易用性與跟單功能的使用者。",
+      "tutorial": [
+        "點擊連結前往 Bitget 註冊頁",
+        "輸入電子郵件或手機並設定密碼",
+        "完成基本驗證",
+        "依要求完成 KYC 身分驗證",
+        "開始交易並保持 20% 返佣活動生效"
+      ],
+      "faq": [
+        {
+          "q": "Bitget 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.1%；合約 Maker 0.02%、Taker 0.06%。"
+        },
+        {
+          "q": "Bitget 的返佣比例是多少？",
+          "a": "目前透過 cryptore 連結註冊可維持 20% 固定返佣。"
+        },
+        {
+          "q": "Bitget 適合新手嗎？",
+          "a": "適合。Bitget 的流程與介面相對直接，對剛入門的交易者較友善。"
+        }
+      ]
+    },
+    "gate": {
+      "description": "Gate.io 是老牌交易所之一，長期以山寨幣覆蓋廣與上新速度快著稱，目前透過 CryptoRebate 註冊可保持 20% 固定返佣活動。",
+      "pros": [
+        "長尾幣種與新幣覆蓋廣",
+        "平台歷史較長",
+        "目前返佣活動固定 20%",
+        "可搭配 GT 折扣"
+      ],
+      "cons": [
+        "介面資訊量較大",
+        "小幣流動性差異較大",
+        "不同地區規則可能變動"
+      ],
+      "bestFor": "適合偏好山寨幣、長尾市場與大量標的的交易者。",
+      "tutorial": [
+        "點擊連結前往 Gate.io 註冊頁",
+        "輸入電子郵件並設定密碼",
+        "完成信箱驗證",
+        "如需要更高額度可再完成 KYC",
+        "開始交易並保持 CRYPTORE 返佣活動生效"
+      ],
+      "faq": [
+        {
+          "q": "Gate.io 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.1%；合約 Maker 0.015%、Taker 0.05%。使用 GT 可降低有效費率。"
+        },
+        {
+          "q": "Gate.io 的返佣比例是多少？",
+          "a": "目前透過 CRYPTORE 連結註冊可維持 20% 固定返佣活動。"
+        },
+        {
+          "q": "Gate.io 適合山寨幣交易嗎？",
+          "a": "適合。Gate.io 一直是山寨幣與長尾標的比較豐富的平台之一。"
+        }
+      ]
+    },
+    "kucoin": {
+      "description": "KuCoin 以大量山寨幣、長尾市場覆蓋與高返佣活動聞名，目前透過 CryptoRebate 註冊可維持 60% 高返佣活動。",
+      "pros": [
+        "返佣活動高達 60%",
+        "山寨幣覆蓋廣",
+        "支援 KCS 平台幣折扣",
+        "現貨與理財產品豐富"
+      ],
+      "cons": [
+        "部分地區不可用",
+        "小幣深度不如頭部平台",
+        "近年 KYC 與合規要求趨嚴"
+      ],
+      "bestFor": "適合追求高返佣比例，並且希望交易更多山寨幣與長尾標的的使用者。",
+      "tutorial": [
+        "點擊連結前往 KuCoin 註冊頁",
+        "輸入電子郵件或手機並設定密碼",
+        "完成驗證碼流程",
+        "依地區或產品需求完成 KYC",
+        "開始交易並保持 60% 返佣活動生效"
+      ],
+      "faq": [
+        {
+          "q": "KuCoin 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.1%；合約 Maker 0.02%、Taker 0.06%。持有 KCS 可再降低有效費率。"
+        },
+        {
+          "q": "KuCoin 的返佣比例是多少？",
+          "a": "目前透過 cryptore 連結註冊可維持 60% 返佣活動。"
+        },
+        {
+          "q": "KuCoin 適合哪類使用者？",
+          "a": "特別適合關注高返佣、山寨幣與較多交易標的的用戶。"
+        }
+      ]
+    },
+    "huobi": {
+      "description": "Huobi 在多數市場已以 HTX 品牌繼續營運，是老牌交易所品牌之一，目前透過 CryptoRebate 註冊可維持 30% 固定返佣活動。",
+      "pros": [
+        "返佣活動為 30%",
+        "品牌歷史較長",
+        "支援 HT 平台幣折扣",
+        "現貨與合約產品結構穩定"
+      ],
+      "cons": [
+        "部分地區可用性變動較快",
+        "整體深度不如頭部平台",
+        "小幣流動性差異較大"
+      ],
+      "bestFor": "適合偏好老牌平台，同時想取得固定 30% 返佣活動的使用者。",
+      "tutorial": [
+        "點擊連結前往 Huobi 註冊頁",
+        "使用電子郵件或手機建立帳號",
+        "完成驗證碼步驟",
+        "依要求完成 KYC 身分驗證",
+        "開始交易並保持 30% 返佣活動生效"
+      ],
+      "faq": [
+        {
+          "q": "Huobi 的手續費是多少？",
+          "a": "現貨 Maker/Taker 皆為 0.2%；合約 Maker 0.02%、Taker 0.05%。使用 HT 可再降低有效費率。"
+        },
+        {
+          "q": "Huobi 的返佣比例是多少？",
+          "a": "目前透過 cryptore 連結註冊可維持 30% 固定返佣活動。"
+        },
+        {
+          "q": "為什麼會看到 Huobi / HTX 兩種名稱？",
+          "a": "該平台在部分市場採用 HTX 品牌營運，但許多用戶仍習慣稱其為 Huobi。"
+        }
+      ]
+    }
+  },
+  "calculator": {
+    "title": "手續費計算器",
+    "subtitle": "輸入每月交易量，快速比較不同交易所的實際返佣與節省金額。",
+    "monthlyVolume": "每月交易量 (USD)",
+    "tradeType": "交易類型",
+    "spot": "現貨",
+    "futures": "合約",
+    "results": "比較結果",
+    "exchange": "交易所",
+    "monthlyFee": "每月手續費",
+    "monthlyRebate": "每月返佣",
+    "yearlySavings": "年節省金額",
+    "recommended": "推薦",
+    "noVolume": "請輸入交易量以查看比較結果",
+    "estimateNote": "* 依掛單/吃單平均費率估算，未納入 VIP 等級與平台幣折扣，最終返佣仍以交易所規則為準。"
+  },
+  "about": {
+    "title": "什麼是加密貨幣交易所返佣？",
+    "subtitle": "了解返佣的原理，以及 CryptoRebate 如何幫你節省交易成本。",
+    "whatTitle": "返佣是什麼？",
+    "whatDesc": "當你在加密貨幣交易所交易時，需要支付手續費。若你透過推薦連結註冊，平台可能會把部分手續費返還給你，這就是返佣。",
+    "howTitle": "返佣如何運作？",
+    "step1": "透過 CryptoRebate 的推薦連結註冊交易所",
+    "step2": "像平常一樣進行現貨或合約交易",
+    "step3": "交易所依活動規則返還部分手續費",
+    "step4": "返佣通常直接回到你的交易所帳戶",
+    "costTitle": "會額外收費嗎？",
+    "costDesc": "不會。多數情況下，返佣連結不會增加你的手續費，部分平台甚至還能提供額外折扣。",
+    "riskTitle": "風險提醒",
+    "riskDesc": "CryptoRebate 提供的是資訊比較與註冊入口，不構成投資建議。加密貨幣交易具高風險，請依自身情況審慎決策。",
+    "faqTitle": "常見問題",
+    "faq1Q": "返佣與手續費折扣有什麼不同？",
+    "faq1A": "手續費折扣是直接降低你支付的費率，返佣則是先支付手續費，再由平台返還其中一部分。",
+    "faq2Q": "返佣會影響我的交易體驗嗎？",
+    "faq2A": "不會。註冊完成後，你使用的仍是該交易所的正式產品與功能。",
+    "faq3Q": "返佣會一直有效嗎？",
+    "faq3A": "返佣活動是否持續有效，取決於交易所當前的合作規則與你的帳戶狀態。"
+  },
+  "common": {
+    "learnMore": "進一步了解",
+    "getStarted": "立即開始",
+    "backToList": "返回列表",
+    "share": "分享",
+    "disclaimer": "風險提示：加密貨幣交易存在風險，請謹慎投資。本站資訊僅供參考，不構成投資建議。",
+    "copyright": "© {year} CryptoRebate。保留所有權利。",
+    "relatedExchanges": "相關交易所"
+  },
+  "disclosure": {
+    "title": "合作披露",
+    "subtitle": "CryptoRebate 致力於完整揭露我們的收入模式與合作關係。",
+    "howWeEarnTitle": "我們如何獲得收入",
+    "howWeEarnDesc": "當使用者透過本站連結註冊交易所並交易時，我們可能從交易所獲得合作佣金。",
+    "noCostTitle": "這不會增加你的成本",
+    "noCostDesc": "透過本站推薦連結註冊，不會提高你的交易手續費。我們的佣金由交易所支付，而不是從你的資金中額外扣除。",
+    "partnersTitle": "目前合作的交易所",
+    "partnersDesc": "我們目前與以下交易所維持推薦合作關係：",
+    "partner1": "Binance - 全球交易量領先、產品線完整",
+    "partner2": "OKX - 技術成熟，整合 Web3 錢包與衍生品交易",
+    "partner3": "Bybit - 衍生品與跟單交易體驗優秀",
+    "partner4": "Bitget - 新手友善，跟單功能成熟",
+    "partner5": "Gate.io - 老牌平台，山寨幣覆蓋廣",
+    "partner6": "KuCoin - 高返佣活動與長尾市場深度較強",
+    "partner7": "Huobi - 老牌品牌，在多個市場以 HTX 名稱營運",
+    "commitmentTitle": "我們的承諾",
+    "commitmentDesc": "即使存在合作關係，我們仍會盡力維持資訊透明、定期更新資料，並避免只因佣金而推薦不合適的平台。",
+    "questionsTitle": "有問題想詢問？",
+    "questionsDesc": "如果你對合作披露、返佣活動或平台資料有疑問，歡迎隨時與我們聯繫。"
+  },
+  "legal": {
+    "title": "隱私政策與使用條款",
+    "subtitle": "請在使用本站前先了解我們的資料政策與免責聲明。",
+    "privacyTitle": "隱私政策",
+    "dataCollectionTitle": "我們收集哪些資料？",
+    "dataCollectionDesc": "CryptoRebate 盡量減少資料收集，並只在必要範圍內使用技術資訊。",
+    "dataItem1": "基本分析資料，例如匿名流量與瀏覽器資訊",
+    "dataItem2": "Cookies 僅用於保存語言偏好等基本設定",
+    "dataItem3": "我們不會收集、保存或處理你的交易帳戶與個人財務資料",
+    "referralLinksTitle": "推薦連結說明",
+    "referralLinksDesc": "當你點擊本站的交易所連結後，將會跳轉到對應交易所官方網站。後續註冊、交易與資料處理由該交易所負責。",
+    "termsTitle": "使用條款",
+    "noAdviceTitle": "不構成投資建議",
+    "noAdviceDesc": "本站提供的所有資訊僅供參考，不構成任何形式的投資、法律或稅務建議。",
+    "accuracyTitle": "資訊準確性",
+    "accuracyDesc": "我們會盡力更新返佣比例與手續費資料，但交易所規則可能隨時變動，請以官方頁面為準。",
+    "liabilityTitle": "責任限制",
+    "liabilityDesc": "對於因使用本站資訊、點擊合作連結或交易所政策變動造成的損失，CryptoRebate 不承擔直接或間接責任。",
+    "changesTitle": "政策更新",
+    "changesDesc": "若本站的隱私政策或使用條款有重大變更，我們將在網站上更新內容。"
+  },
+  "tags": {
+    "most-popular": "最受歡迎",
+    "highest-volume": "交易量最高",
+    "beginner-friendly": "新手友善",
+    "low-fees": "低手續費",
+    "web3-wallet": "Web3 錢包",
+    "professional": "專業型",
+    "futures-leader": "合約強項",
+    "fast-listing": "上新快速",
+    "copy-trading": "跟單交易",
+    "high-rebate": "高返佣",
+    "most-tokens": "幣種最多",
+    "veteran": "老牌平台"
+  }
+}

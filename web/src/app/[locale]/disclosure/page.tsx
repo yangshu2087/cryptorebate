@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
+import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -12,18 +13,40 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const title = t("disclosureTitle");
+  const description = t("disclosureDescription");
   return {
-    title: t("disclosureTitle"),
-    description: t("disclosureDescription"),
+    title,
+    description,
     alternates: {
-      canonical: `https://cryptorebate.app/${locale}/disclosure`,
-      languages: { zh: "/zh/disclosure", en: "/en/disclosure" },
+      canonical: getLocalizedUrl(locale, "/disclosure"),
+      languages: getLocaleAlternates("/disclosure"),
+    },
+    openGraph: {
+      title,
+      description,
+      url: getLocalizedUrl(locale, "/disclosure"),
+      locale: getOpenGraphLocale(locale),
+      images: [
+        {
+          url: `/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      title,
+      description,
+      images: [`/${locale}/twitter-image`],
     },
   };
 }
 
 export default function DisclosurePage() {
   const t = useTranslations("disclosure");
+  const tc = useTranslations("common");
 
   const partners = [
     t("partner1"),
@@ -31,6 +54,8 @@ export default function DisclosurePage() {
     t("partner3"),
     t("partner4"),
     t("partner5"),
+    t("partner6"),
+    t("partner7"),
   ];
 
   return (
@@ -96,7 +121,7 @@ export default function DisclosurePage() {
           href="/exchanges"
           className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark transition-colors"
         >
-          {useTranslations("common")("getStarted")}
+          {tc("getStarted")}
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>

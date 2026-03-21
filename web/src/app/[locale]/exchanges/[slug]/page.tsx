@@ -16,6 +16,7 @@ import { CopyButton } from "@/components/shared/copy-button";
 import { ExchangeCard } from "@/components/exchanges/exchange-card";
 import { FAQJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { exchanges, getExchangeBySlug, getAllExchangeSlugs } from "@/data/exchanges";
+import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import {
   ArrowLeft,
   ExternalLink,
@@ -53,11 +54,33 @@ export async function generateMetadata({
       rebate: exchange.spotRebate,
     }),
     alternates: {
-      canonical: `https://cryptorebate.app/${locale}/exchanges/${slug}`,
-      languages: {
-        zh: `/zh/exchanges/${slug}`,
-        en: `/en/exchanges/${slug}`,
-      },
+      canonical: getLocalizedUrl(locale, `/exchanges/${slug}`),
+      languages: getLocaleAlternates(`/exchanges/${slug}`),
+    },
+    openGraph: {
+      title: t("exchangeDetailTitle", { name: exchange.name }),
+      description: t("exchangeDetailDescription", {
+        name: exchange.name,
+        rebate: exchange.spotRebate,
+      }),
+      url: getLocalizedUrl(locale, `/exchanges/${slug}`),
+      locale: getOpenGraphLocale(locale),
+      images: [
+        {
+          url: `/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: t("exchangeDetailTitle", { name: exchange.name }),
+        },
+      ],
+    },
+    twitter: {
+      title: t("exchangeDetailTitle", { name: exchange.name }),
+      description: t("exchangeDetailDescription", {
+        name: exchange.name,
+        rebate: exchange.spotRebate,
+      }),
+      images: [`/${locale}/twitter-image`],
     },
   };
 }
@@ -93,7 +116,7 @@ function ExchangeDetailView({
 }) {
   const t = useTranslations();
   const slug = exchange.slug;
-  const localizedBaseUrl = `https://cryptorebate.app/${locale}`;
+  const localizedBaseUrl = getLocalizedUrl(locale);
 
   const description = t(`exchanges.${slug}.description`);
   const pros = t.raw(`exchanges.${slug}.pros`) as string[];
@@ -397,8 +420,9 @@ function ExchangeDetailView({
         </div>
       </section>
 
-      <FAQJsonLd items={faq} />
+      <FAQJsonLd locale={locale} items={faq} />
       <BreadcrumbJsonLd
+        locale={locale}
         items={[
           { name: t("nav.home"), url: localizedBaseUrl },
           { name: t("nav.exchanges"), url: `${localizedBaseUrl}/exchanges` },

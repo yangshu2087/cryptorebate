@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { ExchangeFilters } from "@/components/exchanges/exchange-filters";
+import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -10,12 +11,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const title = t("exchangesTitle");
+  const description = t("exchangesDescription");
   return {
-    title: t("exchangesTitle"),
-    description: t("exchangesDescription"),
+    title,
+    description,
     alternates: {
-      canonical: `https://cryptorebate.app/${locale}/exchanges`,
-      languages: { zh: "/zh/exchanges", en: "/en/exchanges" },
+      canonical: getLocalizedUrl(locale, "/exchanges"),
+      languages: getLocaleAlternates("/exchanges"),
+    },
+    openGraph: {
+      title,
+      description,
+      url: getLocalizedUrl(locale, "/exchanges"),
+      locale: getOpenGraphLocale(locale),
+      images: [
+        {
+          url: `/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      title,
+      description,
+      images: [`/${locale}/twitter-image`],
     },
   };
 }

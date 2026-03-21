@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,8 @@ import { exchanges } from "@/data/exchanges";
 import { ExchangeCard } from "@/components/exchanges/exchange-card";
 import { SavingsEstimator } from "@/components/home/savings-estimator";
 import { FAQJsonLd } from "@/components/seo/json-ld";
+import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { SITE_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -26,19 +28,34 @@ export async function generateMetadata({
     title: t("homeTitle"),
     description: t("siteDescription"),
     alternates: {
-      canonical: `https://cryptorebate.app/${locale}`,
-      languages: { zh: "/zh", en: "/en" },
+      canonical: getLocalizedUrl(locale),
+      languages: getLocaleAlternates(),
     },
     openGraph: {
       title: t("homeTitle"),
       description: t("siteDescription"),
-      siteName: "CryptoRebate",
-      locale: locale === "zh" ? "zh_CN" : "en_US",
+      siteName: SITE_NAME,
+      url: getLocalizedUrl(locale),
+      locale: getOpenGraphLocale(locale),
+      images: [
+        {
+          url: `/${locale}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: t("homeTitle"),
+        },
+      ],
+    },
+    twitter: {
+      title: t("homeTitle"),
+      description: t("siteDescription"),
+      images: [`/${locale}/twitter-image`],
     },
   };
 }
 
 export default function HomePage() {
+  const locale = useLocale();
   const t = useTranslations("home");
   const sortedExchanges = [...exchanges].sort((a, b) => a.order - b.order);
 
@@ -59,21 +76,35 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-6xl px-4">
       {/* Hero */}
-      <section className="py-20 text-center md:py-28">
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-          {t("heroTitle")}
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-          {t("heroSubtitle")}
-        </p>
-        <div className="mt-8 flex items-center justify-center gap-4">
-          <Link href="/exchanges" className="inline-flex items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-base font-medium text-white hover:bg-brand-dark transition-colors">
-            {t("ctaBrowse")}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link href="/calculator" className="inline-flex items-center rounded-md border px-6 py-2.5 text-base font-medium hover:bg-accent transition-colors">
-            {t("ctaCalculator")}
-          </Link>
+      <section className="relative py-16 text-center md:py-24 lg:py-28">
+        <div className="absolute inset-x-0 top-8 -z-10 mx-auto h-56 max-w-4xl rounded-[3rem] bg-[radial-gradient(circle_at_center,rgba(0,102,255,0.12),transparent_62%)] blur-3xl" />
+        <div className="mx-auto max-w-4xl rounded-[2rem] border border-border/60 bg-background/70 px-6 py-10 shadow-sm backdrop-blur-sm md:px-10 md:py-14">
+          <div className="mx-auto inline-flex items-center rounded-full border border-brand/15 bg-brand/8 px-4 py-1.5 text-xs font-semibold tracking-wide text-brand md:text-sm">
+            {t("heroBadge")}
+          </div>
+          <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+            {t("heroTitle")}
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            {t("heroSubtitle")}
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+            <Link href="/exchanges" className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-base font-medium text-white shadow-[0_10px_30px_rgba(0,102,255,0.22)] transition-colors hover:bg-brand-dark">
+              {t("ctaBrowse")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href="/calculator" className="inline-flex items-center rounded-full border border-border/70 bg-background/80 px-6 py-3 text-base font-medium transition-colors hover:bg-accent">
+              {t("ctaCalculator")}
+            </Link>
+          </div>
+          <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-border/60 bg-muted/30 px-4 py-4 text-left md:px-5">
+            <p className="text-sm font-semibold text-foreground md:text-[15px]">
+              {t("brandCardSubtitle")}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {t("brandCardDescription")}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -195,6 +226,9 @@ export default function HomePage() {
                 <Link href="/exchanges/binance" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
                   Binance <ArrowRight className="h-3 w-3" />
                 </Link>
+                <Link href="/exchanges/kucoin" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  KuCoin <ArrowRight className="h-3 w-3" />
+                </Link>
                 <Link href="/exchanges/bitget" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
                   Bitget <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -218,6 +252,9 @@ export default function HomePage() {
                 <Link href="/exchanges/okx" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
                   OKX <ArrowRight className="h-3 w-3" />
                 </Link>
+                <Link href="/exchanges/huobi" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  Huobi <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -232,11 +269,14 @@ export default function HomePage() {
               </p>
               <p className="mt-3 text-sm font-medium">{t("persona3Recommend")}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Link href="/exchanges/gate" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
-                  Gate.io <ArrowRight className="h-3 w-3" />
+                <Link href="/exchanges/kucoin" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  KuCoin <ArrowRight className="h-3 w-3" />
                 </Link>
-                <Link href="/exchanges/bitget" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
-                  Bitget <ArrowRight className="h-3 w-3" />
+                <Link href="/exchanges/bybit" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  Bybit <ArrowRight className="h-3 w-3" />
+                </Link>
+                <Link href="/exchanges/huobi" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  Huobi <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </CardContent>
@@ -254,6 +294,9 @@ export default function HomePage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link href="/exchanges/gate" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
                   Gate.io <ArrowRight className="h-3 w-3" />
+                </Link>
+                <Link href="/exchanges/kucoin" className="inline-flex items-center gap-1 text-xs text-brand hover:underline">
+                  KuCoin <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </CardContent>
@@ -282,7 +325,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <FAQJsonLd items={faqItems} />
+      <FAQJsonLd locale={locale} items={faqItems} />
     </div>
   );
 }

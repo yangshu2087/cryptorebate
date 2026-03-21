@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "siteName": "CryptoRebate",
+    "siteTagline": "より良いリベートを確保してから取引所に登録",
+    "siteDescription": "取引所ごとのリベート施策、招待コード、手数料情報を集約。登録前により有利な選択肢を素早く見つけ、長期の取引コストを抑えられます。",
+    "homeTitle": "CryptoRebate | 取引所リベート・招待コード比較【最新】",
+    "exchangesTitle": "取引所比較一覧 | リベート率・招待コード・手数料 - CryptoRebate",
+    "exchangesDescription": "Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobiの最新リベート率と招待コードを比較。手数料条件まで一目で確認。",
+    "calculatorTitle": "手数料・リベート計算ツール | CryptoRebate",
+    "calculatorDescription": "月間取引量を入力するだけで、取引所ごとの想定手数料と年間節約額をすぐに試算できます。",
+    "aboutTitle": "取引所リベートの仕組み | CryptoRebate",
+    "aboutDescription": "リベートと手数料割引の違い、受け取り方、注意点を日本語でわかりやすく解説。",
+    "disclosureTitle": "提携開示 - CryptoRebate",
+    "disclosureDescription": "CryptoRebate の提携関係、収益モデル、透明性に対する考え方を説明します。",
+    "legalTitle": "プライバシーと利用規約 - CryptoRebate",
+    "legalDescription": "CryptoRebate のプライバシーポリシー、データ取扱い、利用条件です。",
+    "exchangeDetailTitle": "{name} 招待コード・リベート最新情報 | CryptoRebate",
+    "exchangeDetailDescription": "{name} の最新招待コードとリベート率（{rebate}）を確認。登録手順、手数料、注意点までまとめてチェック。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "exchanges": "取引所",
+    "calculator": "手数料計算",
+    "about": "リベートとは",
+    "disclosure": "提携開示",
+    "legal": "プライバシーと利用規約",
+    "language": "言語"
+  },
+  "home": {
+    "heroBadge": "CryptoRebate · 登録前により良いリベートを見つける",
+    "heroTitle": "より良いリベートを確保してから取引所に登録",
+    "heroSubtitle": "取引所ごとのリベート施策、招待コード、手数料情報を集約。登録前により有利な選択肢を素早く見つけ、長期の取引コストを抑えられます。",
+    "brandCardSubtitle": "分散したリベートリンクを、より良い登録判断に",
+    "brandCardDescription": "CryptoRebateなら、招待コードやキャンペーンページを自分で探し回らなくても、リベート条件を素早く比較して、より良い登録ルートを選べます。",
+    "ctaBrowse": "取引所を見る",
+    "ctaCalculator": "節約額を計算",
+    "estimatorTitle": "どれくらい節約できる？",
+    "estimatorMonthlyVolume": "月間取引量 (USD)",
+    "estimatorYearlySavings": "年間節約額",
+    "estimatorExchange": "取引所",
+    "estimatorRebate": "リベート率",
+    "estimatorSavings": "年間節約額",
+    "estimatorNote": "* 現物の Maker/Taker 平均手数料をもとに試算しています。VIP 手数料やトークン割引は含みません。",
+    "featuredTitle": "最新オファー対象の主要取引所",
+    "featuredSubtitle": "招待コード、リベート率、手数料条件を最新データで反映。",
+    "whyTitle": "CryptoRebate を使う理由",
+    "why1Title": "透明なリベート情報",
+    "why1Desc": "各取引所の最新リベート率、招待コード、手数料をわかりやすく掲載します。",
+    "why2Title": "実用的なレビュー",
+    "why2Desc": "各取引所の強みと弱みを率直に整理し、比較しやすくしています。",
+    "why3Title": "主要取引所を横断比較",
+    "why3Desc": "世界的に利用されている主要取引所を横断して比較できます。",
+    "why4Title": "定期的に見直し",
+    "why4Desc": "手数料やリベート条件は定期的に確認し、情報の鮮度を保つようにしています。",
+    "comparisonTitle": "手数料とリベートの比較表",
+    "comparisonSubtitle": "実質コストで選べるように、主要指標を1画面で整理しました。",
+    "comparisonExchange": "取引所",
+    "comparisonSpotFee": "現物手数料",
+    "comparisonFuturesFee": "先物手数料",
+    "comparisonRebate": "リベート",
+    "comparisonPairs": "取引ペア",
+    "comparisonKYC": "KYC",
+    "comparisonAction": "登録",
+    "kycRequired": "必須",
+    "kycOptional": "任意",
+    "personaTitle": "あなたに合う取引所を探す",
+    "personaSubtitle": "どこから始めるべきか迷ったら、ここから比較してください。",
+    "persona1Title": "初心者向け",
+    "persona1Desc": "使いやすさとシンプルさを重視するなら、初心者向けの取引所から始めるのがおすすめです。",
+    "persona1Recommend": "おすすめ: Binance、KuCoin、Bitget",
+    "persona2Title": "先物トレーダー向け",
+    "persona2Desc": "流動性とプロ向け機能を重視するなら、先物に強い取引所が向いています。",
+    "persona2Recommend": "おすすめ: Bybit、OKX、Huobi",
+    "persona3Title": "高リベート重視",
+    "persona3Desc": "手数料をできるだけ抑えたいなら、リベート率が高い取引所を優先しましょう。",
+    "persona3Recommend": "おすすめ: KuCoin (60%)、Bybit (33%)、Huobi (30%)",
+    "persona4Title": "アルトコイン重視",
+    "persona4Desc": "新規上場やマイナー銘柄まで幅広く見たいなら、銘柄数が多い取引所が有利です。",
+    "persona4Recommend": "おすすめ: Gate.io、KuCoin",
+    "faqTitle": "よくある質問",
+    "faq1Q": "取引所リベートとは何ですか？",
+    "faq1A": "取引時に支払った手数料の一部が、紹介キャンペーン経由で戻ってくる仕組みです。",
+    "faq2Q": "リベートリンクを使うと手数料は高くなりますか？",
+    "faq2A": "いいえ。通常は追加費用はなく、むしろ割引条件が付くこともあります。",
+    "faq3Q": "リベートはいつ反映されますか？",
+    "faq3A": "取引所ごとに異なり、即時または日次精算が一般的です。最新ルールを確認してください。",
+    "faq4Q": "現在対応している取引所は？",
+    "faq4A": "現在は Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi に対応しています。"
+  },
+  "exchanges": {
+    "title": "取引所一覧",
+    "subtitle": "手数料、リベート率、招待コードを比較して最適な取引所を選びましょう。",
+    "sortBy": "並び替え",
+    "sortByRebate": "リベート率",
+    "sortByFees": "手数料",
+    "sortByPopularity": "人気順",
+    "filterType": "取引タイプ",
+    "filterAll": "すべて",
+    "filterSpot": "現物",
+    "filterFutures": "先物",
+    "spotFees": "現物手数料",
+    "futuresFees": "先物手数料",
+    "rebateRate": "リベート率",
+    "spotRebate": "現物リベート",
+    "futuresRebate": "先物リベート",
+    "maker": "Maker",
+    "taker": "Taker",
+    "viewDetails": "詳細を見る",
+    "register": "今すぐ登録",
+    "referralCode": "招待コード",
+    "copyCode": "コピー",
+    "copied": "コピー済み",
+    "tradingPairs": "取引ペア",
+    "founded": "設立",
+    "headquarters": "本社",
+    "pros": "メリット",
+    "cons": "デメリット",
+    "registrationGuide": "{name} 登録ガイド",
+    "faqTitle": "よくある質問",
+    "tokenDiscount": "{token} で支払うとさらに {percent}% 割引",
+    "regionRestrictions": "利用制限地域",
+    "noRestrictions": "大きな制限なし",
+    "kycDifficulty": "KYC の難易度",
+    "kycEasy": "易しい - 基本確認で利用可能",
+    "kycModerate": "普通 - 身分証とセルフィー確認が必要",
+    "kycStrict": "厳しめ - 書類確認が多い",
+    "rebateActivation": "リベート適用",
+    "rebateAutoYes": "登録後に自動適用",
+    "rebateAutoNo": "手動設定が必要",
+    "rebateSettlement": "精算周期",
+    "settlementInstant": "即時",
+    "settlementDaily": "毎日",
+    "platformTokenStack": "取引所トークン割引との併用",
+    "tokenStackYes": "{token} 割引と併用可能",
+    "tokenStackNo": "併用できるトークン割引なし",
+    "lastReviewed": "最終確認日",
+    "quickInfo": "クイック情報",
+    "binance": {
+      "description": "Binance は世界最大級の暗号資産取引所で、現物、先物、オプション、ステーキングまで幅広い機能を備えています。",
+      "pros": [
+        "流動性が非常に高い",
+        "商品ラインが豊富",
+        "BNB 割引を利用できる",
+        "安全性と知名度が高い"
+      ],
+      "cons": [
+        "一部地域では利用不可",
+        "KYC が厳しめ",
+        "サポートが混み合うことがある"
+      ],
+      "bestFor": "流動性、安心感、機能の多さを重視する幅広いユーザーに向いています。",
+      "tutorial": [
+        "登録リンクから Binance にアクセス",
+        "メールまたは電話番号で登録",
+        "認証コードを確認",
+        "必要に応じて KYC を完了",
+        "取引開始後も cryptore リベートを維持"
+      ],
+      "faq": [
+        {
+          "q": "Binance の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.1%、先物は Maker 0.02%、Taker 0.05% です。BNB を使うとさらに割引されます。"
+        },
+        {
+          "q": "cryptore コードの特典は？",
+          "a": "cryptore 経由で登録すると 20% のリベート条件を維持できます。"
+        },
+        {
+          "q": "Binance は初心者にも向いていますか？",
+          "a": "はい。機能は多いですが、情報量も豊富で初心者から上級者まで使いやすい取引所です。"
+        }
+      ]
+    },
+    "okx": {
+      "description": "OKX は Web3 ウォレットとデリバティブ機能に強く、プロ向けの機能がまとまった取引所です。",
+      "pros": [
+        "Web3 機能が強い",
+        "先物板の厚みがある",
+        "OKB 割引に対応",
+        "上級者向け機能が多い"
+      ],
+      "cons": [
+        "初心者には少し複雑",
+        "地域制限がある",
+        "一部機能の学習コストが高い"
+      ],
+      "bestFor": "先物、Web3、プロ向けツールを重視するユーザーに向いています。",
+      "tutorial": [
+        "登録リンクから OKX にアクセス",
+        "メールまたは電話番号で登録",
+        "認証コードを確認",
+        "本人確認を完了",
+        "取引開始後も cryptore リベートを維持"
+      ],
+      "faq": [
+        {
+          "q": "OKX の手数料は？",
+          "a": "現物は Maker 0.08%、Taker 0.1%、先物は Maker 0.02%、Taker 0.05% です。OKB でさらに軽減できます。"
+        },
+        {
+          "q": "OKX のリベート率は？",
+          "a": "現在は cryptore 経由で 20% リベート条件を維持できます。"
+        },
+        {
+          "q": "OKX はどんな人向け？",
+          "a": "先物取引や Web3 活用を重視する中上級者に向いています。"
+        }
+      ]
+    },
+    "bybit": {
+      "description": "Bybit は先物とコピートレードで人気が高く、スムーズな取引体験が強みの取引所です。",
+      "pros": [
+        "先物取引が快適",
+        "33% リベート",
+        "コピートレードが充実",
+        "話題銘柄の上場が早い"
+      ],
+      "cons": [
+        "地域制限がある",
+        "現物の厚みは Binance に劣る",
+        "サポート品質にばらつきがある"
+      ],
+      "bestFor": "先物中心のトレーダーや、より高いリベートを求めるユーザー向けです。",
+      "tutorial": [
+        "登録リンクから Bybit にアクセス",
+        "メールまたは電話番号で登録",
+        "基本認証を完了",
+        "必要に応じて KYC を完了",
+        "33% リベート条件を維持して取引開始"
+      ],
+      "faq": [
+        {
+          "q": "Bybit の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.1%、先物は Maker 0.02%、Taker 0.055% です。"
+        },
+        {
+          "q": "Bybit のリベート率は？",
+          "a": "cryptoreba 経由で登録すると 33% リベート条件を維持できます。"
+        },
+        {
+          "q": "Bybit は先物向きですか？",
+          "a": "はい。板の厚み、UI、スピードの面で先物トレーダーから高く評価されています。"
+        }
+      ]
+    },
+    "bitget": {
+      "description": "Bitget はコピートレードと使いやすさで知られ、現在はシンプルな 20% 固定リベートを提供しています。",
+      "pros": [
+        "20% 固定リベート",
+        "コピートレードが使いやすい",
+        "初心者向けの UI",
+        "保護基金の認知度が高い"
+      ],
+      "cons": [
+        "流動性は上位勢に劣る",
+        "ブランド歴は比較的短い",
+        "上級者向け機能は限定的"
+      ],
+      "bestFor": "固定リベートと使いやすさを重視する初心者に向いています。",
+      "tutorial": [
+        "登録リンクから Bitget にアクセス",
+        "メールまたは電話番号で登録",
+        "基本認証を完了",
+        "必要に応じて KYC を完了",
+        "20% リベート条件を維持して取引開始"
+      ],
+      "faq": [
+        {
+          "q": "Bitget の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.1%、先物は Maker 0.02%、Taker 0.06% です。"
+        },
+        {
+          "q": "Bitget のリベート率は？",
+          "a": "cryptore 経由の現在の条件は 20% 固定リベートです。"
+        },
+        {
+          "q": "Bitget は初心者向けですか？",
+          "a": "はい。画面構成が比較的わかりやすく、コピートレードも利用しやすいです。"
+        }
+      ]
+    },
+    "gate": {
+      "description": "Gate.io はアルトコインの豊富さで知られる老舗取引所で、現在は 20% 固定リベート条件を提供しています。",
+      "pros": [
+        "アルトコイン銘柄が豊富",
+        "老舗取引所としての実績",
+        "20% 固定リベート",
+        "GT 割引に対応"
+      ],
+      "cons": [
+        "UI 情報量が多い",
+        "小型銘柄は流動性に差がある",
+        "地域ごとのルール変更がありうる"
+      ],
+      "bestFor": "アルトコインを幅広く触りたいユーザーに向いています。",
+      "tutorial": [
+        "登録リンクから Gate.io にアクセス",
+        "メールで登録しパスワード設定",
+        "メール認証を完了",
+        "必要に応じて KYC を完了",
+        "CRYPTORE 条件を維持して取引開始"
+      ],
+      "faq": [
+        {
+          "q": "Gate.io の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.1%、先物は Maker 0.015%、Taker 0.05% です。GT の利用でさらに軽減できます。"
+        },
+        {
+          "q": "Gate.io のリベート率は？",
+          "a": "現在は CRYPTORE 経由で 20% 固定リベート条件を維持できます。"
+        },
+        {
+          "q": "Gate.io はアルトコイン向きですか？",
+          "a": "はい。長尾銘柄や新規上場銘柄の多さで引き続き評価されています。"
+        }
+      ]
+    },
+    "kucoin": {
+      "description": "KuCoin はアルトコインの品揃えと高いリベート率で注目されており、現在は 60% リベート条件が大きな魅力です。",
+      "pros": [
+        "60% の高リベート",
+        "アルトコインが豊富",
+        "KCS 割引に対応",
+        "現物や Earn 商品も充実"
+      ],
+      "cons": [
+        "一部地域では利用不可",
+        "小型銘柄の板は薄め",
+        "KYC 要件が強化されている"
+      ],
+      "bestFor": "高リベートとアルトコインの多さを重視するユーザーに最適です。",
+      "tutorial": [
+        "登録リンクから KuCoin にアクセス",
+        "メールまたは電話番号で登録",
+        "認証コードを確認",
+        "必要に応じて KYC を完了",
+        "60% リベート条件を維持して取引開始"
+      ],
+      "faq": [
+        {
+          "q": "KuCoin の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.1%、先物は Maker 0.02%、Taker 0.06% です。KCS 保有で軽減できます。"
+        },
+        {
+          "q": "KuCoin のリベート率は？",
+          "a": "cryptore 経由で登録すると現在は 60% リベート条件を維持できます。"
+        },
+        {
+          "q": "KuCoin はどんな人向け？",
+          "a": "アルトコイン重視、かつ高リベートを求める人に向いています。"
+        }
+      ]
+    },
+    "huobi": {
+      "description": "Huobi は現在多くの市場で HTX ブランドを使用している老舗系取引所で、現在は 30% 固定リベート条件を提供しています。",
+      "pros": [
+        "30% リベート",
+        "長い運営実績",
+        "HT 割引に対応",
+        "現物と先物をバランスよく提供"
+      ],
+      "cons": [
+        "地域制限が変わりやすい",
+        "流動性は上位勢に劣る場面がある",
+        "小型市場の板に差がある"
+      ],
+      "bestFor": "老舗ブランドを好み、固定 30% リベートを重視するユーザーに向いています。",
+      "tutorial": [
+        "登録リンクから Huobi にアクセス",
+        "メールまたは電話番号で登録",
+        "認証コードを確認",
+        "必要に応じて KYC を完了",
+        "30% リベート条件を維持して取引開始"
+      ],
+      "faq": [
+        {
+          "q": "Huobi の手数料は？",
+          "a": "現物は Maker/Taker ともに 0.2%、先物は Maker 0.02%、Taker 0.05% です。HT 利用で軽減できます。"
+        },
+        {
+          "q": "Huobi のリベート率は？",
+          "a": "cryptore 経由で登録すると現在は 30% 固定リベート条件を維持できます。"
+        },
+        {
+          "q": "Huobi と HTX の違いは？",
+          "a": "ブランド名称が市場によって異なるだけで、同じ系統のプラットフォームとして案内されています。"
+        }
+      ]
+    }
+  },
+  "calculator": {
+    "title": "手数料計算ツール",
+    "subtitle": "月間取引量を入力すると、各取引所でどれだけ節約できるかを比較できます。",
+    "monthlyVolume": "月間取引量 (USD)",
+    "tradeType": "取引タイプ",
+    "spot": "現物",
+    "futures": "先物",
+    "results": "比較結果",
+    "exchange": "取引所",
+    "monthlyFee": "月間手数料",
+    "monthlyRebate": "月間リベート",
+    "yearlySavings": "年間節約額",
+    "recommended": "おすすめ",
+    "noVolume": "取引量を入力すると比較結果が表示されます",
+    "estimateNote": "* Maker/Taker の平均手数料で試算しています。VIP 割引や取引所トークン割引は含みません。"
+  },
+  "about": {
+    "title": "暗号資産取引所のリベートとは？",
+    "subtitle": "仕組みを理解して、CryptoRebate で手数料を抑えましょう。",
+    "whatTitle": "リベートの意味",
+    "whatDesc": "取引所で支払った手数料の一部が、紹介キャンペーンを通じてユーザーに戻る仕組みです。",
+    "howTitle": "仕組みの流れ",
+    "step1": "CryptoRebate のリンクから取引所に登録する",
+    "step2": "通常どおりに取引する",
+    "step3": "取引所が条件に応じて手数料の一部を返す",
+    "step4": "リベートは通常、取引所口座に反映される",
+    "costTitle": "追加費用はかかる？",
+    "costDesc": "通常はかかりません。紹介リンクによって手数料が上がることはなく、むしろ割引が付く場合もあります。",
+    "riskTitle": "リスクについて",
+    "riskDesc": "CryptoRebate は情報比較サイトであり、投資助言を提供するものではありません。最終判断はご自身で行ってください。",
+    "faqTitle": "よくある質問",
+    "faq1Q": "リベートと手数料割引の違いは？",
+    "faq1A": "手数料割引は最初から支払う手数料が下がる仕組みで、リベートは支払った後に一部が戻る仕組みです。",
+    "faq2Q": "リベートで取引体験は変わる？",
+    "faq2A": "変わりません。取引所の通常機能をそのまま使えます。",
+    "faq3Q": "リベートはずっと有効？",
+    "faq3A": "継続条件は取引所のルール次第です。最新条件は取引所側の告知も確認してください。"
+  },
+  "common": {
+    "learnMore": "詳しく見る",
+    "getStarted": "始める",
+    "backToList": "一覧に戻る",
+    "share": "共有",
+    "disclaimer": "注意: 暗号資産取引にはリスクがあります。掲載情報は参考用であり、投資助言ではありません。",
+    "copyright": "© {year} CryptoRebate. All rights reserved.",
+    "relatedExchanges": "関連する取引所"
+  },
+  "disclosure": {
+    "title": "提携開示",
+    "subtitle": "CryptoRebate の収益モデルと提携関係を明確に開示します。",
+    "howWeEarnTitle": "収益の仕組み",
+    "howWeEarnDesc": "ユーザーが当サイトのリンクから取引所に登録し取引した場合、取引所から紹介報酬を受け取ることがあります。",
+    "noCostTitle": "ユーザー負担は増えません",
+    "noCostDesc": "紹介リンクを使ってもユーザーの手数料が上がるわけではありません。報酬は通常、取引所側のマーケティング予算から支払われます。",
+    "partnersTitle": "現在の提携先",
+    "partnersDesc": "現在、以下の取引所と紹介提携があります。",
+    "partner1": "Binance - 流動性と商品数に優れた最大手の一つ",
+    "partner2": "OKX - Web3 とデリバティブ機能が強い取引所",
+    "partner3": "Bybit - 先物とコピートレードで人気",
+    "partner4": "Bitget - 初心者向けでコピートレードが充実",
+    "partner5": "Gate.io - アルトコイン銘柄が豊富な老舗取引所",
+    "partner6": "KuCoin - 高いリベート率と幅広いアルトコインが魅力",
+    "partner7": "Huobi - HTX ブランドでも展開される老舗系取引所",
+    "commitmentTitle": "当サイトの方針",
+    "commitmentDesc": "提携がある場合でも、情報の透明性を保ち、ユーザーに合わない取引所を手数料目的だけで推奨しないよう努めます。",
+    "questionsTitle": "ご質問について",
+    "questionsDesc": "提携開示や掲載情報について不明点があれば、いつでも確認してください。"
+  },
+  "legal": {
+    "title": "プライバシーと利用規約",
+    "subtitle": "サイト利用前に、データ取扱いと免責事項をご確認ください。",
+    "privacyTitle": "プライバシーポリシー",
+    "dataCollectionTitle": "収集するデータ",
+    "dataCollectionDesc": "CryptoRebate は必要最低限の技術情報のみを扱うようにしています。",
+    "dataItem1": "匿名のトラフィック情報やブラウザ情報などの基本分析データ",
+    "dataItem2": "言語設定保存のための Cookie",
+    "dataItem3": "取引口座や個人の金融データは収集しません",
+    "referralLinksTitle": "紹介リンクについて",
+    "referralLinksDesc": "リンクをクリックすると各取引所の公式サイトに移動します。登録や取引に関するデータは各取引所側で管理されます。",
+    "termsTitle": "利用条件",
+    "noAdviceTitle": "投資助言ではありません",
+    "noAdviceDesc": "当サイトの情報は情報提供のみを目的としており、投資・法律・税務アドバイスではありません。",
+    "accuracyTitle": "情報の正確性",
+    "accuracyDesc": "手数料やリベート条件は変更されることがあるため、最終的には公式サイトも確認してください。",
+    "liabilityTitle": "責任の制限",
+    "liabilityDesc": "掲載情報や外部リンクの利用によって生じた損失について、CryptoRebate は直接・間接の責任を負いません。",
+    "changesTitle": "内容の変更",
+    "changesDesc": "プライバシーポリシーや利用条件に重要な変更があった場合は、このページで更新します。"
+  },
+  "tags": {
+    "most-popular": "人気",
+    "highest-volume": "出来高最大",
+    "beginner-friendly": "初心者向け",
+    "low-fees": "低手数料",
+    "web3-wallet": "Web3 ウォレット",
+    "professional": "プロ向け",
+    "futures-leader": "先物向け",
+    "fast-listing": "上場が早い",
+    "copy-trading": "コピートレード",
+    "high-rebate": "高リベート",
+    "most-tokens": "銘柄数が多い",
+    "veteran": "老舗"
+  }
+}

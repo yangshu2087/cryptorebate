@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { exchanges as allExchanges } from "@/data/exchanges";
+import { parseRebate } from "@/lib/rebate";
 import { ExchangeCard } from "./exchange-card";
 
 type SortKey = "rebate" | "fees" | "popularity";
@@ -22,7 +23,7 @@ export function ExchangeFilters() {
   const sorted = [...allExchanges].sort((a, b) => {
     switch (sort) {
       case "rebate":
-        return parseInt(b.spotRebate) - parseInt(a.spotRebate);
+        return parseRebate(b.spotRebate).max - parseRebate(a.spotRebate).max;
       case "fees":
         return a.fees.spotTaker - b.fees.spotTaker;
       case "popularity":

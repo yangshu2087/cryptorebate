@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "siteName": "CryptoRebate",
+    "siteTagline": "Nhận mức hoàn phí tốt hơn trước khi đăng ký sàn",
+    "siteDescription": "Chúng tôi tổng hợp ưu đãi hoàn phí, mã mời và thông tin phí giao dịch trên nhiều sàn, giúp bạn tìm lựa chọn đăng ký có lợi hơn trước khi tạo tài khoản và tiết kiệm nhiều hơn về dài hạn.",
+    "homeTitle": "CryptoRebate - Nền tảng so sánh mã hoàn phí sàn giao dịch",
+    "exchangesTitle": "Danh sách sàn giao dịch - CryptoRebate",
+    "exchangesDescription": "So sánh hoàn phí mới nhất, mã mời và phí giao dịch của các sàn crypto phổ biến.",
+    "calculatorTitle": "Máy tính phí giao dịch - CryptoRebate",
+    "calculatorDescription": "Nhập khối lượng giao dịch hàng tháng để ước tính số tiền tiết kiệm theo tỷ lệ hoàn phí mới nhất của các sàn được hỗ trợ.",
+    "aboutTitle": "Hoàn phí là gì - CryptoRebate",
+    "aboutDescription": "Tìm hiểu cách hoàn phí sàn giao dịch hoạt động và cách nó giúp bạn tiết kiệm chi phí giao dịch.",
+    "disclosureTitle": "Công bố liên kết - CryptoRebate",
+    "disclosureDescription": "CryptoRebate kiếm tiền như thế nào, đang hợp tác với những sàn nào và chúng tôi cam kết minh bạch ra sao.",
+    "legalTitle": "Quyền riêng tư và điều khoản - CryptoRebate",
+    "legalDescription": "Chính sách quyền riêng tư, việc thu thập dữ liệu và điều khoản sử dụng của CryptoRebate.",
+    "exchangeDetailTitle": "{name} - Đăng ký nhận hoàn phí - CryptoRebate",
+    "exchangeDetailDescription": "Đăng ký {name} qua CryptoRebate và dùng mã mời mới nhất để nhận {rebate} hoàn phí giao dịch."
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "exchanges": "Sàn giao dịch",
+    "calculator": "Máy tính phí",
+    "about": "Về hoàn phí",
+    "disclosure": "Công bố liên kết",
+    "legal": "Quyền riêng tư & điều khoản",
+    "language": "Ngôn ngữ"
+  },
+  "home": {
+    "heroBadge": "CryptoRebate · Tìm ưu đãi hoàn phí tốt hơn trước khi đăng ký",
+    "heroTitle": "Nhận mức hoàn phí tốt hơn trước khi đăng ký sàn",
+    "heroSubtitle": "Chúng tôi tổng hợp ưu đãi hoàn phí, mã mời và thông tin phí giao dịch trên nhiều sàn, giúp bạn tìm lựa chọn đăng ký có lợi hơn trước khi tạo tài khoản và tiết kiệm nhiều hơn về dài hạn.",
+    "brandCardSubtitle": "Biến các liên kết hoàn phí rời rạc thành lựa chọn đăng ký tốt hơn",
+    "brandCardDescription": "CryptoRebate giúp bạn khám phá, so sánh và lọc ưu đãi hoàn phí nhanh hơn, để chọn lộ trình đăng ký tốt hơn mà không phải tự tìm từng mã mời và trang chiến dịch rời rạc.",
+    "ctaBrowse": "Xem sàn giao dịch",
+    "ctaCalculator": "Tính số tiền tiết kiệm",
+    "estimatorTitle": "Bạn có thể tiết kiệm bao nhiêu?",
+    "estimatorMonthlyVolume": "Khối lượng giao dịch hàng tháng (USD)",
+    "estimatorYearlySavings": "Tiết kiệm mỗi năm",
+    "estimatorExchange": "Sàn",
+    "estimatorRebate": "Hoàn phí",
+    "estimatorSavings": "Tiết kiệm mỗi năm",
+    "estimatorNote": "* Ước tính dựa trên mức phí spot Maker/Taker trung bình. Chưa tính VIP tier và ưu đãi từ token sàn.",
+    "featuredTitle": "Sàn nổi bật",
+    "featuredSubtitle": "7 sàn lớn với mã mời mới nhất và tỷ lệ hoàn phí đã được cập nhật.",
+    "whyTitle": "Vì sao chọn CryptoRebate",
+    "why1Title": "Thông tin minh bạch",
+    "why1Desc": "Chúng tôi hiển thị rõ tỷ lệ hoàn phí, mã mời và phí giao dịch mới nhất mà không có điều kiện ẩn.",
+    "why2Title": "Đánh giá thực tế",
+    "why2Desc": "Mỗi sàn đều có phần tóm tắt ưu điểm và nhược điểm để bạn so sánh nhanh hơn.",
+    "why3Title": "So sánh các sàn lớn",
+    "why3Desc": "Bạn có thể xem nhiều sàn crypto quốc tế phổ biến trong cùng một nơi.",
+    "why4Title": "Kiểm tra định kỳ",
+    "why4Desc": "Chúng tôi định kỳ rà soát phí giao dịch và điều kiện chiến dịch để cố gắng giữ dữ liệu luôn mới.",
+    "comparisonTitle": "So sánh sàn giao dịch",
+    "comparisonSubtitle": "Phí giao dịch, hoàn phí và các điểm nổi bật trong một bảng so sánh.",
+    "comparisonExchange": "Sàn",
+    "comparisonSpotFee": "Phí spot",
+    "comparisonFuturesFee": "Phí futures",
+    "comparisonRebate": "Hoàn phí",
+    "comparisonPairs": "Số cặp",
+    "comparisonKYC": "KYC",
+    "comparisonAction": "Đăng ký",
+    "kycRequired": "Bắt buộc",
+    "kycOptional": "Tùy chọn",
+    "personaTitle": "Chọn sàn phù hợp với phong cách của bạn",
+    "personaSubtitle": "Nếu chưa biết bắt đầu từ đâu, hãy tham khảo các nhóm nhu cầu dưới đây.",
+    "persona1Title": "Người mới bắt đầu",
+    "persona1Desc": "Nếu bạn ưu tiên giao diện dễ hiểu và quy trình đăng ký đơn giản, hãy bắt đầu với những sàn thân thiện hơn cho người mới.",
+    "persona1Recommend": "Gợi ý: Binance, KuCoin, Bitget",
+    "persona2Title": "Trader futures",
+    "persona2Desc": "Nếu bạn cần thanh khoản mạnh và công cụ nâng cao, hãy ưu tiên những sàn nổi bật về phái sinh.",
+    "persona2Recommend": "Gợi ý: Bybit, OKX, Huobi",
+    "persona3Title": "Muốn hoàn phí cao",
+    "persona3Desc": "Nếu mục tiêu là giảm phí giao dịch tối đa, bạn nên ưu tiên các sàn có tỷ lệ hoàn phí cao hơn.",
+    "persona3Recommend": "Gợi ý: KuCoin (60%), Bybit (33%), Huobi (30%)",
+    "persona4Title": "Thích altcoin",
+    "persona4Desc": "Nếu bạn quan tâm đến coin mới và danh sách cặp giao dịch đa dạng, hãy so sánh các sàn có độ phủ altcoin cao.",
+    "persona4Recommend": "Gợi ý: Gate.io, KuCoin",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq1Q": "Hoàn phí sàn giao dịch là gì?",
+    "faq1A": "Đó là việc một phần phí giao dịch của bạn được hoàn lại sau khi đăng ký qua liên kết đối tác hoặc mã mời.",
+    "faq2Q": "Dùng liên kết đối tác có khiến tôi tốn phí hơn không?",
+    "faq2A": "Không. Trong đa số trường hợp, chi phí giao dịch không tăng lên, thậm chí đôi khi còn có thêm ưu đãi.",
+    "faq3Q": "Khi nào hoàn phí được ghi nhận?",
+    "faq3A": "Tùy từng sàn. Cách phổ biến là ghi nhận ngay hoặc thanh toán theo ngày.",
+    "faq4Q": "Hiện tại có những sàn nào được hỗ trợ?",
+    "faq4A": "Hiện tại đã có Binance, OKX, Bybit, Bitget, Gate.io, KuCoin và Huobi."
+  },
+  "exchanges": {
+    "title": "Danh sách sàn giao dịch",
+    "subtitle": "So sánh phí, tỷ lệ hoàn phí và mã mời để chọn nền tảng phù hợp với bạn.",
+    "sortBy": "Sắp xếp theo",
+    "sortByRebate": "Hoàn phí",
+    "sortByFees": "Phí giao dịch",
+    "sortByPopularity": "Mức độ phổ biến",
+    "filterType": "Loại giao dịch",
+    "filterAll": "Tất cả",
+    "filterSpot": "Spot",
+    "filterFutures": "Futures",
+    "spotFees": "Phí spot",
+    "futuresFees": "Phí futures",
+    "rebateRate": "Tỷ lệ hoàn phí",
+    "spotRebate": "Hoàn phí spot",
+    "futuresRebate": "Hoàn phí futures",
+    "maker": "Maker",
+    "taker": "Taker",
+    "viewDetails": "Xem chi tiết",
+    "register": "Đăng ký",
+    "referralCode": "Mã mời",
+    "copyCode": "Sao chép",
+    "copied": "Đã sao chép",
+    "tradingPairs": "Cặp giao dịch",
+    "founded": "Thành lập",
+    "headquarters": "Trụ sở",
+    "pros": "Ưu điểm",
+    "cons": "Nhược điểm",
+    "registrationGuide": "Hướng dẫn đăng ký {name}",
+    "faqTitle": "Câu hỏi thường gặp",
+    "tokenDiscount": "Thanh toán bằng {token} có thể được giảm thêm {percent}%",
+    "regionRestrictions": "Hạn chế khu vực",
+    "noRestrictions": "Không thấy hạn chế lớn",
+    "kycDifficulty": "Mức độ KYC",
+    "kycEasy": "Dễ - xác minh cơ bản là đủ",
+    "kycModerate": "Trung bình - cần giấy tờ và ảnh selfie",
+    "kycStrict": "Khá nghiêm - yêu cầu kiểm tra đầy đủ hơn",
+    "rebateActivation": "Kích hoạt hoàn phí",
+    "rebateAutoYes": "Tự động kích hoạt sau khi đăng ký",
+    "rebateAutoNo": "Cần bật thủ công",
+    "rebateSettlement": "Chu kỳ thanh toán",
+    "settlementInstant": "Ngay lập tức",
+    "settlementDaily": "Hàng ngày",
+    "platformTokenStack": "Có cộng dồn với ưu đãi token sàn không",
+    "tokenStackYes": "Có, có thể cộng thêm ưu đãi bằng {token}",
+    "tokenStackNo": "Không có ưu đãi token riêng để cộng dồn",
+    "lastReviewed": "Kiểm tra gần nhất",
+    "quickInfo": "Thông tin nhanh",
+    "binance": {
+      "description": "Binance là sàn crypto có khối lượng giao dịch lớn nhất thế giới, nổi bật với thanh khoản sâu và hệ sinh thái đầy đủ gồm spot, futures, options, earn và staking.",
+      "pros": [
+        "Thanh khoản rất mạnh",
+        "Hệ sản phẩm đầy đủ",
+        "Có thể giảm phí thêm bằng BNB",
+        "Thương hiệu lớn và hạ tầng mạnh"
+      ],
+      "cons": [
+        "Không hỗ trợ ở một số khu vực",
+        "Yêu cầu KYC khá chặt",
+        "Bộ phận hỗ trợ đôi khi phản hồi chậm"
+      ],
+      "bestFor": "Phù hợp với phần lớn trader cần thanh khoản, độ ổn định và nhiều công cụ giao dịch.",
+      "tutorial": [
+        "Mở liên kết đến trang đăng ký Binance",
+        "Đăng ký bằng email hoặc số điện thoại",
+        "Xác nhận mã bảo mật",
+        "Hoàn tất KYC nếu khu vực của bạn yêu cầu",
+        "Bắt đầu giao dịch và giữ ưu đãi hoàn phí với mã cryptore"
+      ],
+      "faq": [
+        {
+          "q": "Phí giao dịch của Binance là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.1%. Futures Maker 0.02%, Taker 0.05%. Nếu trả bằng BNB, mức phí thực tế có thể thấp hơn."
+        },
+        {
+          "q": "Mã cryptore mang lại gì?",
+          "a": "Mã này giúp bạn giữ ưu đãi hoàn phí 20% hiện tại khi đăng ký qua liên kết đối tác."
+        },
+        {
+          "q": "Binance có phù hợp với người mới không?",
+          "a": "Có. Dù có rất nhiều tính năng, Binance vẫn đủ hoàn thiện cho cả người mới lẫn trader nhiều kinh nghiệm."
+        }
+      ]
+    },
+    "okx": {
+      "description": "OKX được biết đến nhờ nền tảng kỹ thuật mạnh, hệ sinh thái Web3 tốt và bộ công cụ giao dịch phái sinh thuận tiện.",
+      "pros": [
+        "Tích hợp Web3 mạnh",
+        "Độ sâu futures tốt",
+        "Có thể giảm phí bằng OKB",
+        "Phù hợp với trader nâng cao"
+      ],
+      "cons": [
+        "Giao diện khó hơn với người mới",
+        "Có hạn chế ở một số khu vực",
+        "Một số tính năng cần kinh nghiệm để dùng hiệu quả"
+      ],
+      "bestFor": "Phù hợp với người dùng kết hợp giao dịch phái sinh, Web3 và phong cách giao dịch chuyên nghiệp hơn.",
+      "tutorial": [
+        "Mở liên kết đăng ký OKX",
+        "Tạo tài khoản bằng email hoặc số điện thoại",
+        "Xác nhận mã bảo mật",
+        "Hoàn tất xác minh danh tính",
+        "Giao dịch với ưu đãi hoàn phí cryptore"
+      ],
+      "faq": [
+        {
+          "q": "Phí giao dịch của OKX là bao nhiêu?",
+          "a": "Spot Maker 0.08%, Taker 0.1%. Futures Maker 0.02%, Taker 0.05%. Giữ OKB có thể giúp giảm phí thêm."
+        },
+        {
+          "q": "OKX hiện có hoàn phí bao nhiêu?",
+          "a": "Liên kết cryptore hiện hỗ trợ mức hoàn phí 20%."
+        },
+        {
+          "q": "OKX phù hợp với ai?",
+          "a": "Phù hợp với người coi trọng giao dịch phái sinh, ví Web3 và giao diện chuyên nghiệp hơn."
+        }
+      ]
+    },
+    "bybit": {
+      "description": "Bybit đặc biệt phổ biến với trader futures nhờ giao diện mượt, tốc độ tốt và hệ thống copy trading phát triển.",
+      "pros": [
+        "Tập trung mạnh vào phái sinh",
+        "Hoàn phí 33%",
+        "Copy trading phát triển",
+        "Niêm yết tài sản đang hot khá nhanh"
+      ],
+      "cons": [
+        "Có hạn chế khu vực",
+        "Độ sâu spot không bằng Binance",
+        "Chất lượng hỗ trợ đôi lúc không đồng đều"
+      ],
+      "bestFor": "Phù hợp với trader futures và người muốn hưởng mức hoàn phí cao hơn.",
+      "tutorial": [
+        "Mở trang đăng ký Bybit từ liên kết",
+        "Tạo tài khoản bằng email hoặc số điện thoại",
+        "Hoàn tất xác minh cơ bản",
+        "KYC thêm nếu cần cho sản phẩm nâng cao",
+        "Bắt đầu giao dịch với ưu đãi hoàn phí 33%"
+      ],
+      "faq": [
+        {
+          "q": "Phí của Bybit là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.1%. Futures Maker 0.02%, Taker 0.055%."
+        },
+        {
+          "q": "Bybit hoàn phí bao nhiêu?",
+          "a": "Khi đăng ký bằng liên kết cryptoreba, bạn có thể giữ mức hoàn phí 33%."
+        },
+        {
+          "q": "Bybit có tốt cho giao dịch futures không?",
+          "a": "Có. Đây là một trong những sàn được sử dụng nhiều nhất cho giao dịch phái sinh."
+        }
+      ]
+    },
+    "bitget": {
+      "description": "Bitget tập trung vào sự đơn giản, copy trading và trải nghiệm thân thiện với người dùng. Hiện tại sàn này áp dụng mức hoàn phí cố định 20%.",
+      "pros": [
+        "Hoàn phí cố định 20%",
+        "Copy trading mạnh",
+        "Thân thiện với người mới",
+        "Có quỹ bảo vệ"
+      ],
+      "cons": [
+        "Thanh khoản thấp hơn nhóm dẫn đầu",
+        "Lịch sử thương hiệu ngắn hơn",
+        "Ít công cụ nâng cao hơn"
+      ],
+      "bestFor": "Phù hợp với người mới và người muốn một mức hoàn phí cố định, dễ hiểu.",
+      "tutorial": [
+        "Mở liên kết đăng ký Bitget",
+        "Tạo tài khoản bằng email hoặc số điện thoại",
+        "Xác nhận thông tin cơ bản",
+        "Hoàn thành KYC nếu cần",
+        "Bắt đầu giao dịch với ưu đãi hoàn phí 20%"
+      ],
+      "faq": [
+        {
+          "q": "Phí của Bitget là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.1%. Futures Maker 0.02%, Taker 0.06%."
+        },
+        {
+          "q": "Bitget hoàn phí bao nhiêu?",
+          "a": "Hiện tại khi đăng ký qua cryptore, bạn giữ được mức hoàn phí cố định 20%."
+        },
+        {
+          "q": "Bitget có hợp với người mới không?",
+          "a": "Có. Quy trình và giao diện của Bitget khá trực quan cho người mới bắt đầu."
+        }
+      ]
+    },
+    "gate": {
+      "description": "Gate.io là một trong những sàn lâu đời, nổi tiếng vì số lượng altcoin nhiều và tốc độ niêm yết nhanh. Hiện tại sàn này áp dụng mức hoàn phí cố định 20% qua CryptoRebate.",
+      "pros": [
+        "Độ phủ altcoin và coin mới rộng",
+        "Nền tảng có lịch sử lâu năm",
+        "Hoàn phí cố định 20%",
+        "Có thể giảm phí thêm bằng GT"
+      ],
+      "cons": [
+        "Giao diện chứa khá nhiều thông tin",
+        "Thanh khoản coin nhỏ chênh lệch nhiều",
+        "Quy định theo khu vực có thể thay đổi"
+      ],
+      "bestFor": "Phù hợp với trader thích altcoin, thị trường ngách và danh sách tài sản phong phú.",
+      "tutorial": [
+        "Mở trang đăng ký Gate.io từ liên kết",
+        "Nhập email và đặt mật khẩu",
+        "Hoàn tất xác minh email",
+        "Làm KYC nếu cần thêm hạn mức hoặc tính năng",
+        "Bắt đầu giao dịch với mã CRYPTORE và ưu đãi hoàn phí 20%"
+      ],
+      "faq": [
+        {
+          "q": "Phí của Gate.io là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.1%. Futures Maker 0.015%, Taker 0.05%. Dùng GT có thể giúp giảm phí hiệu dụng."
+        },
+        {
+          "q": "Gate.io hoàn phí bao nhiêu?",
+          "a": "Hiện tại khi đăng ký qua liên kết CRYPTORE, bạn giữ được mức hoàn phí cố định 20%."
+        },
+        {
+          "q": "Gate.io có hợp để giao dịch altcoin không?",
+          "a": "Có. Gate.io từ lâu đã là một trong những sàn có độ phủ altcoin và token đuôi dài khá tốt."
+        }
+      ]
+    },
+    "kucoin": {
+      "description": "KuCoin nổi tiếng nhờ độ phủ altcoin rộng, nhiều thị trường ngách và mức hoàn phí cao. Hiện tại sàn này duy trì ưu đãi hoàn phí 60% qua CryptoRebate.",
+      "pros": [
+        "Hoàn phí lên tới 60%",
+        "Danh mục altcoin rất rộng",
+        "Có thể giảm phí thêm bằng KCS",
+        "Spot và sản phẩm earn khá đa dạng"
+      ],
+      "cons": [
+        "Không khả dụng ở một số khu vực",
+        "Độ sâu coin nhỏ không bằng sàn top đầu",
+        "Yêu cầu KYC và tuân thủ ngày càng chặt"
+      ],
+      "bestFor": "Phù hợp với người muốn mức hoàn phí cao và thích giao dịch nhiều altcoin hơn.",
+      "tutorial": [
+        "Mở trang đăng ký KuCoin từ liên kết",
+        "Nhập email hoặc số điện thoại và đặt mật khẩu",
+        "Hoàn tất bước xác minh mã",
+        "Làm KYC tùy theo khu vực hoặc sản phẩm bạn muốn dùng",
+        "Bắt đầu giao dịch với ưu đãi hoàn phí 60%"
+      ],
+      "faq": [
+        {
+          "q": "Phí của KuCoin là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.1%. Futures Maker 0.02%, Taker 0.06%. Giữ KCS có thể giúp giảm phí thêm."
+        },
+        {
+          "q": "KuCoin hoàn phí bao nhiêu?",
+          "a": "Hiện tại khi đăng ký qua cryptore, bạn có thể giữ mức hoàn phí 60%."
+        },
+        {
+          "q": "KuCoin phù hợp với ai?",
+          "a": "Đặc biệt phù hợp với người chú trọng hoàn phí cao, altcoin và danh sách cặp giao dịch phong phú."
+        }
+      ]
+    },
+    "huobi": {
+      "description": "Huobi hiện tiếp tục vận hành ở nhiều thị trường dưới thương hiệu HTX. Đây là một thương hiệu sàn lâu năm và đang áp dụng mức hoàn phí cố định 30% qua CryptoRebate.",
+      "pros": [
+        "Hoàn phí 30%",
+        "Thương hiệu lâu năm",
+        "Có thể giảm phí thêm bằng HT",
+        "Cấu trúc sản phẩm spot và futures khá ổn định"
+      ],
+      "cons": [
+        "Mức độ khả dụng theo khu vực thay đổi nhanh",
+        "Độ sâu tổng thể không bằng nhóm dẫn đầu",
+        "Thanh khoản coin nhỏ chênh lệch đáng kể"
+      ],
+      "bestFor": "Phù hợp với người thích thương hiệu sàn lâu năm và muốn một mức hoàn phí cố định 30%.",
+      "tutorial": [
+        "Mở trang đăng ký Huobi từ liên kết",
+        "Tạo tài khoản bằng email hoặc số điện thoại",
+        "Hoàn tất bước xác minh mã",
+        "Thực hiện KYC theo yêu cầu",
+        "Bắt đầu giao dịch với ưu đãi hoàn phí 30%"
+      ],
+      "faq": [
+        {
+          "q": "Phí của Huobi là bao nhiêu?",
+          "a": "Spot Maker/Taker đều là 0.2%. Futures Maker 0.02%, Taker 0.05%. Dùng HT có thể giúp giảm phí thêm."
+        },
+        {
+          "q": "Huobi hoàn phí bao nhiêu?",
+          "a": "Hiện tại khi đăng ký qua cryptore, bạn giữ được mức hoàn phí cố định 30%."
+        },
+        {
+          "q": "Vì sao có lúc thấy tên Huobi, có lúc thấy HTX?",
+          "a": "Tại một số thị trường, nền tảng này hoạt động dưới thương hiệu HTX, nhưng nhiều người dùng vẫn quen gọi là Huobi."
+        }
+      ]
+    }
+  },
+  "calculator": {
+    "title": "Máy tính phí giao dịch",
+    "subtitle": "Nhập khối lượng giao dịch hàng tháng để so sánh nhanh số tiền hoàn phí và tiết kiệm thực tế giữa các sàn.",
+    "monthlyVolume": "Khối lượng giao dịch hàng tháng (USD)",
+    "tradeType": "Loại giao dịch",
+    "spot": "Spot",
+    "futures": "Futures",
+    "results": "Kết quả so sánh",
+    "exchange": "Sàn",
+    "monthlyFee": "Phí mỗi tháng",
+    "monthlyRebate": "Hoàn phí mỗi tháng",
+    "yearlySavings": "Tiết kiệm mỗi năm",
+    "recommended": "Đề xuất",
+    "noVolume": "Vui lòng nhập khối lượng giao dịch để xem kết quả so sánh",
+    "estimateNote": "* Ước tính dựa trên mức phí Maker/Taker trung bình. Chưa tính VIP tier và ưu đãi token sàn; số cuối cùng vẫn phụ thuộc quy định của từng sàn."
+  },
+  "about": {
+    "title": "Hoàn phí sàn crypto là gì?",
+    "subtitle": "Hiểu cách hoàn phí hoạt động và cách CryptoRebate giúp bạn giảm chi phí giao dịch.",
+    "whatTitle": "Hoàn phí là gì?",
+    "whatDesc": "Khi giao dịch trên sàn crypto, bạn phải trả phí giao dịch. Nếu đăng ký qua liên kết giới thiệu, sàn có thể hoàn lại một phần phí đó cho bạn; đó chính là hoàn phí.",
+    "howTitle": "Hoàn phí hoạt động như thế nào?",
+    "step1": "Đăng ký sàn qua liên kết giới thiệu của CryptoRebate",
+    "step2": "Giao dịch spot hoặc futures như bình thường",
+    "step3": "Sàn hoàn lại một phần phí theo quy định của chương trình",
+    "step4": "Khoản hoàn phí thường được chuyển trực tiếp vào tài khoản sàn của bạn",
+    "costTitle": "Có tốn thêm tiền không?",
+    "costDesc": "Không. Trong đa số trường hợp, liên kết hoàn phí không làm tăng phí giao dịch; một số sàn còn có thêm ưu đãi giảm phí.",
+    "riskTitle": "Lưu ý rủi ro",
+    "riskDesc": "CryptoRebate cung cấp thông tin so sánh và lối vào đăng ký, không phải lời khuyên đầu tư. Giao dịch crypto có rủi ro cao, vui lòng tự đánh giá trước khi quyết định.",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq1Q": "Hoàn phí khác gì với giảm phí trực tiếp?",
+    "faq1A": "Giảm phí trực tiếp là hạ ngay mức phí bạn phải trả; còn hoàn phí là bạn trả phí trước, sau đó sàn hoàn lại một phần.",
+    "faq2Q": "Hoàn phí có ảnh hưởng đến trải nghiệm giao dịch của tôi không?",
+    "faq2A": "Không. Sau khi đăng ký, bạn vẫn sử dụng sản phẩm và chức năng chính thức của sàn như bình thường.",
+    "faq3Q": "Hoàn phí có luôn còn hiệu lực không?",
+    "faq3A": "Điều này phụ thuộc vào quy định hợp tác hiện tại của sàn và trạng thái tài khoản của bạn."
+  },
+  "common": {
+    "learnMore": "Tìm hiểu thêm",
+    "getStarted": "Bắt đầu ngay",
+    "backToList": "Quay lại danh sách",
+    "share": "Chia sẻ",
+    "disclaimer": "Cảnh báo rủi ro: Giao dịch crypto có rủi ro. Hãy đầu tư thận trọng. Nội dung trên trang chỉ mang tính tham khảo và không phải lời khuyên đầu tư.",
+    "copyright": "© {year} CryptoRebate. Bảo lưu mọi quyền.",
+    "relatedExchanges": "Sàn liên quan"
+  },
+  "disclosure": {
+    "title": "Công bố liên kết",
+    "subtitle": "CryptoRebate cam kết minh bạch về mô hình doanh thu và các đối tác mà chúng tôi hợp tác.",
+    "howWeEarnTitle": "Chúng tôi kiếm tiền như thế nào",
+    "howWeEarnDesc": "Khi người dùng đăng ký sàn qua liên kết trên trang và bắt đầu giao dịch, chúng tôi có thể nhận được hoa hồng đối tác từ sàn đó.",
+    "noCostTitle": "Điều này không làm tăng chi phí của bạn",
+    "noCostDesc": "Việc đăng ký qua liên kết giới thiệu trên trang không làm tăng phí giao dịch của bạn. Khoản hoa hồng của chúng tôi do sàn chi trả, không bị trừ thêm từ tài khoản của bạn.",
+    "partnersTitle": "Các sàn đang hợp tác",
+    "partnersDesc": "Hiện tại chúng tôi có quan hệ liên kết với các sàn sau:",
+    "partner1": "Binance - khối lượng toàn cầu hàng đầu, hệ sản phẩm đầy đủ",
+    "partner2": "OKX - nền tảng kỹ thuật mạnh, tích hợp ví Web3 và phái sinh",
+    "partner3": "Bybit - trải nghiệm phái sinh và copy trading tốt",
+    "partner4": "Bitget - thân thiện với người mới, copy trading trưởng thành",
+    "partner5": "Gate.io - nền tảng lâu năm, phủ altcoin rộng",
+    "partner6": "KuCoin - hoàn phí cao và danh mục thị trường ngách mạnh",
+    "partner7": "Huobi - thương hiệu lâu năm, tại nhiều thị trường hoạt động dưới tên HTX",
+    "commitmentTitle": "Cam kết của chúng tôi",
+    "commitmentDesc": "Dù có quan hệ hợp tác, chúng tôi vẫn cố gắng giữ thông tin minh bạch, cập nhật định kỳ và tránh giới thiệu nền tảng không phù hợp chỉ vì mức hoa hồng.",
+    "questionsTitle": "Có câu hỏi?",
+    "questionsDesc": "Nếu bạn có thắc mắc về công bố liên kết, hoàn phí hoặc dữ liệu sàn, hãy liên hệ với chúng tôi bất cứ lúc nào."
+  },
+  "legal": {
+    "title": "Quyền riêng tư và điều khoản",
+    "subtitle": "Vui lòng đọc chính sách dữ liệu và tuyên bố miễn trừ trách nhiệm trước khi sử dụng trang này.",
+    "privacyTitle": "Chính sách quyền riêng tư",
+    "dataCollectionTitle": "Chúng tôi thu thập dữ liệu gì?",
+    "dataCollectionDesc": "CryptoRebate cố gắng tối thiểu hóa việc thu thập dữ liệu và chỉ sử dụng thông tin kỹ thuật trong phạm vi cần thiết.",
+    "dataItem1": "Dữ liệu phân tích cơ bản, ví dụ lưu lượng truy cập ẩn danh và thông tin trình duyệt",
+    "dataItem2": "Cookie chỉ được dùng cho các cài đặt cơ bản như lưu ngôn ngữ ưu tiên",
+    "dataItem3": "Chúng tôi không thu thập, lưu trữ hoặc xử lý tài khoản giao dịch hay dữ liệu tài chính cá nhân của bạn",
+    "referralLinksTitle": "Giải thích về liên kết giới thiệu",
+    "referralLinksDesc": "Khi bạn nhấp vào liên kết sàn trên trang này, bạn sẽ được chuyển tới website chính thức của sàn tương ứng. Mọi bước đăng ký, giao dịch và xử lý dữ liệu sau đó do chính sàn chịu trách nhiệm.",
+    "termsTitle": "Điều khoản sử dụng",
+    "noAdviceTitle": "Không phải lời khuyên đầu tư",
+    "noAdviceDesc": "Mọi thông tin trên trang này chỉ mang tính tham khảo và không cấu thành lời khuyên đầu tư, pháp lý hay thuế.",
+    "accuracyTitle": "Độ chính xác thông tin",
+    "accuracyDesc": "Chúng tôi cố gắng cập nhật tỷ lệ hoàn phí và phí giao dịch, nhưng quy định của sàn có thể thay đổi bất cứ lúc nào. Vui lòng ưu tiên kiểm tra trang chính thức của sàn.",
+    "liabilityTitle": "Giới hạn trách nhiệm",
+    "liabilityDesc": "CryptoRebate không chịu trách nhiệm trực tiếp hoặc gián tiếp cho tổn thất phát sinh từ việc sử dụng thông tin trên trang, nhấp vào liên kết đối tác hoặc thay đổi chính sách của sàn.",
+    "changesTitle": "Cập nhật chính sách",
+    "changesDesc": "Nếu có thay đổi quan trọng đối với chính sách quyền riêng tư hoặc điều khoản sử dụng, chúng tôi sẽ cập nhật nội dung trên website."
+  },
+  "tags": {
+    "most-popular": "Phổ biến nhất",
+    "highest-volume": "Khối lượng cao nhất",
+    "beginner-friendly": "Thân thiện cho người mới",
+    "low-fees": "Phí thấp",
+    "web3-wallet": "Ví Web3",
+    "professional": "Chuyên nghiệp",
+    "futures-leader": "Mạnh về futures",
+    "fast-listing": "Niêm yết nhanh",
+    "copy-trading": "Copy trading",
+    "high-rebate": "Hoàn phí cao",
+    "most-tokens": "Nhiều token nhất",
+    "veteran": "Thương hiệu lâu năm"
+  }
+}

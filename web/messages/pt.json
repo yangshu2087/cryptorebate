@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "siteName": "CryptoRebate",
+    "siteTagline": "Garanta um rebate melhor antes de se registar numa exchange",
+    "siteDescription": "Agregamos ofertas de rebate, códigos de convite e informações de comissões de várias exchanges para ajudar você a encontrar uma opção de registo mais vantajosa antes da conta e poupar mais no longo prazo.",
+    "homeTitle": "CryptoRebate | Códigos de convite e rebates de exchanges (Atualizado)",
+    "exchangesTitle": "Comparador de corretoras | Rebates, códigos e comissões - CryptoRebate",
+    "exchangesDescription": "Compare Binance, OKX, Bybit, Bitget, Gate.io, KuCoin e Huobi com rebates e códigos de convite atualizados.",
+    "calculatorTitle": "Calculadora de comissões e rebate | CryptoRebate",
+    "calculatorDescription": "Introduza o volume mensal e estime de imediato o custo de trading e a poupança anual por corretora.",
+    "aboutTitle": "O que é rebate em cripto | CryptoRebate",
+    "aboutDescription": "Guia prático para entender como o rebate funciona, como difere do desconto direto e como reduzir custos sem complicação.",
+    "disclosureTitle": "Divulgação de afiliados - CryptoRebate",
+    "disclosureDescription": "Como a CryptoRebate ganha dinheiro, com que exchanges trabalha e qual é o seu compromisso com a transparência.",
+    "legalTitle": "Privacidade e termos - CryptoRebate",
+    "legalDescription": "Política de privacidade, recolha de dados e termos de utilização da CryptoRebate.",
+    "exchangeDetailTitle": "{name}: código de convite atualizado e registo | CryptoRebate",
+    "exchangeDetailDescription": "Veja o código de convite atualizado da {name}, o rebate {rebate}, as comissões e o passo a passo de registo."
+  },
+  "nav": {
+    "home": "Início",
+    "exchanges": "Corretoras",
+    "calculator": "Calculadora de comissões",
+    "about": "Sobre rebates",
+    "disclosure": "Divulgação",
+    "legal": "Privacidade e termos",
+    "language": "Idioma"
+  },
+  "home": {
+    "heroBadge": "CryptoRebate · Encontre melhores rebates antes do registo",
+    "heroTitle": "Garanta um rebate melhor antes de se registar numa exchange",
+    "heroSubtitle": "Agregamos ofertas de rebate, códigos de convite e informações de comissões de várias exchanges para ajudar você a encontrar uma opção de registo mais vantajosa antes da conta e poupar mais no longo prazo.",
+    "brandCardSubtitle": "Transforme links de rebate dispersos em melhores escolhas de registo",
+    "brandCardDescription": "A CryptoRebate ajuda-o a descobrir, comparar e filtrar ofertas de rebate mais rapidamente, para que escolha um caminho de registo mais vantajoso sem procurar códigos e campanhas fragmentadas por conta própria.",
+    "ctaBrowse": "Ver corretoras",
+    "ctaCalculator": "Calcular poupança",
+    "estimatorTitle": "Quanto pode poupar?",
+    "estimatorMonthlyVolume": "Volume mensal (USD)",
+    "estimatorYearlySavings": "Poupança anual",
+    "estimatorExchange": "Corretora",
+    "estimatorRebate": "Rebate",
+    "estimatorSavings": "Poupança anual",
+    "estimatorNote": "* Estimativa baseada na média Maker/Taker de spot. Não inclui níveis VIP nem descontos por token da exchange.",
+    "featuredTitle": "Corretoras com benefícios atualizados",
+    "featuredSubtitle": "Atualizámos códigos de convite, rebates e condições principais de comissões.",
+    "whyTitle": "Porque usar a CryptoRebate",
+    "why1Title": "Dados transparentes",
+    "why1Desc": "Mostramos rebates, códigos e comissões atualizadas de forma clara e sem condições escondidas.",
+    "why2Title": "Comparação prática",
+    "why2Desc": "Cada exchange inclui um resumo objetivo de vantagens e limitações.",
+    "why3Title": "Cobertura global",
+    "why3Desc": "Pode comparar rapidamente várias plataformas internacionais num só local.",
+    "why4Title": "Revisão regular",
+    "why4Desc": "Revisamos taxas e campanhas com frequência para manter a informação o mais atual possível.",
+    "comparisonTitle": "Tabela de comparação de comissões e rebates",
+    "comparisonSubtitle": "Indicadores essenciais numa única vista para escolher pela poupança real.",
+    "comparisonExchange": "Corretora",
+    "comparisonSpotFee": "Comissão spot",
+    "comparisonFuturesFee": "Comissão de futuros",
+    "comparisonRebate": "Rebate",
+    "comparisonPairs": "Pares",
+    "comparisonKYC": "KYC",
+    "comparisonAction": "Registar",
+    "kycRequired": "Obrigatório",
+    "kycOptional": "Opcional",
+    "personaTitle": "Encontre a corretora certa para si",
+    "personaSubtitle": "Se não sabe por onde começar, use estes perfis como atalho.",
+    "persona1Title": "Iniciantes",
+    "persona1Desc": "Se valoriza simplicidade e facilidade de uso, comece por plataformas mais amigáveis para novos utilizadores.",
+    "persona1Recommend": "Recomendado: Binance, KuCoin, Bitget",
+    "persona2Title": "Traders de futuros",
+    "persona2Desc": "Se precisa de liquidez e ferramentas avançadas, foque-se nas corretoras mais fortes em derivados.",
+    "persona2Recommend": "Recomendado: Bybit, OKX, Huobi",
+    "persona3Title": "Quem procura rebate alto",
+    "persona3Desc": "Se quer reduzir comissões ao máximo, priorize as campanhas com maior retorno.",
+    "persona3Recommend": "Recomendado: KuCoin (60%), Bybit (33%), Huobi (30%)",
+    "persona4Title": "Caçadores de altcoins",
+    "persona4Desc": "Se procura novos listagens e mais variedade, compare as plataformas com maior amplitude de mercado.",
+    "persona4Recommend": "Recomendado: Gate.io, KuCoin",
+    "faqTitle": "Perguntas frequentes",
+    "faq1Q": "O que é um rebate de exchange?",
+    "faq1A": "É a devolução de parte da comissão de trading quando se regista através de um link ou código promocional.",
+    "faq2Q": "Usar um link de rebate torna o trading mais caro?",
+    "faq2A": "Não. Normalmente o seu custo não aumenta e, em alguns casos, até pode obter desconto adicional.",
+    "faq3Q": "Quando é creditado o rebate?",
+    "faq3A": "Depende da exchange. O mais comum é liquidação instantânea ou diária.",
+    "faq4Q": "Que exchanges estão disponíveis agora?",
+    "faq4A": "Atualmente suportamos Binance, OKX, Bybit, Bitget, Gate.io, KuCoin e Huobi."
+  },
+  "exchanges": {
+    "title": "Lista de corretoras",
+    "subtitle": "Compare comissões, rebates e códigos de convite para escolher a plataforma certa.",
+    "sortBy": "Ordenar por",
+    "sortByRebate": "Rebate",
+    "sortByFees": "Comissões",
+    "sortByPopularity": "Popularidade",
+    "filterType": "Tipo de trading",
+    "filterAll": "Tudo",
+    "filterSpot": "Spot",
+    "filterFutures": "Futuros",
+    "spotFees": "Comissões spot",
+    "futuresFees": "Comissões de futuros",
+    "rebateRate": "Rebate",
+    "spotRebate": "Rebate spot",
+    "futuresRebate": "Rebate em futuros",
+    "maker": "Maker",
+    "taker": "Taker",
+    "viewDetails": "Ver detalhes",
+    "register": "Registar agora",
+    "referralCode": "Código de convite",
+    "copyCode": "Copiar",
+    "copied": "Copiado",
+    "tradingPairs": "Pares de trading",
+    "founded": "Fundada",
+    "headquarters": "Sede",
+    "pros": "Vantagens",
+    "cons": "Desvantagens",
+    "registrationGuide": "Guia de registo na {name}",
+    "faqTitle": "Perguntas frequentes",
+    "tokenDiscount": "Ao pagar com {token}, obtém mais {percent}% de desconto",
+    "regionRestrictions": "Restrições regionais",
+    "noRestrictions": "Sem grandes restrições conhecidas",
+    "kycDifficulty": "Dificuldade do KYC",
+    "kycEasy": "Fácil - verificação básica suficiente",
+    "kycModerate": "Média - requer documento e selfie",
+    "kycStrict": "Alta - processo mais rígido",
+    "rebateActivation": "Ativação do rebate",
+    "rebateAutoYes": "Ativa automaticamente após o registo",
+    "rebateAutoNo": "Requer ativação manual",
+    "rebateSettlement": "Periodicidade da liquidação",
+    "settlementInstant": "Instantânea",
+    "settlementDaily": "Diária",
+    "platformTokenStack": "Compatível com desconto do token da exchange",
+    "tokenStackYes": "Sim, pode combinar com o desconto de {token}",
+    "tokenStackNo": "Sem desconto de token para combinar",
+    "lastReviewed": "Última revisão",
+    "quickInfo": "Informação rápida",
+    "binance": {
+      "description": "A Binance é uma das maiores exchanges de cripto do mundo, com grande liquidez e uma oferta muito ampla de produtos.",
+      "pros": [
+        "Liquidez muito elevada",
+        "Linha de produtos bastante completa",
+        "Desconto adicional com BNB",
+        "Marca forte e conhecida"
+      ],
+      "cons": [
+        "Indisponível em algumas regiões",
+        "KYC relativamente rígido",
+        "O suporte pode demorar"
+      ],
+      "bestFor": "Ideal para quem procura liquidez, segurança e um ecossistema muito completo.",
+      "tutorial": [
+        "Abra o link de registo da Binance",
+        "Crie a conta com email ou telefone",
+        "Confirme o código",
+        "Complete o KYC se a sua região exigir",
+        "Comece a negociar mantendo o rebate com cryptore"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da Binance?",
+          "a": "Spot: Maker/Taker de 0.1%. Futuros: Maker 0.02% e Taker 0.05%. Com BNB, o custo efetivo pode descer ainda mais."
+        },
+        {
+          "q": "O que oferece o código cryptore?",
+          "a": "Mantém ativa a campanha atual com rebate de 20% ao registar-se por esse link."
+        },
+        {
+          "q": "A Binance serve para iniciantes?",
+          "a": "Sim. Apesar de ter muitas funcionalidades, continua a ser uma plataforma bastante acessível."
+        }
+      ]
+    },
+    "okx": {
+      "description": "A OKX destaca-se pela componente Web3, pela infraestrutura técnica e pela força na negociação de derivados.",
+      "pros": [
+        "Boa integração Web3",
+        "Boa profundidade em futuros",
+        "Compatível com desconto em OKB",
+        "Adequada para utilizadores avançados"
+      ],
+      "cons": [
+        "Interface mais complexa para iniciantes",
+        "Tem restrições geográficas",
+        "Algumas funções exigem mais experiência"
+      ],
+      "bestFor": "Boa escolha para quem combina derivados, Web3 e um perfil de trading mais avançado.",
+      "tutorial": [
+        "Abra o link de registo da OKX",
+        "Registe-se com email ou telefone",
+        "Confirme o código",
+        "Conclua a verificação de identidade",
+        "Comece a negociar mantendo o rebate cryptore"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da OKX?",
+          "a": "Spot: Maker 0.08% e Taker 0.1%. Futuros: Maker 0.02% e Taker 0.05%. O OKB pode reduzir ainda mais a taxa."
+        },
+        {
+          "q": "Que rebate oferece a OKX?",
+          "a": "Atualmente, o link cryptore mantém um rebate de 20%."
+        },
+        {
+          "q": "Para quem faz mais sentido a OKX?",
+          "a": "Para utilizadores que valorizam derivados, ferramentas avançadas e integração Web3."
+        }
+      ]
+    },
+    "bybit": {
+      "description": "A Bybit é especialmente popular entre traders de futuros graças à interface fluida e ao ecossistema de copy trading.",
+      "pros": [
+        "Boa experiência em futuros",
+        "Rebate de 33%",
+        "Copy trading desenvolvido",
+        "Listagens rápidas de ativos populares"
+      ],
+      "cons": [
+        "Tem restrições em algumas regiões",
+        "O mercado spot é menos profundo que o da Binance",
+        "A qualidade do suporte pode variar"
+      ],
+      "bestFor": "Indicada para traders de derivados e para quem procura um rebate mais alto.",
+      "tutorial": [
+        "Abra o link de registo da Bybit",
+        "Crie a conta com email ou telefone",
+        "Complete a verificação básica",
+        "Faça KYC se precisar",
+        "Negocie mantendo o rebate de 33%"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da Bybit?",
+          "a": "Spot: Maker/Taker de 0.1%. Futuros: Maker 0.02% e Taker 0.055%."
+        },
+        {
+          "q": "Que rebate oferece a Bybit?",
+          "a": "Com o link cryptoreba, a condição atual é um rebate de 33%."
+        },
+        {
+          "q": "A Bybit é boa para futuros?",
+          "a": "Sim. Continua a ser uma das plataformas mais bem avaliadas para negociar derivados."
+        }
+      ]
+    },
+    "bitget": {
+      "description": "A Bitget é conhecida pela simplicidade, pelo copy trading e pelo rebate fixo de 20%.",
+      "pros": [
+        "Rebate fixo de 20%",
+        "Bom sistema de copy trading",
+        "Interface amigável para iniciantes",
+        "Conta com fundo de proteção"
+      ],
+      "cons": [
+        "Menor liquidez que as líderes",
+        "Marca mais recente",
+        "Menos ferramentas avançadas"
+      ],
+      "bestFor": "Muito indicada para iniciantes que querem um rebate simples e uma interface fácil.",
+      "tutorial": [
+        "Abra o link de registo da Bitget",
+        "Registe-se com email ou telefone",
+        "Complete a validação básica",
+        "Faça KYC se necessário",
+        "Comece a negociar mantendo o rebate de 20%"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da Bitget?",
+          "a": "Spot: Maker/Taker de 0.1%. Futuros: Maker 0.02% e Taker 0.06%."
+        },
+        {
+          "q": "Que rebate oferece a Bitget?",
+          "a": "Com o link atual da cryptore, o rebate fixo é de 20%."
+        },
+        {
+          "q": "A Bitget é boa para iniciantes?",
+          "a": "Sim. Tem uma curva de entrada relativamente simples e o copy trading é fácil de usar."
+        }
+      ]
+    },
+    "gate": {
+      "description": "A Gate.io é uma plataforma veterana conhecida pela ampla cobertura de altcoins e por manter um rebate fixo de 20%.",
+      "pros": [
+        "Grande oferta de altcoins e pares",
+        "Longa trajetória no mercado",
+        "Rebate fixo de 20%",
+        "Desconto adicional com GT"
+      ],
+      "cons": [
+        "Interface carregada",
+        "A liquidez de moedas pequenas varia bastante",
+        "As regras regionais podem mudar"
+      ],
+      "bestFor": "Muito boa para utilizadores interessados em altcoins e mercados menos comuns.",
+      "tutorial": [
+        "Abra o link de registo da Gate.io",
+        "Registe-se com email",
+        "Confirme o email",
+        "Complete o KYC se necessário",
+        "Negocie mantendo o rebate com CRYPTORE"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da Gate.io?",
+          "a": "Spot: Maker/Taker de 0.1%. Futuros: Maker 0.015% e Taker 0.05%. O GT pode reduzir o custo efetivo."
+        },
+        {
+          "q": "Que rebate oferece a Gate.io?",
+          "a": "Com o link CRYPTORE, o rebate atual é de 20% fixos."
+        },
+        {
+          "q": "A Gate.io é boa para altcoins?",
+          "a": "Sim. Continua a destacar-se pela variedade de mercados e listagens menos convencionais."
+        }
+      ]
+    },
+    "kucoin": {
+      "description": "A KuCoin atrai utilizadores pelo rebate elevado e pela ampla cobertura de altcoins. Neste momento, o grande destaque é o rebate de 60%.",
+      "pros": [
+        "Rebate de 60%",
+        "Ampla cobertura de altcoins",
+        "Desconto com KCS",
+        "Inclui spot, futuros e produtos earn"
+      ],
+      "cons": [
+        "Indisponível em algumas regiões",
+        "Menor profundidade em ativos pequenos",
+        "O KYC ficou mais exigente"
+      ],
+      "bestFor": "Excelente opção para quem procura rebate alto e uma oferta maior de tokens.",
+      "tutorial": [
+        "Abra o link de registo da KuCoin",
+        "Crie a conta com email ou telefone",
+        "Confirme o código",
+        "Complete o KYC se necessário",
+        "Comece a negociar mantendo o rebate de 60%"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da KuCoin?",
+          "a": "Spot: Maker/Taker de 0.1%. Futuros: Maker 0.02% e Taker 0.06%. Com KCS, a taxa efetiva pode baixar mais."
+        },
+        {
+          "q": "Que rebate oferece a KuCoin?",
+          "a": "Com o link cryptore, a condição atual é um rebate de 60%."
+        },
+        {
+          "q": "Para quem a KuCoin é mais indicada?",
+          "a": "Para utilizadores que priorizam rebates altos e uma oferta mais ampla de altcoins."
+        }
+      ]
+    },
+    "huobi": {
+      "description": "A Huobi, hoje conhecida como HTX em vários mercados, continua a ser uma marca histórica com rebate atual de 30%.",
+      "pros": [
+        "Rebate de 30%",
+        "Marca com longa trajetória",
+        "Compatível com desconto em HT",
+        "Boa cobertura de spot e futuros"
+      ],
+      "cons": [
+        "A disponibilidade regional pode variar",
+        "Liquidez abaixo das líderes",
+        "Mercados pequenos com profundidade desigual"
+      ],
+      "bestFor": "Boa opção para quem prefere uma marca veterana com rebate fixo de 30%.",
+      "tutorial": [
+        "Abra o link de registo da Huobi",
+        "Registe-se com email ou telefone",
+        "Confirme o código",
+        "Faça KYC se necessário",
+        "Comece a negociar mantendo o rebate de 30%"
+      ],
+      "faq": [
+        {
+          "q": "Quais são as comissões da Huobi?",
+          "a": "Spot: Maker/Taker de 0.2%. Futuros: Maker 0.02% e Taker 0.05%. O HT pode reduzir o custo efetivo."
+        },
+        {
+          "q": "Que rebate oferece a Huobi?",
+          "a": "Com o link cryptore, o rebate atual é de 30%."
+        },
+        {
+          "q": "Porque aparece como Huobi e também como HTX?",
+          "a": "Em vários mercados a marca usada é HTX, embora muitos utilizadores continuem a referir-se à plataforma como Huobi."
+        }
+      ]
+    }
+  },
+  "calculator": {
+    "title": "Calculadora de comissões",
+    "subtitle": "Introduza o volume mensal e compare a poupança estimada entre corretoras.",
+    "monthlyVolume": "Volume mensal (USD)",
+    "tradeType": "Tipo de trading",
+    "spot": "Spot",
+    "futures": "Futuros",
+    "results": "Resultados da comparação",
+    "exchange": "Corretora",
+    "monthlyFee": "Comissão mensal",
+    "monthlyRebate": "Rebate mensal",
+    "yearlySavings": "Poupança anual",
+    "recommended": "Recomendado",
+    "noVolume": "Introduza um volume para ver os resultados",
+    "estimateNote": "* Cálculo baseado na média Maker/Taker. Não inclui níveis VIP nem descontos por token da exchange."
+  },
+  "about": {
+    "title": "O que é um rebate numa exchange cripto?",
+    "subtitle": "Perceba a mecânica do rebate e use-a para reduzir os seus custos de trading.",
+    "whatTitle": "O que significa rebate?",
+    "whatDesc": "É a devolução de parte da comissão de trading quando se regista através de um link ou código promocional.",
+    "howTitle": "Como funciona?",
+    "step1": "Regista-se na exchange através de um link da CryptoRebate",
+    "step2": "Negocia normalmente",
+    "step3": "A exchange devolve parte da comissão segundo a campanha em vigor",
+    "step4": "O rebate costuma ser creditado diretamente na conta da exchange",
+    "costTitle": "Isto aumenta os meus custos?",
+    "costDesc": "Não. Usar um link de rebate normalmente não aumenta as comissões e, nalguns casos, até acrescenta um desconto.",
+    "riskTitle": "Aviso de risco",
+    "riskDesc": "A CryptoRebate não fornece aconselhamento de investimento. A informação do site tem apenas caráter informativo.",
+    "faqTitle": "Perguntas frequentes",
+    "faq1Q": "Qual é a diferença entre rebate e desconto direto?",
+    "faq1A": "O desconto reduz a comissão imediatamente; o rebate devolve uma parte depois da cobrança.",
+    "faq2Q": "O rebate altera a experiência de uso?",
+    "faq2A": "Não. Depois do registo, continua a usar a exchange da mesma forma que qualquer outro utilizador.",
+    "faq3Q": "O rebate mantém-se sempre?",
+    "faq3A": "Depende das regras atualizadas da exchange e do estado da conta."
+  },
+  "common": {
+    "learnMore": "Saber mais",
+    "getStarted": "Começar",
+    "backToList": "Voltar à lista",
+    "share": "Partilhar",
+    "disclaimer": "Aviso: negociar criptomoedas envolve risco. A informação deste site é apenas de referência e não constitui aconselhamento financeiro.",
+    "copyright": "© {year} CryptoRebate. Todos os direitos reservados.",
+    "relatedExchanges": "Corretoras relacionadas"
+  },
+  "disclosure": {
+    "title": "Divulgação de afiliados",
+    "subtitle": "A CryptoRebate explica de forma transparente o seu modelo de receita e as suas parcerias.",
+    "howWeEarnTitle": "Como geramos receita",
+    "howWeEarnDesc": "Se um utilizador se registar e negociar através dos nossos links, podemos receber uma comissão de afiliado da exchange.",
+    "noCostTitle": "Isto não aumenta o seu custo",
+    "noCostDesc": "Registar-se pelos nossos links não costuma aumentar as comissões. A compensação é normalmente paga pela própria exchange.",
+    "partnersTitle": "Parceiros atuais",
+    "partnersDesc": "Atualmente colaboramos com as seguintes plataformas:",
+    "partner1": "Binance - uma das maiores plataformas em liquidez e variedade",
+    "partner2": "OKX - forte em Web3 e derivados",
+    "partner3": "Bybit - muito popular em futuros e copy trading",
+    "partner4": "Bitget - simples de usar e forte em copy trading",
+    "partner5": "Gate.io - plataforma veterana com grande cobertura de altcoins",
+    "partner6": "KuCoin - rebate elevado e mercado alargado de altcoins",
+    "partner7": "Huobi - marca histórica também conhecida como HTX",
+    "commitmentTitle": "O nosso compromisso",
+    "commitmentDesc": "Mesmo com relações de afiliados, tentamos manter a informação útil, atualizada e honesta para o utilizador.",
+    "questionsTitle": "Tem dúvidas?",
+    "questionsDesc": "Se algo não estiver claro sobre rebates, parceiros ou dados do site, vale a pena confirmar antes de se registar."
+  },
+  "legal": {
+    "title": "Privacidade e termos",
+    "subtitle": "Leia a nossa política de dados e a limitação de responsabilidade antes de usar o site.",
+    "privacyTitle": "Política de privacidade",
+    "dataCollectionTitle": "Que dados recolhemos?",
+    "dataCollectionDesc": "A CryptoRebate tenta minimizar a recolha de dados e limita-se a informação técnica básica.",
+    "dataItem1": "Analítica básica, como tráfego anónimo e dados do navegador",
+    "dataItem2": "Cookies apenas para guardar preferências como o idioma",
+    "dataItem3": "Não recolhemos dados das suas contas de trading nem informação financeira pessoal",
+    "referralLinksTitle": "Sobre os links de afiliados",
+    "referralLinksDesc": "Ao clicar num link, será encaminhado para o site oficial da exchange. A partir daí, o registo e o tratamento de dados dependem da própria plataforma.",
+    "termsTitle": "Termos de utilização",
+    "noAdviceTitle": "Não é aconselhamento de investimento",
+    "noAdviceDesc": "A informação do site tem fins informativos e não constitui aconselhamento de investimento, jurídico ou fiscal.",
+    "accuracyTitle": "Exatidão da informação",
+    "accuracyDesc": "Tentamos manter rebates e comissões atualizados, mas as condições podem mudar a qualquer momento.",
+    "liabilityTitle": "Limitação de responsabilidade",
+    "liabilityDesc": "A CryptoRebate não se responsabiliza por perdas resultantes do uso da informação do site, links externos ou alterações nas políticas da exchange.",
+    "changesTitle": "Alterações de política",
+    "changesDesc": "Se estas políticas mudarem de forma importante, esta página será atualizada."
+  },
+  "tags": {
+    "most-popular": "Popular",
+    "highest-volume": "Maior volume",
+    "beginner-friendly": "Boa para iniciantes",
+    "low-fees": "Baixas comissões",
+    "web3-wallet": "Carteira Web3",
+    "professional": "Profissional",
+    "futures-leader": "Forte em futuros",
+    "fast-listing": "Listagens rápidas",
+    "copy-trading": "Copy trading",
+    "high-rebate": "Rebate alto",
+    "most-tokens": "Mais tokens",
+    "veteran": "Veterana"
+  }
+}

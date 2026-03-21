@@ -1,40 +1,61 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { exchanges } from "@/data/exchanges";
+import { SITE_NAME } from "@/lib/constants";
 
 export function Footer() {
   const t = useTranslations();
   const year = new Date().getFullYear();
+  const footerExchanges = [...exchanges].sort((a, b) => a.order - b.order);
+  const brandTagline = t("metadata.siteTagline");
 
   return (
-    <footer className="border-t border-border/40 bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white text-sm font-bold">
-                CR
-              </div>
-              <span className="text-lg font-bold">CryptoRebate</span>
+    <footer className="border-t border-border/50 bg-gradient-to-b from-background to-muted/20">
+      <div className="mx-auto max-w-6xl px-4 py-14">
+        <div className="grid items-stretch gap-5 md:grid-cols-3">
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-5 shadow-sm backdrop-blur-sm">
+            <div>
+              <Image
+                src="/images/brand/cryptorebate-wordmark.svg"
+                alt={`${SITE_NAME} logo`}
+                width={220}
+                height={44}
+                className="h-11 w-auto dark:hidden"
+              />
+              <Image
+                src="/images/brand/cryptorebate-wordmark-dark.svg"
+                alt={`${SITE_NAME} logo`}
+                width={220}
+                height={44}
+                className="hidden h-11 w-auto dark:block"
+              />
+              <div className="mt-2 text-xs font-medium text-muted-foreground">{brandTagline}</div>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {t("metadata.siteDescription")}
             </p>
           </div>
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">{t("nav.exchanges")}</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/exchanges/binance" className="hover:text-foreground transition-colors">Binance</Link></li>
-              <li><Link href="/exchanges/okx" className="hover:text-foreground transition-colors">OKX</Link></li>
-              <li><Link href="/exchanges/bybit" className="hover:text-foreground transition-colors">Bybit</Link></li>
-              <li><Link href="/exchanges/bitget" className="hover:text-foreground transition-colors">Bitget</Link></li>
-              <li><Link href="/exchanges/gate" className="hover:text-foreground transition-colors">Gate.io</Link></li>
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-5 shadow-sm backdrop-blur-sm">
+            <h3 className="text-sm font-semibold tracking-tight">{t("nav.exchanges")}</h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              {footerExchanges.map((exchange) => (
+                <li key={exchange.slug}>
+                  <Link
+                    href={`/exchanges/${exchange.slug}`}
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {exchange.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">{t("common.learnMore")}</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-5 shadow-sm backdrop-blur-sm">
+            <h3 className="text-sm font-semibold tracking-tight">{t("common.learnMore")}</h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
               <li><Link href="/calculator" className="hover:text-foreground transition-colors">{t("nav.calculator")}</Link></li>
               <li><Link href="/about" className="hover:text-foreground transition-colors">{t("nav.about")}</Link></li>
               <li><Link href="/disclosure" className="hover:text-foreground transition-colors">{t("nav.disclosure")}</Link></li>

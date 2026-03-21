@@ -12,6 +12,7 @@ import { calculateSavings } from "@/lib/rebate";
 import { Crown } from "lucide-react";
 
 type TradeType = "spot" | "futures";
+const MAX_MONTHLY_VOLUME = 100000000;
 
 export function CalculatorForm() {
   const t = useTranslations("calculator");
@@ -20,7 +21,7 @@ export function CalculatorForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value.replace(/,/g, "")) || 0;
-    setVolume(Math.min(val, 5000000));
+    setVolume(Math.min(val, MAX_MONTHLY_VOLUME));
   };
 
   const results = exchanges
@@ -66,12 +67,12 @@ export function CalculatorForm() {
               <Slider
                 value={[volume]}
                 onValueChange={(v) => setVolume(Array.isArray(v) ? v[0] : v)}
-                max={2000000}
+                max={MAX_MONTHLY_VOLUME}
                 min={1000}
                 step={1000}
                 className="flex-1"
               />
-              <div className="relative w-36">
+              <div className="relative w-44">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                   $
                 </span>
@@ -147,7 +148,7 @@ export function CalculatorForm() {
             ))}
 
             <p className="text-xs text-muted-foreground mt-2">
-              * 基于挂单/吃单均价估算，未计入 VIP 等级折扣和平台币抵扣。返佣区间取决于交易量等级，具体以交易所规则为准。
+              {t("estimateNote")}
             </p>
           </div>
         ) : (
