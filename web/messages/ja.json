@@ -462,7 +462,7 @@
     "privacyTitle": "プライバシーポリシー",
     "dataCollectionTitle": "収集するデータ",
     "dataCollectionDesc": "CryptoRebate は必要最低限の技術情報のみを扱うようにしています。",
-    "dataItem1": "匿名のトラフィック情報やブラウザ情報などの基本分析データ",
+    "dataItem1": "同意ベースの分析: 同意後にのみ、匿名のページ閲覧、コンテンツ利用、紹介クリック統計を収集します",
     "dataItem2": "言語設定保存のための Cookie",
     "dataItem3": "取引口座や個人の金融データは収集しません",
     "referralLinksTitle": "紹介リンクについて",
@@ -490,5 +490,12 @@
     "high-rebate": "高リベート",
     "most-tokens": "銘柄数が多い",
     "veteran": "老舗"
+  },
+  "consent": {
+    "title": "分析設定",
+    "description": "取引所ガイド、GEOページ、紹介リンクのクリック状況を把握するための、プライバシー配慮型分析を許可してください。収集は同意後にのみ行います。",
+    "accept": "分析を許可",
+    "decline": "今はしない",
+    "learnMore": "プライバシーと利用規約"
   }
 }

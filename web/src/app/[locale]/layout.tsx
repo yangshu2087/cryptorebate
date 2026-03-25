@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { AnalyticsConsentBanner } from "@/components/analytics/analytics-consent-banner";
 import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 import { getLanguageTag, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import {
@@ -130,6 +131,7 @@ export default async function LocaleLayout({
             <div className="flex min-h-screen flex-col">
               <Header />
               <main className="flex-1">{children}</main>
+              <AnalyticsConsentBanner />
               <Footer />
             </div>
           </NextIntlClientProvider>

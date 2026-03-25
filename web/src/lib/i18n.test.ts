@@ -41,4 +41,25 @@ describe("i18n helpers", () => {
 
     expect(alternates["x-default"]).toBe(`${SITE_URL}/${DEFAULT_LOCALE}/legal`);
   });
+
+  it("supports locale subsets for GEO pages", () => {
+    const locales = ["zh", "en"] as const;
+    const alternates = getLocaleAlternates("/exchanges/binance/referral-code", locales);
+    const alternateUrls = getLocaleAlternateUrls(
+      "/exchanges/binance/referral-code",
+      locales
+    );
+
+    expect(alternates).toEqual({
+      zh: "/zh/exchanges/binance/referral-code",
+      en: "/en/exchanges/binance/referral-code",
+      "x-default": "/en/exchanges/binance/referral-code",
+    });
+
+    expect(alternateUrls).toEqual({
+      zh: `${SITE_URL}/zh/exchanges/binance/referral-code`,
+      en: `${SITE_URL}/en/exchanges/binance/referral-code`,
+      "x-default": `${SITE_URL}/en/exchanges/binance/referral-code`,
+    });
+  });
 });

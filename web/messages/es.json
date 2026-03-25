@@ -462,7 +462,7 @@
     "privacyTitle": "Política de privacidad",
     "dataCollectionTitle": "¿Qué datos recopilamos?",
     "dataCollectionDesc": "CryptoRebate intenta minimizar la recopilación de datos y se limita a información técnica básica.",
-    "dataItem1": "Analítica básica, como tráfico anónimo y datos del navegador",
+    "dataItem1": "Analítica basada en consentimiento: vistas de página anónimas, uso de contenido y estadísticas de clics de referidos solo después de tu consentimiento",
     "dataItem2": "Cookies solo para guardar preferencias como el idioma",
     "dataItem3": "No recopilamos datos de tus cuentas de trading ni información financiera personal",
     "referralLinksTitle": "Sobre los enlaces de afiliación",
@@ -490,5 +490,12 @@
     "high-rebate": "Rebate alto",
     "most-tokens": "Más tokens",
     "veteran": "Veterana"
+  },
+  "consent": {
+    "title": "Preferencias de analítica",
+    "description": "Permite una analítica respetuosa con la privacidad para medir el uso de guías, páginas GEO y clics de referidos. Solo recopilamos estos datos después de tu consentimiento.",
+    "accept": "Permitir analítica",
+    "decline": "Ahora no",
+    "learnMore": "Privacidad y términos"
   }
 }

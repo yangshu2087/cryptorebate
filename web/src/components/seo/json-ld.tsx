@@ -6,6 +6,11 @@ interface FAQItem {
   a: string;
 }
 
+interface HowToStep {
+  name: string;
+  text?: string;
+}
+
 export function WebsiteJsonLd({
   locale,
   description,
@@ -102,6 +107,75 @@ export function BreadcrumbJsonLd({
       item: item.url,
     })),
   };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+export function WebPageJsonLd({
+  locale,
+  name,
+  description,
+  url,
+}: {
+  locale?: string;
+  name: string;
+  description?: string;
+  url: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name,
+    description,
+    url,
+    inLanguage: getLanguageTag(locale ?? DEFAULT_LOCALE),
+    isPartOf: {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+export function HowToJsonLd({
+  locale,
+  name,
+  description,
+  url,
+  steps,
+}: {
+  locale?: string;
+  name: string;
+  description?: string;
+  url: string;
+  steps: HowToStep[];
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    url,
+    inLanguage: getLanguageTag(locale ?? DEFAULT_LOCALE),
+    step: steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text ?? step.name,
+    })),
+  };
+
   return (
     <script
       type="application/ld+json"

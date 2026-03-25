@@ -24,8 +24,12 @@
 - 站点默认语言：`en`（保留 `zh` 与其他多语言）
 - 数据质量门禁：`npm run check` + GitHub Actions
 - 域名策略：`www.cryptorebate.app` 永久 301 到 `cryptorebate.app`
+- 生产项目：Vercel `cryptorebate`，Root Directory=`web`
+- GEO 路由：每个交易所有 6 类子页，当前线上共 462 个 GEO URL
+- 分析策略：默认不采集，用户同意后才初始化 PostHog 并发送点击日志
 
 ## 当前覆盖快照
 - 交易所（7）：Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi/HTX
 - 语种（11）：en、zh、zh-tw、ja、ko、ru、es、pt、vi、th、hi
 - 品牌资产主路径：`web/public/images/brand/*`
+- 最小 API：`GET /api/exchanges`、`POST /api/clicks`

@@ -9,6 +9,12 @@
 3. Owner 获得返佣收益
 4. 平台实时展示返佣数据和收益情况
 
+当前阶段说明：
+- Web 产品站、11 语种、多交易所比较页与 6 类 GEO 子页已上线
+- 当前线上主域已切到 `cryptorebate.app` 最新版本
+- P0 后端能力已开始补齐：已有 `GET /api/exchanges` 与 consent-gated `POST /api/clicks`
+- 下一阶段重点从“把页面做出来”转向“让 GSC 正常发现并沉淀真实 query，再决定下一批长尾页”
+
 ## 2. 核心目标
 1. 建立全球可访问的加密货币返佣 Web 平台
 2. 用清晰的信息架构提高注册转化
@@ -44,6 +50,12 @@
 - 交易所页支持标准化字段：返佣比例、适用条件、更新时间、风险提示
 - 推广资产中心可导出基础素材：开户链接、plain text 文案、CSV
 - 渠道归因最小闭环跑通：UTM / referrer / page_url 进入日志与统计
+
+当前 P0 落地状态：
+- 已完成：Web 页面、11 语种、7 家交易所、GEO 内容集群、`GET /api/exchanges`
+- 已完成：`POST /api/clicks` 基础采集入口，字段含 `utm` / `referrer` / `page_url` / `timestamp`
+- 已完成：分析 consent gate，默认不采集，用户同意后再初始化 PostHog 与点击日志
+- 待继续：把服务端点击日志接入可查询存储，形成真正的来源/收益看板
 
 ### P1
 - 有 SEO 落地页和内容页开始吃流量

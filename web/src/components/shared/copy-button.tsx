@@ -4,13 +4,28 @@ import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import {
+  captureAnalyticsEvent,
+  type AnalyticsProperties,
+} from "@/lib/posthog-client";
+import { queueClickLog } from "@/lib/click-log";
 
-export function CopyButton({ text }: { text: string }) {
+export function CopyButton({
+  text,
+  analytics,
+}: {
+  text: string;
+  analytics?: AnalyticsProperties;
+}) {
   const [copied, setCopied] = useState(false);
   const t = useTranslations("exchanges");
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(text);
+    captureAnalyticsEvent("invite code copied", analytics);
+    queueClickLog("invite code copied", analytics, {
+      targetUrl: `code:${text}`,
+    });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

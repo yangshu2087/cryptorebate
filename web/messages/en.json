@@ -462,7 +462,7 @@
     "privacyTitle": "Privacy Policy",
     "dataCollectionTitle": "Data Collection",
     "dataCollectionDesc": "CryptoRebate collects only minimal data necessary for the website to function properly:",
-    "dataItem1": "Basic analytics: anonymous statistics such as page views and traffic sources",
+    "dataItem1": "Consent-based analytics: anonymous page views, content usage, and referral-click statistics after you opt in",
     "dataItem2": "Cookies: used only to save your language preference",
     "dataItem3": "We do not collect, store, or process any personal identity information or trading data",
     "referralLinksTitle": "Referral Links",
@@ -490,5 +490,12 @@
     "high-rebate": "High Rebate",
     "most-tokens": "Most Tokens",
     "veteran": "Veteran Exchange"
+  },
+  "consent": {
+    "title": "Analytics preferences",
+    "description": "Allow privacy-friendly analytics so we can measure exchange guide usage, GEO pages, and referral clicks. We only collect this after you opt in.",
+    "accept": "Allow analytics",
+    "decline": "Not now",
+    "learnMore": "Privacy & Terms"
   }
 }

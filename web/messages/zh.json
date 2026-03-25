@@ -462,7 +462,7 @@
     "privacyTitle": "隐私政策",
     "dataCollectionTitle": "数据收集",
     "dataCollectionDesc": "CryptoRebate 仅收集最少量的数据以保障网站正常运行：",
-    "dataItem1": "基础分析数据：页面访问量、访问来源等匿名统计信息",
+    "dataItem1": "基于同意的分析：仅在你同意后采集匿名页面浏览、内容使用和返佣点击统计",
     "dataItem2": "Cookies：仅用于保存你的语言偏好设置",
     "dataItem3": "我们不收集、存储任何个人身份信息或交易数据",
     "referralLinksTitle": "推荐链接说明",
@@ -490,5 +490,12 @@
     "high-rebate": "高返佣",
     "most-tokens": "币种最多",
     "veteran": "老牌交易所"
+  },
+  "consent": {
+    "title": "分析偏好",
+    "description": "允许隐私优先的分析，用于衡量交易所指南、GEO 页面和返佣点击表现。只有在你同意后我们才会采集。",
+    "accept": "允许分析",
+    "decline": "暂不允许",
+    "learnMore": "隐私与条款"
   }
 }

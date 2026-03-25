@@ -6,6 +6,14 @@ import {
   type Locale,
 } from "./constants";
 
+function getLocalesSubset(locales?: readonly string[]) {
+  if (!locales || locales.length === 0) {
+    return LOCALES;
+  }
+
+  return locales;
+}
+
 export function getLanguageTag(locale: string): string {
   return LOCALE_LANGUAGE_TAGS[locale as Locale] ?? LOCALE_LANGUAGE_TAGS[DEFAULT_LOCALE];
 }
@@ -23,10 +31,14 @@ function normalizePathname(pathname = ""): string {
   return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
 }
 
-export function getLocaleAlternates(pathname = ""): Record<string, string> {
+export function getLocaleAlternates(
+  pathname = "",
+  locales?: readonly string[]
+): Record<string, string> {
   const normalizedPathname = normalizePathname(pathname);
+  const supportedLocales = getLocalesSubset(locales);
   const alternates = Object.fromEntries(
-    LOCALES.map((locale) => [
+    supportedLocales.map((locale) => [
       locale,
       normalizedPathname ? `/${locale}${normalizedPathname}` : `/${locale}`,
     ])
@@ -35,19 +47,26 @@ export function getLocaleAlternates(pathname = ""): Record<string, string> {
   return {
     ...alternates,
     "x-default": normalizedPathname
-      ? `/${DEFAULT_LOCALE}${normalizedPathname}`
-      : `/${DEFAULT_LOCALE}`,
+      ? `/${supportedLocales.includes(DEFAULT_LOCALE) ? DEFAULT_LOCALE : supportedLocales[0]}${normalizedPathname}`
+      : `/${supportedLocales.includes(DEFAULT_LOCALE) ? DEFAULT_LOCALE : supportedLocales[0]}`,
   };
 }
 
-export function getLocaleAlternateUrls(pathname = ""): Record<string, string> {
+export function getLocaleAlternateUrls(
+  pathname = "",
+  locales?: readonly string[]
+): Record<string, string> {
+  const supportedLocales = getLocalesSubset(locales);
   const alternates = Object.fromEntries(
-    LOCALES.map((locale) => [locale, getLocalizedUrl(locale, pathname)])
+    supportedLocales.map((locale) => [locale, getLocalizedUrl(locale, pathname)])
   );
 
   return {
     ...alternates,
-    "x-default": getLocalizedUrl(DEFAULT_LOCALE, pathname),
+    "x-default": getLocalizedUrl(
+      supportedLocales.includes(DEFAULT_LOCALE) ? DEFAULT_LOCALE : supportedLocales[0],
+      pathname
+    ),
   };
 }
 

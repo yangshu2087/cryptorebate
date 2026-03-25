@@ -52,7 +52,12 @@ export function ExchangeFilters() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sorted.map((exchange) => (
-          <ExchangeCard key={exchange.slug} exchange={exchange} />
+          <ExchangeCard
+            key={exchange.slug}
+            exchange={exchange}
+            pageType="exchanges_list"
+            showSeoLinks
+          />
         ))}
       </div>
     </div>

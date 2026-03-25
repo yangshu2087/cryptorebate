@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { exchanges } from "@/data/exchanges";
 import { calculateSavings } from "@/lib/rebate";
+import { captureAnalyticsEvent } from "@/lib/posthog-client";
 
 const MAX_MONTHLY_VOLUME = 100000000;
 
 export function SavingsEstimator() {
+  const locale = useLocale();
   const t = useTranslations("home");
   const [volume, setVolume] = useState(10000);
+  const hasTrackedInitialVolume = useRef(false);
 
   const handleSliderChange = (value: number | readonly number[]) => {
     setVolume(Array.isArray(value) ? value[0] : value);
@@ -38,6 +41,23 @@ export function SavingsEstimator() {
       isRange: result.isRange,
     };
   });
+
+  useEffect(() => {
+    if (!hasTrackedInitialVolume.current) {
+      hasTrackedInitialVolume.current = true;
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      captureAnalyticsEvent("savings estimator adjusted", {
+        locale,
+        page_type: "home",
+        volume,
+      });
+    }, 600);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [locale, volume]);
 
   return (
     <Card className="border-brand/20 bg-card">

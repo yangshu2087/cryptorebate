@@ -462,7 +462,7 @@
     "privacyTitle": "Chính sách quyền riêng tư",
     "dataCollectionTitle": "Chúng tôi thu thập dữ liệu gì?",
     "dataCollectionDesc": "CryptoRebate cố gắng tối thiểu hóa việc thu thập dữ liệu và chỉ sử dụng thông tin kỹ thuật trong phạm vi cần thiết.",
-    "dataItem1": "Dữ liệu phân tích cơ bản, ví dụ lưu lượng truy cập ẩn danh và thông tin trình duyệt",
+    "dataItem1": "Phân tích dựa trên sự đồng ý: chỉ thu thập lượt xem trang ẩn danh, mức sử dụng nội dung và thống kê nhấp liên kết giới thiệu sau khi bạn đồng ý",
     "dataItem2": "Cookie chỉ được dùng cho các cài đặt cơ bản như lưu ngôn ngữ ưu tiên",
     "dataItem3": "Chúng tôi không thu thập, lưu trữ hoặc xử lý tài khoản giao dịch hay dữ liệu tài chính cá nhân của bạn",
     "referralLinksTitle": "Giải thích về liên kết giới thiệu",
@@ -490,5 +490,12 @@
     "high-rebate": "Hoàn phí cao",
     "most-tokens": "Nhiều token nhất",
     "veteran": "Thương hiệu lâu năm"
+  },
+  "consent": {
+    "title": "Tùy chọn phân tích",
+    "description": "Cho phép phân tích theo hướng tôn trọng quyền riêng tư để đo lường việc sử dụng hướng dẫn sàn, trang GEO và lượt nhấp liên kết giới thiệu. Chúng tôi chỉ thu thập sau khi bạn đồng ý.",
+    "accept": "Cho phép phân tích",
+    "decline": "Lúc khác",
+    "learnMore": "Quyền riêng tư & điều khoản"
   }
 }

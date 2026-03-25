@@ -462,7 +462,7 @@
     "privacyTitle": "개인정보 처리",
     "dataCollectionTitle": "수집하는 정보",
     "dataCollectionDesc": "CryptoRebate 는 필요한 최소한의 기술 정보만 처리하려고 합니다.",
-    "dataItem1": "익명 트래픽 정보와 브라우저 정보 등 기본 분석 데이터",
+    "dataItem1": "동의 기반 분석: 동의 후에만 익명 페이지 조회, 콘텐츠 이용, 추천 클릭 통계를 수집합니다",
     "dataItem2": "언어 설정 저장을 위한 쿠키",
     "dataItem3": "거래 계정 정보나 개인 금융 데이터는 수집하지 않습니다",
     "referralLinksTitle": "제휴 링크 안내",
@@ -490,5 +490,12 @@
     "high-rebate": "고리베이트",
     "most-tokens": "종목 수 많음",
     "veteran": "오랜 운영"
+  },
+  "consent": {
+    "title": "분석 설정",
+    "description": "거래소 가이드, GEO 페이지, 추천 링크 클릭 성과를 파악하기 위한 프라이버시 중심 분석을 허용해 주세요. 수집은 동의 후에만 진행됩니다.",
+    "accept": "분석 허용",
+    "decline": "지금은 안 함",
+    "learnMore": "개인정보 및 약관"
   }
 }

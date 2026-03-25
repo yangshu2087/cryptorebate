@@ -21,10 +21,24 @@ All routes are under `src/app/[locale]/`:
 | `/` | Homepage with featured exchanges, savings estimator, FAQ |
 | `/exchanges` | Exchange list with sorting and filtering |
 | `/exchanges/[slug]` | Exchange detail page (fees, pros/cons, tutorial, FAQ) |
+| `/exchanges/[slug]/[pageType]` | GEO/SEO cluster pages for referral code, signup/KYC, fees, official site, app download, and safety review |
 | `/calculator` | Fee calculator comparing exchanges by trading volume |
 | `/about` | How rebates work, risk disclosure |
 | `/disclosure` | Affiliate disclosure (revenue model, partner list) |
 | `/legal` | Privacy policy and terms of use |
+
+Current GEO page types:
+
+- `referral-code`
+- `signup-kyc`
+- `fees-rebate`
+- `official-site`
+- `app-download`
+- `safety-review`
+
+Current GEO coverage:
+
+- `7 exchanges × 6 page types × 11 locales = 462` GEO URLs
 
 ## Data Source
 
@@ -95,15 +109,45 @@ npm run dev
 
 Open http://localhost:3000 to view the site.
 
+### Analytics Environment
+
+PostHog is wired in with a client-side setup behind a consent gate. To enable it, add:
+
+```bash
+NEXT_PUBLIC_POSTHOG_TOKEN=your_project_token
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+```
+
+Use `.env.local` for local development, and set the same values in Vercel Project Environment Variables for production.
+
+Analytics behavior:
+
+- PostHog initializes only after the visitor accepts analytics
+- Click logs are sent to `POST /api/clicks` only after consent
+- The consent decision is stored in localStorage and a first-party cookie
+
+## API Endpoints
+
+Minimal API coverage is now available under App Router route handlers:
+
+- `GET /api/exchanges`
+  - Returns all 7 exchanges in display order
+- `GET /api/exchanges?slug=binance`
+  - Returns one exchange payload with numeric rebate fields
+- `POST /api/clicks`
+  - Accepts consent-gated click logs with `event`, `page_url`, `referrer`, `timestamp`, UTM fields, and analytics properties
+  - Current storage backend is Vercel/server logs; this is the P0 ingestion layer, not a reporting database
+
 ## Deployment
 
 Deploy on Vercel with the following configuration:
 
 - **Root Directory**: `web` (the monorepo root contains other projects)
+- **Production Project**: `cryptorebate`
 - **Framework Preset**: Next.js (auto-detected)
 - **Build Command**: default (`next build`)
 - **Output Directory**: default (`.next`)
-- **Domain Redirect**: `www.cryptorebate.app` is forced to `https://cryptorebate.app` by `vercel.json` (301)
+- **Domain Redirect**: `www.cryptorebate.app` is forced to `https://cryptorebate.app` by `vercel.json` (permanent redirect)
 
 Quick deploy commands:
 
@@ -120,11 +164,31 @@ npm run deploy:vercel
 - Referral links are validated as URLs and checked against an approved partner-domain allowlist
 - GitHub Actions workflow `.github/workflows/quality-gates.yml` enforces these checks on `push` and `pull_request`
 
+## Minimal Analytics Events
+
+The first PostHog pass captures:
+
+- `$pageview`
+- `savings estimator adjusted`
+- `exchange cta clicked`
+- `invite code copied`
+- `analytics consent granted`
+
+The implementation lives in:
+
+- `instrumentation-client.ts`
+- `src/lib/analytics-consent.ts`
+- `src/lib/click-log.ts`
+- `src/lib/posthog-client.ts`
+- `src/app/api/clicks/route.ts`
+- `src/components/analytics/tracked-external-link.tsx`
+
 ## SEO Notes
 
 - Each page has `generateMetadata` with title, description, and `alternates` for language variants
 - Canonical URLs point to `https://cryptorebate.app/{locale}/{path}`
 - Exchange detail pages use dynamic metadata with exchange name and rebate rate
+- GEO cluster pages add `WebPage`, `FAQPage`, `BreadcrumbList`, and `HowTo` where appropriate
 - Static data means pages are statically generated at build time for optimal performance
 
 ## Legal / Compliance

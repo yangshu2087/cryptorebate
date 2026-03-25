@@ -14,11 +14,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CopyButton } from "@/components/shared/copy-button";
 import { ExchangeCard } from "@/components/exchanges/exchange-card";
+import { TrackedInternalLink } from "@/components/analytics/tracked-internal-link";
+import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
 import { FAQJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import {
+  getExchangeSeoClusterLabels,
+  getExchangeSeoEntriesForExchange,
+  getExchangeSeoPageHref,
+  getExchangeSeoPageLabels,
+  isSeoContentLocale,
+} from "@/data/exchange-seo";
 import { exchanges, getExchangeBySlug, getAllExchangeSlugs } from "@/data/exchanges";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import {
   ArrowLeft,
+  ArrowRight,
   ExternalLink,
   Check,
   X,
@@ -124,6 +134,9 @@ function ExchangeDetailView({
   const bestFor = t(`exchanges.${slug}.bestFor`);
   const tutorial = t.raw(`exchanges.${slug}.tutorial`) as string[];
   const faq = t.raw(`exchanges.${slug}.faq`) as { q: string; a: string }[];
+  const seoLocale = isSeoContentLocale(locale) ? locale : null;
+  const geoGuides = seoLocale ? getExchangeSeoEntriesForExchange(seoLocale, slug) : [];
+  const geoLabels = seoLocale ? getExchangeSeoClusterLabels(seoLocale) : null;
 
   const relatedExchanges = exchanges
     .filter((e) => e.slug !== slug)
@@ -168,12 +181,30 @@ function ExchangeDetailView({
               {t("exchanges.referralCode")}:
             </span>
             <code className="font-mono font-semibold">{exchange.referralCode}</code>
-            <CopyButton text={exchange.referralCode} />
+            <CopyButton
+              text={exchange.referralCode}
+              analytics={{
+                exchange_slug: exchange.slug,
+                locale,
+                page_type: "exchange_detail_header",
+              }}
+            />
           </div>
-          <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer nofollow sponsored" className="inline-flex items-center gap-2 rounded-md bg-cta px-4 py-2 font-semibold text-black hover:bg-cta-hover transition-colors">
+          <TrackedExternalLink
+            href={exchange.referralLink}
+            target="_blank"
+            rel="noopener noreferrer nofollow sponsored"
+            className="inline-flex items-center gap-2 rounded-md bg-cta px-4 py-2 font-semibold text-black hover:bg-cta-hover transition-colors"
+            analytics={{
+              cta_type: "register",
+              exchange_slug: exchange.slug,
+              locale,
+              page_type: "exchange_detail_header",
+            }}
+          >
             {t("exchanges.register")}
             <ExternalLink className="h-4 w-4" />
-          </a>
+          </TrackedExternalLink>
         </div>
       </div>
 
@@ -197,6 +228,48 @@ function ExchangeDetailView({
 
       {/* Description */}
       <p className="text-base leading-relaxed text-muted-foreground">{description}</p>
+
+      {geoLabels && geoGuides.length > 0 ? (
+        <section className="mt-8">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-bold">{geoLabels.detailHubTitle}</h2>
+            <p className="text-sm leading-7 text-muted-foreground">
+              {geoLabels.detailHubSubtitle}
+            </p>
+          </div>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {geoGuides.map((guide) => {
+              const labels = getExchangeSeoPageLabels(seoLocale!, guide.pageType);
+
+              return (
+                <TrackedInternalLink
+                  key={guide.pageType}
+                  href={getExchangeSeoPageHref(exchange.slug, guide.pageType)}
+                  analytics={{
+                    content_locale: locale,
+                    content_exchange_slug: exchange.slug,
+                    content_page_type: guide.pageType,
+                    content_cluster: "exchange_geo",
+                    content_primary_query: guide.primaryQuery,
+                    hub_page_type: "exchange_detail",
+                    cta_target_type: guide.pageType,
+                  }}
+                  className="block rounded-2xl border border-border/70 bg-background p-5 transition-colors hover:border-brand/30 hover:bg-muted/20"
+                >
+                  <p className="text-sm font-semibold">{labels.nav}</p>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                    {guide.answerBox.body}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand">
+                    {labels.short}
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </TrackedInternalLink>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       {/* Rebate Info */}
       <Card className="mt-8 border-brand/20">
@@ -385,10 +458,21 @@ function ExchangeDetailView({
             </div>
           ))}
         </div>
-        <a href={exchange.referralLink} target="_blank" rel="noopener noreferrer nofollow sponsored" className="mt-6 inline-flex items-center gap-2 rounded-md bg-cta px-6 py-2.5 font-semibold text-black hover:bg-cta-hover transition-colors">
+        <TrackedExternalLink
+          href={exchange.referralLink}
+          target="_blank"
+          rel="noopener noreferrer nofollow sponsored"
+          className="mt-6 inline-flex items-center gap-2 rounded-md bg-cta px-6 py-2.5 font-semibold text-black hover:bg-cta-hover transition-colors"
+          analytics={{
+            cta_type: "register",
+            exchange_slug: exchange.slug,
+            locale,
+            page_type: "exchange_detail_guide",
+          }}
+        >
           {t("exchanges.register")} {exchange.name}
           <ExternalLink className="h-4 w-4" />
-        </a>
+        </TrackedExternalLink>
       </section>
 
       {/* FAQ */}
@@ -415,7 +499,11 @@ function ExchangeDetailView({
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           {relatedExchanges.map((ex) => (
-            <ExchangeCard key={ex.slug} exchange={ex} />
+            <ExchangeCard
+              key={ex.slug}
+              exchange={ex}
+              pageType="exchange_detail_related"
+            />
           ))}
         </div>
       </section>

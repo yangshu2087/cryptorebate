@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { TrackedInternalLink } from "@/components/analytics/tracked-internal-link";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Accordion,
@@ -9,10 +10,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ArrowRight, Shield, BarChart3, Globe, RefreshCw, Users, TrendingUp, Percent, Coins } from "lucide-react";
+import {
+  SEO_PAGE_TYPES,
+  getExchangeSeoClusterLabels,
+  getExchangeSeoGuidesForLocale,
+  getExchangeSeoPageHref,
+  getExchangeSeoPageLabels,
+  isSeoContentLocale,
+} from "@/data/exchange-seo";
 import { exchanges } from "@/data/exchanges";
 import { ExchangeCard } from "@/components/exchanges/exchange-card";
 import { SavingsEstimator } from "@/components/home/savings-estimator";
 import { FAQJsonLd } from "@/components/seo/json-ld";
+import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import { SITE_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
@@ -58,6 +68,9 @@ export default function HomePage() {
   const locale = useLocale();
   const t = useTranslations("home");
   const sortedExchanges = [...exchanges].sort((a, b) => a.order - b.order);
+  const seoLocale = isSeoContentLocale(locale) ? locale : null;
+  const geoGuides = seoLocale ? getExchangeSeoGuidesForLocale(seoLocale) : [];
+  const geoLabels = seoLocale ? getExchangeSeoClusterLabels(seoLocale) : null;
 
   const whyItems = [
     { icon: Shield, titleKey: "why1Title" as const, descKey: "why1Desc" as const },
@@ -121,10 +134,122 @@ export default function HomePage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {sortedExchanges.map((exchange) => (
-            <ExchangeCard key={exchange.slug} exchange={exchange} />
+            <ExchangeCard
+              key={exchange.slug}
+              exchange={exchange}
+              pageType="home_featured"
+            />
           ))}
         </div>
       </section>
+
+      {geoLabels ? (
+        <>
+          <section className="pb-16">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold md:text-3xl">{geoLabels.geoHubTitle}</h2>
+              <p className="mt-2 text-muted-foreground">{geoLabels.geoHubSubtitle}</p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {geoGuides.map((group) => (
+                <Card key={group.exchange.slug} className="border-border/70">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-semibold">{group.exchange.name}</h3>
+                        <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                          {group.guides[0]?.answerBox.body}
+                        </p>
+                      </div>
+                      <div className="shrink-0 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
+                        {group.exchange.spotRebate}
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {group.guides.map((guide) => {
+                        const labels = getExchangeSeoPageLabels(seoLocale!, guide.pageType);
+
+                        return (
+                          <TrackedInternalLink
+                            key={guide.pageType}
+                            href={getExchangeSeoPageHref(group.exchange.slug, guide.pageType)}
+                            analytics={{
+                              content_locale: locale,
+                              content_exchange_slug: group.exchange.slug,
+                              content_page_type: guide.pageType,
+                              content_cluster: "exchange_geo",
+                              content_primary_query: guide.primaryQuery,
+                              hub_page_type: "home",
+                              cta_target_type: guide.pageType,
+                            }}
+                            className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                          >
+                            {labels.short}
+                            <ArrowRight className="h-3 w-3" />
+                          </TrackedInternalLink>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          <section className="pb-16">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold md:text-3xl">
+                {geoLabels.browseByQuestionTitle}
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                {geoLabels.browseByQuestionSubtitle}
+              </p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {SEO_PAGE_TYPES.map((pageType) => {
+                const pageLabels = getExchangeSeoPageLabels(seoLocale!, pageType);
+
+                return (
+                  <Card key={pageType} className="border-border/70">
+                    <CardContent className="p-5">
+                      <h3 className="font-semibold">{pageLabels.nav}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {pageLabels.question}
+                      </p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {geoGuides.map((group) => {
+                          const guide = group.guides.find((item) => item.pageType === pageType);
+                          if (!guide) return null;
+
+                          return (
+                            <TrackedInternalLink
+                              key={`${group.exchange.slug}-${pageType}`}
+                              href={getExchangeSeoPageHref(group.exchange.slug, pageType)}
+                              analytics={{
+                                content_locale: locale,
+                                content_exchange_slug: group.exchange.slug,
+                                content_page_type: pageType,
+                                content_cluster: "exchange_geo",
+                                content_primary_query: guide.primaryQuery,
+                                hub_page_type: "home_question_hub",
+                                cta_target_type: pageType,
+                              }}
+                              className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                            >
+                              {group.exchange.name}
+                              <ArrowRight className="h-3 w-3" />
+                            </TrackedInternalLink>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </section>
+        </>
+      ) : null}
 
       {/* Why Choose Us */}
       <section className="pb-16">
@@ -187,15 +312,21 @@ export default function HomePage() {
                         {exchange.kyc === "required" ? t("kycRequired") : t("kycOptional")}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">
-                        <a
+                        <TrackedExternalLink
                           href={exchange.referralLink}
                           target="_blank"
                           rel="noopener noreferrer nofollow sponsored"
                           className="inline-flex items-center gap-1 rounded-md bg-brand px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-dark transition-colors"
+                          analytics={{
+                            cta_type: "comparison_action",
+                            exchange_slug: exchange.slug,
+                            locale,
+                            page_type: "home_comparison_table",
+                          }}
                         >
                           {t("comparisonAction")}
                           <ArrowRight className="h-3 w-3" />
-                        </a>
+                        </TrackedExternalLink>
                       </td>
                     </tr>
                   ))}

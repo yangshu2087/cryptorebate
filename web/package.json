@@ -10,6 +10,7 @@
     "check": "npm run lint && npm run test && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "seo:search-console": "node ./scripts/analyze-search-console.mjs",
     "deploy:vercel": "npx vercel --prod",
     "deploy:vercel:preview": "npx vercel"
   },
@@ -22,6 +23,7 @@
     "next": "16.1.7",
     "next-intl": "^4.8.3",
     "next-themes": "^0.4.6",
+    "posthog-js": "^1.363.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "shadcn": "^4.0.8",

@@ -462,7 +462,7 @@
     "privacyTitle": "隱私政策",
     "dataCollectionTitle": "我們收集哪些資料？",
     "dataCollectionDesc": "CryptoRebate 盡量減少資料收集，並只在必要範圍內使用技術資訊。",
-    "dataItem1": "基本分析資料，例如匿名流量與瀏覽器資訊",
+    "dataItem1": "基於同意的分析：僅在你同意後收集匿名頁面瀏覽、內容使用與返佣點擊統計",
     "dataItem2": "Cookies 僅用於保存語言偏好等基本設定",
     "dataItem3": "我們不會收集、保存或處理你的交易帳戶與個人財務資料",
     "referralLinksTitle": "推薦連結說明",
@@ -490,5 +490,12 @@
     "high-rebate": "高返佣",
     "most-tokens": "幣種最多",
     "veteran": "老牌平台"
+  },
+  "consent": {
+    "title": "分析偏好",
+    "description": "允許以隱私優先的方式收集分析資料，用於衡量交易所指南、GEO 頁面與返佣點擊表現。只有在你同意後我們才會收集。",
+    "accept": "允許分析",
+    "decline": "暫不允許",
+    "learnMore": "隱私與條款"
   }
 }
