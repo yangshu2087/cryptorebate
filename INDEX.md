@@ -25,6 +25,7 @@
 - 数据质量门禁：`npm run check` + GitHub Actions
 - 域名策略：`www.cryptorebate.app` 永久 301 到 `cryptorebate.app`
 - 生产项目：Vercel `cryptorebate`，Root Directory=`web`
+- 推荐发布方式：仓库根目录 `npx vercel --prod`；`web/` 目录只通过 `npm run deploy:vercel` 间接发布
 - GEO 路由：每个交易所有 6 类子页，当前线上共 462 个 GEO URL
 - 分析策略：默认不采集，用户同意后才初始化 PostHog 并发送点击日志
 

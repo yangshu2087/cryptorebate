@@ -156,6 +156,14 @@ npm run check
 npm run deploy:vercel
 ```
 
+Important deployment rule:
+
+- Do not run raw `npx vercel --prod` from `web/`. The Vercel project already uses `Root Directory = web`, so direct deploys from inside `web/` can resolve to `web/web`.
+- Safe options:
+  - From repo root: `npx vercel --prod`
+  - From `web/`: `npm run deploy:vercel` or `npm run deploy:vercel:preview`
+
+
 ## Data Quality Gates
 
 - `npm run check` runs lint + test + build in one command

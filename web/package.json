@@ -11,8 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seo:search-console": "node ./scripts/analyze-search-console.mjs",
-    "deploy:vercel": "npx vercel --prod",
-    "deploy:vercel:preview": "npx vercel"
+    "deploy:vercel": "bash ../scripts/deploy-vercel.sh production",
+    "deploy:vercel:preview": "bash ../scripts/deploy-vercel.sh preview"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

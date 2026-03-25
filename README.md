@@ -49,11 +49,12 @@
 cd web
 npm run check
 npm run dev
-npm run deploy:vercel
+npm run deploy:vercel   # safe from web/, delegates to repo root
 ```
 
 ## 上线口径
 - Vercel 项目 Root Directory 设为 `web`
 - 当前正式生产项目名为 `cryptorebate`
+- 推荐发布入口：在仓库根目录运行 `npx vercel --prod`，或在 `web/` 目录运行 `npm run deploy:vercel`（会自动回到根目录）
 - 发布前必须先通过 `npm run check`
 - `www.cryptorebate.app` 通过 Vercel 永久重定向收口到 `https://cryptorebate.app`
