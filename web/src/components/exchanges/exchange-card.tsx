@@ -5,31 +5,29 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrackedInternalLink } from "@/components/analytics/tracked-internal-link";
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
-import {
-  getUnifiedSeoEntriesForExchange,
-  getUnifiedSeoPageHref,
-  getUnifiedSeoPageLabels,
-  isSeoContentLocale,
-} from "@/lib/automation/catalog";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import type { Exchange } from "@/types/exchange";
+
+export type ExchangeSeoLink = {
+  pageType: string;
+  primaryQuery: string;
+  label: string;
+  href: string;
+};
 
 export function ExchangeCard({
   exchange,
   pageType = "exchange_card",
   showSeoLinks = false,
+  seoLinks = [],
 }: {
   exchange: Exchange;
   pageType?: string;
   showSeoLinks?: boolean;
+  seoLinks?: ExchangeSeoLink[];
 }) {
   const locale = useLocale();
   const t = useTranslations();
-  const seoLocale = isSeoContentLocale(locale) ? locale : null;
-  const geoEntries =
-    showSeoLinks && seoLocale
-      ? getUnifiedSeoEntriesForExchange(seoLocale, exchange.slug)
-      : [];
   const geoSectionLabel = locale === "zh" ? "问题页入口" : "SEO / GEO guides";
 
   return (
@@ -78,19 +76,16 @@ export function ExchangeCard({
           </div>
         </div>
 
-        {geoEntries.length > 0 ? (
+        {showSeoLinks && seoLinks.length > 0 ? (
           <div className="mt-4 rounded-xl border border-border/70 bg-muted/20 p-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               {geoSectionLabel}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {geoEntries.map((entry) => {
-                const labels = getUnifiedSeoPageLabels(seoLocale!, entry.pageType);
-
-                return (
+              {seoLinks.map((entry) => (
                   <TrackedInternalLink
                     key={entry.pageType}
-                    href={getUnifiedSeoPageHref(exchange.slug, entry.pageType)}
+                    href={entry.href}
                     analytics={{
                       content_locale: locale,
                       content_exchange_slug: exchange.slug,
@@ -102,11 +97,10 @@ export function ExchangeCard({
                     }}
                     className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium transition-colors hover:border-brand/30 hover:text-brand"
                   >
-                    {labels.short}
+                    {entry.label}
                     <ArrowRight className="h-3 w-3" />
                   </TrackedInternalLink>
-                );
-              })}
+                ))}
             </div>
           </div>
         ) : null}

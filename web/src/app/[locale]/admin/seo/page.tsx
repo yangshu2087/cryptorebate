@@ -6,8 +6,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: `SEO Automation Console | ${SITE_NAME}`,
-  description: "Internal operator dashboard for SEO and GEO automation.",
+  title: `SEO / GEO 自动化控制台 | ${SITE_NAME}`,
+  description: "内部使用的 SEO / GEO 自动化运营控制台。",
   robots: {
     index: false,
     follow: false,

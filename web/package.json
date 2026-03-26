@@ -13,6 +13,7 @@
     "seo:search-console": "node ./scripts/analyze-search-console.mjs",
     "automation:generate": "tsx ./scripts/run-automation-pipeline.ts",
     "automation:daily": "tsx ./scripts/run-automation-pipeline.ts --mode daily",
+    "automation:sync-gsc": "tsx ./scripts/run-automation-pipeline.ts --mode gsc",
     "automation:sync-earnings": "tsx ./scripts/run-automation-pipeline.ts --mode earnings",
     "deploy:vercel": "bash ../scripts/deploy-vercel.sh production",
     "deploy:vercel:preview": "bash ../scripts/deploy-vercel.sh preview"
@@ -22,6 +23,8 @@
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "^6.2.1",
+    "google-auth-library": "^10.6.2",
     "lucide-react": "^0.577.0",
     "next": "16.1.7",
     "next-intl": "^4.8.3",

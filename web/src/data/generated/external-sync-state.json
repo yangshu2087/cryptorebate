@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-03-26T05:26:10.793Z",
+  "gsc": {
+    "enabled": false,
+    "status": "disabled",
+    "configured": false,
+    "rowsFetched": 0,
+    "signalsWritten": 0
+  },
+  "partners": [
+    {
+      "exchangeSlug": "binance",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "okx",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "bybit",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "bitget",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "gate",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "kucoin",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    },
+    {
+      "exchangeSlug": "huobi",
+      "enabled": false,
+      "configured": false,
+      "status": "disabled",
+      "recordsFetched": 0,
+      "conversionsWritten": 0,
+      "commissionsWritten": 0
+    }
+  ]
+}

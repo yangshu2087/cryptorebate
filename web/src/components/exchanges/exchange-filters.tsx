@@ -4,13 +4,17 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { exchanges as allExchanges } from "@/data/exchanges";
 import { parseRebate } from "@/lib/rebate";
-import { ExchangeCard } from "./exchange-card";
+import { ExchangeCard, type ExchangeSeoLink } from "./exchange-card";
 
 type SortKey = "rebate" | "fees" | "popularity";
 
 const SORT_OPTIONS: SortKey[] = ["popularity", "rebate", "fees"];
 
-export function ExchangeFilters() {
+export function ExchangeFilters({
+  seoLinksByExchange = {},
+}: {
+  seoLinksByExchange?: Record<string, ExchangeSeoLink[]>;
+}) {
   const t = useTranslations("exchanges");
   const [sort, setSort] = useState<SortKey>("popularity");
 
@@ -57,6 +61,7 @@ export function ExchangeFilters() {
             exchange={exchange}
             pageType="exchanges_list"
             showSeoLinks
+            seoLinks={seoLinksByExchange[exchange.slug] ?? []}
           />
         ))}
       </div>

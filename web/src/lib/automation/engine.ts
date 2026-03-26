@@ -1,7 +1,13 @@
+import fs from "node:fs";
+import path from "node:path";
 import controlPlaneSeed from "@/data/automation/control-plane.json";
-import commissionImports from "@/data/automation/commission-imports.json";
-import conversionImports from "@/data/automation/conversion-imports.json";
-import manualQuerySeeds from "@/data/automation/manual-query-seeds.json";
+import commissionImportsSeed from "@/data/automation/commission-imports.json";
+import conversionImportsSeed from "@/data/automation/conversion-imports.json";
+import manualQuerySeedsSeed from "@/data/automation/manual-query-seeds.json";
+import externalSyncStateSeed from "@/data/generated/external-sync-state.json";
+import gscQuerySignalsSeed from "@/data/generated/gsc-query-signals.json";
+import partnerCommissionsSeed from "@/data/generated/partner-commissions.json";
+import partnerConversionsSeed from "@/data/generated/partner-conversions.json";
 import {
   SEO_CONTENT_LOCALES,
   SEO_PAGE_TYPES,
@@ -23,6 +29,7 @@ import type {
   ContentBrief,
   ConversionEvent,
   EarningsSnapshot,
+  ExternalSourcesState,
   QueryCluster,
   QueryOpportunity,
   QuerySignal,
@@ -83,6 +90,62 @@ const exchangeWeights: Record<string, number> = {
 
 const opportunityThreshold = 58;
 const refreshThreshold = 44;
+
+function resolveAutomationDataPath(...parts: string[]) {
+  return path.join(process.cwd(), "src", "data", ...parts);
+}
+
+function readAutomationJsonSync<T>(parts: string[], fallback: T): T {
+  try {
+    return JSON.parse(fs.readFileSync(resolveAutomationDataPath(...parts), "utf8")) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function getControlPlaneSeed() {
+  return readAutomationJsonSync(
+    ["automation", "control-plane.json"],
+    controlPlaneSeed as AutomationControlPlane
+  );
+}
+
+function getManualQuerySeeds() {
+  return readAutomationJsonSync(["automation", "manual-query-seeds.json"], manualQuerySeedsSeed);
+}
+
+function getManualConversionImports() {
+  return readAutomationJsonSync(["automation", "conversion-imports.json"], conversionImportsSeed);
+}
+
+function getManualCommissionImports() {
+  return readAutomationJsonSync(["automation", "commission-imports.json"], commissionImportsSeed);
+}
+
+function getGeneratedGscSignals() {
+  return readAutomationJsonSync(["generated", "gsc-query-signals.json"], gscQuerySignalsSeed);
+}
+
+function getGeneratedPartnerConversions() {
+  return readAutomationJsonSync(
+    ["generated", "partner-conversions.json"],
+    partnerConversionsSeed
+  );
+}
+
+function getGeneratedPartnerCommissions() {
+  return readAutomationJsonSync(
+    ["generated", "partner-commissions.json"],
+    partnerCommissionsSeed
+  );
+}
+
+function getExternalSourcesState() {
+  return readAutomationJsonSync<ExternalSourcesState>(
+    ["generated", "external-sync-state.json"],
+    externalSyncStateSeed as ExternalSourcesState
+  );
+}
 
 type BaseSeoLocale = (typeof SEO_CONTENT_LOCALES)[number];
 type BaseSeoPageType = (typeof SEO_PAGE_TYPES)[number];
@@ -192,7 +255,7 @@ function buildDynamicSignal(
 }
 
 function normalizeManualSignals(): QuerySignal[] {
-  return (manualQuerySeeds as Array<
+  return (getManualQuerySeeds() as Array<
     Omit<QuerySignal, "id" | "observedAt" | "source"> & { source: QuerySignal["source"] }
   >).map((seed, index) => ({
     id: `manual-${seed.locale}-${seed.exchangeSlug}-${seed.pageType}-${index}`,
@@ -239,7 +302,12 @@ function buildSignals() {
     )
   );
 
-  return [...baseSignals, ...extraSignals, ...normalizeManualSignals()];
+  return [
+    ...baseSignals,
+    ...extraSignals,
+    ...normalizeManualSignals(),
+    ...(getGeneratedGscSignals() as QuerySignal[]),
+  ];
 }
 
 function buildCluster(signal: QuerySignal): QueryCluster {
@@ -729,6 +797,7 @@ function buildAlerts(opportunities: QueryOpportunity[], controlPlane: Automation
 
 function buildRuns(): AutomationRun[] {
   const now = new Date().toISOString();
+  const externalSources = getExternalSourcesState();
   return ([
     "daily_gsc_ingest",
     "daily_query_clustering",
@@ -746,12 +815,21 @@ function buildRuns(): AutomationRun[] {
     status: "success",
     startedAt: now,
     completedAt: now,
-    summary: `${job} completed using repo-driven automation inputs.`,
+    summary:
+      job === "daily_gsc_ingest"
+        ? `GSC sync ${externalSources.gsc.status} (${externalSources.gsc.signalsWritten ?? 0} signals).`
+        : job === "daily_revenue_sync"
+          ? `Partner sync processed ${externalSources.partners.reduce(
+              (sum, item) => sum + item.commissionsWritten + item.conversionsWritten,
+              0
+            )} records.`
+          : `${job} completed using local + external automation inputs.`,
   }));
 }
 
 export function buildAutomationState(): AutomationState {
-  const controlPlane = controlPlaneSeed as AutomationControlPlane;
+  const controlPlane = getControlPlaneSeed();
+  const externalSources = getExternalSourcesState();
   const signals = buildSignals();
   const clusters = signals.map(buildCluster);
   const opportunities = clusters.map(buildOpportunity);
@@ -783,7 +861,7 @@ export function buildAutomationState(): AutomationState {
   const { affiliateClicks, conversions, commissions } = buildAffiliateArtifacts(pages);
   const mergedConversions = [
     ...conversions,
-    ...(conversionImports as Array<Omit<ConversionEvent, "id"> & { id?: string }>).map(
+    ...(getManualConversionImports() as Array<Omit<ConversionEvent, "id"> & { id?: string }>).map(
       (item, index) => ({
       id: item.id ?? `imported-conversion-${index}`,
       exchangeSlug: item.exchangeSlug,
@@ -794,10 +872,21 @@ export function buildAutomationState(): AutomationState {
       status: item.status,
       })
     ),
+    ...(getGeneratedPartnerConversions() as Array<
+      Omit<ConversionEvent, "id"> & { id?: string }
+    >).map((item, index) => ({
+      id: item.id ?? `synced-conversion-${index}`,
+      exchangeSlug: item.exchangeSlug,
+      queryClusterId: item.queryClusterId,
+      registeredAt: item.registeredAt,
+      tradedAt: item.tradedAt,
+      firstDepositUsd: item.firstDepositUsd,
+      status: item.status,
+    })),
   ];
   const mergedCommissions = [
     ...commissions,
-    ...(commissionImports as Array<Omit<CommissionEvent, "id"> & { id?: string }>).map(
+    ...(getManualCommissionImports() as Array<Omit<CommissionEvent, "id"> & { id?: string }>).map(
       (item, index) => ({
       id: item.id ?? `imported-commission-${index}`,
       exchangeSlug: item.exchangeSlug,
@@ -807,6 +896,16 @@ export function buildAutomationState(): AutomationState {
       source: item.source,
       })
     ),
+    ...(getGeneratedPartnerCommissions() as Array<
+      Omit<CommissionEvent, "id"> & { id?: string }
+    >).map((item, index) => ({
+      id: item.id ?? `synced-commission-${index}`,
+      exchangeSlug: item.exchangeSlug,
+      queryClusterId: item.queryClusterId,
+      commissionUsd: item.commissionUsd,
+      recordedAt: item.recordedAt,
+      source: item.source,
+    })),
   ];
   const earnings = buildEarnings(pages, affiliateClicks, mergedConversions, mergedCommissions);
   const { pageRoiDaily, queryRoiDaily } = buildRoiEntries(
@@ -842,6 +941,7 @@ export function buildAutomationState(): AutomationState {
     pageRoiDaily,
     queryRoiDaily,
     alerts,
+    externalSources,
     metrics: {
       totalSignals: signals.length,
       totalOpportunities: opportunities.length,

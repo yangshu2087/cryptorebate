@@ -154,6 +154,8 @@ Quick deploy commands:
 ```bash
 npm run check
 npm run automation:generate
+npm run automation:sync-gsc
+npm run automation:sync-earnings
 npm run deploy:vercel
 ```
 
@@ -181,6 +183,50 @@ Important deployment rule:
 - `src/data/automation/*` stores the control plane and import seeds
 - `src/data/generated/automation-state.json` is the generated automation snapshot
 - `.github/workflows/automation-loop.yml` runs the automation pipeline daily and commits refreshed snapshot output
+- The same automation loop can now ingest real external sources when secrets are configured:
+  - Google Search Console via service-account or refresh-token OAuth
+  - Partner earnings feeds for Binance / OKX / Bybit / Bitget / Gate / KuCoin / Huobi via JSON or CSV endpoints
+- Generated external snapshots are written to:
+  - `src/data/generated/gsc-query-signals.json`
+  - `src/data/generated/partner-conversions.json`
+  - `src/data/generated/partner-commissions.json`
+  - `src/data/generated/external-sync-state.json`
+
+### External Source Environment
+
+Use `web/.env.example` as the reference template.
+
+Core GSC variables:
+
+- `AUTOMATION_GSC_ENABLED`
+- `AUTOMATION_GSC_PROPERTY`
+- `AUTOMATION_GSC_AUTH_MODE`
+- `AUTOMATION_GSC_SERVICE_ACCOUNT_JSON` or `AUTOMATION_GSC_CLIENT_EMAIL` + `AUTOMATION_GSC_PRIVATE_KEY`
+- `AUTOMATION_GSC_CLIENT_ID`
+- `AUTOMATION_GSC_CLIENT_SECRET`
+- `AUTOMATION_GSC_REFRESH_TOKEN`
+
+Partner sync variables follow the pattern:
+
+- `AUTOMATION_PARTNER_<EXCHANGE>_ENABLED`
+- `AUTOMATION_PARTNER_<EXCHANGE>_URL`
+- `AUTOMATION_PARTNER_<EXCHANGE>_FORMAT`
+- `AUTOMATION_PARTNER_<EXCHANGE>_MODE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_AUTH_TYPE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_AUTH_HEADER`
+- `AUTOMATION_PARTNER_<EXCHANGE>_TOKEN`
+
+Where `<EXCHANGE>` is one of:
+
+- `BINANCE`
+- `OKX`
+- `BYBIT`
+- `BITGET`
+- `GATE`
+- `KUCOIN`
+- `HUOBI`
+
+The internal operator console is available at `/en/admin/seo`, but the UI copy is intentionally fixed to Simplified Chinese for operator consistency.
 
 ## Minimal Analytics Events
 

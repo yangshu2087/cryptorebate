@@ -5,6 +5,8 @@ import type {
   AutomationState,
   CommissionEvent,
   ConversionEvent,
+  ExternalSourcesState,
+  QuerySignal,
 } from "./types";
 import { buildAutomationState } from "./engine";
 import { resetAutomationStateCache } from "./catalog";
@@ -27,6 +29,30 @@ export const AUTOMATION_PATHS = {
     "automation",
     "commission-imports.json"
   ),
+  generatedGscSignals: resolvePath(
+    "src",
+    "data",
+    "generated",
+    "gsc-query-signals.json"
+  ),
+  generatedPartnerConversions: resolvePath(
+    "src",
+    "data",
+    "generated",
+    "partner-conversions.json"
+  ),
+  generatedPartnerCommissions: resolvePath(
+    "src",
+    "data",
+    "generated",
+    "partner-commissions.json"
+  ),
+  externalSyncState: resolvePath(
+    "src",
+    "data",
+    "generated",
+    "external-sync-state.json"
+  ),
   snapshotDir: resolvePath("src", "data", "generated"),
   snapshot: resolvePath("src", "data", "generated", "automation-state.json"),
 };
@@ -43,6 +69,14 @@ async function writeJsonFile(filePath: string, value: unknown) {
 
 export async function readControlPlaneFromDisk() {
   return readJsonFile<AutomationControlPlane>(AUTOMATION_PATHS.controlPlane);
+}
+
+export async function readExternalSyncStateFromDisk() {
+  try {
+    return await readJsonFile<ExternalSourcesState>(AUTOMATION_PATHS.externalSyncState);
+  } catch {
+    return null;
+  }
 }
 
 export async function writeControlPlaneToDisk(controlPlane: AutomationControlPlane) {
@@ -83,6 +117,22 @@ export async function appendCommissionsToDisk(
   await writeJsonFile(AUTOMATION_PATHS.commissionImports, merged);
 }
 
+export async function writeGeneratedGscSignalsToDisk(items: QuerySignal[]) {
+  await writeJsonFile(AUTOMATION_PATHS.generatedGscSignals, items);
+}
+
+export async function writeGeneratedPartnerConversionsToDisk(items: ConversionEvent[]) {
+  await writeJsonFile(AUTOMATION_PATHS.generatedPartnerConversions, items);
+}
+
+export async function writeGeneratedPartnerCommissionsToDisk(items: CommissionEvent[]) {
+  await writeJsonFile(AUTOMATION_PATHS.generatedPartnerCommissions, items);
+}
+
+export async function writeExternalSyncStateToDisk(state: ExternalSourcesState) {
+  await writeJsonFile(AUTOMATION_PATHS.externalSyncState, state);
+}
+
 export async function writeAutomationStateSnapshot(state: AutomationState) {
   await writeJsonFile(AUTOMATION_PATHS.snapshot, {
     version: state.version,
@@ -91,6 +141,7 @@ export async function writeAutomationStateSnapshot(state: AutomationState) {
     runs: state.runs,
     metrics: state.metrics,
     alerts: state.alerts,
+    externalSources: state.externalSources,
     signalsPreview: state.signals.slice(0, 120),
     opportunities: state.opportunities.slice(0, 250),
     pages: state.pages.filter((page) => page.id.startsWith("page-")).slice(0, 250),

@@ -16,6 +16,13 @@ export type AutomationDynamicPageType =
 
 export type AutomationSource = "gsc" | "manual" | "analytics" | "partner";
 
+export type ExternalSyncStatus =
+  | "success"
+  | "failed"
+  | "skipped"
+  | "disabled"
+  | "unknown";
+
 export type AutomationLifecycleStage =
   | "discovered"
   | "generated"
@@ -212,6 +219,38 @@ export type AutomationAlert = {
   triggeredAt: string;
 };
 
+export type ExternalGscSyncState = {
+  enabled: boolean;
+  configured: boolean;
+  status: ExternalSyncStatus;
+  authMode?: "service-account" | "refresh-token";
+  property?: string;
+  lastSyncAt?: string;
+  rowsFetched: number;
+  signalsWritten: number;
+  error?: string;
+};
+
+export type ExternalPartnerSyncState = {
+  exchangeSlug: Exchange["slug"];
+  enabled: boolean;
+  configured: boolean;
+  status: ExternalSyncStatus;
+  format?: "json" | "csv";
+  mode?: "combined" | "commissions" | "conversions";
+  lastSyncAt?: string;
+  recordsFetched: number;
+  conversionsWritten: number;
+  commissionsWritten: number;
+  error?: string;
+};
+
+export type ExternalSourcesState = {
+  generatedAt?: string;
+  gsc: ExternalGscSyncState;
+  partners: ExternalPartnerSyncState[];
+};
+
 export type AutomationRun = {
   id: string;
   job:
@@ -268,5 +307,6 @@ export type AutomationState = {
   pageRoiDaily: RoiEntry[];
   queryRoiDaily: RoiEntry[];
   alerts: AutomationAlert[];
+  externalSources: ExternalSourcesState;
   metrics: AutomationMetrics;
 };

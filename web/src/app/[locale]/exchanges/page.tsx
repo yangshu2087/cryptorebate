@@ -60,6 +60,19 @@ export default function ExchangesPage() {
   const geoGuides = seoLocale ? getUnifiedSeoGuidesForLocale(seoLocale) : [];
   const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
   const topOpportunities = seoLocale ? getTopAutomationOpportunities(seoLocale, 9) : [];
+  const seoLinksByExchange = seoLocale
+    ? Object.fromEntries(
+        geoGuides.map((group) => [
+          group.exchange.slug,
+          group.guides.map((guide) => ({
+            pageType: guide.pageType,
+            primaryQuery: guide.primaryQuery,
+            label: getUnifiedSeoPageLabels(seoLocale, guide.pageType).short,
+            href: getUnifiedSeoPageHref(group.exchange.slug, guide.pageType),
+          })),
+        ])
+      )
+    : {};
   const pageTypes = Array.from(
     new Set(geoGuides.flatMap((group) => group.guides.map((guide) => guide.pageType)))
   );
@@ -164,7 +177,7 @@ export default function ExchangesPage() {
         </section>
       ) : null}
 
-      <ExchangeFilters />
+      <ExchangeFilters seoLinksByExchange={seoLinksByExchange} />
     </div>
   );
 }

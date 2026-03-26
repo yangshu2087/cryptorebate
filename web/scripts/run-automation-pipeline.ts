@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 
 import { regenerateAutomationState } from "../src/lib/automation/persistence";
+import { runExternalSync } from "../src/lib/automation/external-sync";
 
 function parseMode() {
   const modeIndex = process.argv.findIndex((arg) => arg === "--mode");
@@ -14,7 +15,17 @@ function parseMode() {
 
 async function main() {
   const mode = parseMode();
-  const state = await regenerateAutomationState();
+  const syncMode =
+    mode === "daily"
+      ? "daily"
+      : mode === "earnings"
+        ? "partners"
+        : mode === "gsc"
+          ? "gsc"
+          : null;
+
+  const syncResult = syncMode ? await runExternalSync(syncMode) : null;
+  const state = syncResult?.state ?? (await regenerateAutomationState());
 
   const payload = {
     mode,
@@ -24,6 +35,7 @@ async function main() {
     publishedPages: state.metrics.publishedPages,
     projectedRevenue: state.metrics.monthlyProjectedRevenueUsd,
     alerts: state.alerts.length,
+    externalSources: state.externalSources,
   };
 
   console.info(JSON.stringify(payload, null, 2));

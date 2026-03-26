@@ -15,6 +15,7 @@ export async function GET(request: Request) {
     {
       data: {
         metrics: state.metrics,
+        externalSources: state.externalSources,
         topOpportunities: getTopAutomationOpportunities(locale, 10),
         topRoiPages: getTopAutomationRoiPages(locale, 10),
         alerts: getAutomationAlerts(locale, 10),

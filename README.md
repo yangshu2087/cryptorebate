@@ -17,6 +17,7 @@
 - 最小后端闭环已补齐：`GET /api/exchanges` 与 `POST /api/clicks`
 - 分析采集已加 consent gate：用户同意前不初始化 PostHog，也不发送点击日志
 - SEO/GEO 自动化闭环已接入：opportunities、pages、ROI、earnings、control APIs、daily automation snapshot
+- GSC 真实 OAuth/拉取与 7 家交易所 partner earnings 外部同步框架已接入，当前只差生产环境凭据与数据源 URL
 - 新增部署与质量门禁：
   - `web/vercel.json`：强制 `www -> apex` 301
   - `web/package.json`：新增 `npm run check` 与 Vercel 一键部署命令
@@ -53,8 +54,22 @@ cd web
 npm run check
 npm run dev
 npm run automation:generate
+npm run automation:sync-gsc
+npm run automation:sync-earnings
 npm run deploy:vercel   # safe from web/, delegates to repo root
 ```
+
+## 外部自动源（GSC / Partner Earnings）
+- GSC 真实拉取已支持两种模式：
+  - Service Account
+  - Refresh Token
+- partner earnings 已支持 7 家交易所按 `URL + JSON/CSV + auth` 外部同步
+- 本地环境变量样例见：`web/.env.example`
+- GitHub Actions 每日 automation loop 已支持读取对应 secrets 并回写：
+  - `web/src/data/generated/gsc-query-signals.json`
+  - `web/src/data/generated/partner-conversions.json`
+  - `web/src/data/generated/partner-commissions.json`
+  - `web/src/data/generated/external-sync-state.json`
 
 ## 上线口径
 - Vercel 项目 Root Directory 设为 `web`

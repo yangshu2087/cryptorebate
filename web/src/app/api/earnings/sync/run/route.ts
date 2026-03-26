@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { regenerateAutomationState } from "@/lib/automation/persistence";
+import { runExternalSync } from "@/lib/automation/external-sync";
+
+export const runtime = "nodejs";
 
 export async function POST() {
-  const state = await regenerateAutomationState();
+  const { state, partners } = await runExternalSync("partners");
 
   return NextResponse.json({
     ok: true,
@@ -12,6 +14,7 @@ export async function POST() {
       opportunities: state.metrics.totalOpportunities,
       publishedPages: state.metrics.publishedPages,
       alerts: state.alerts.length,
+      partnerSync: partners?.reports ?? [],
     },
   });
 }
