@@ -2,6 +2,8 @@ name: CTA Live Audit
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "15 1 * * *"
 
 jobs:
   cta-live-audit:
@@ -27,4 +29,3 @@ jobs:
 
       - name: Run live CTA audit against production
         run: npm run audit:cta
-
