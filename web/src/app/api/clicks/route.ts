@@ -1,5 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { appendClicksToDisk } from "@/lib/automation/persistence";
+import { getExchangeBySlug } from "@/data/exchanges";
 
 type ClickPayload = {
   event: string;
@@ -12,6 +14,15 @@ type ClickPayload = {
   utm_campaign?: string;
   utm_content?: string;
   utm_term?: string;
+  locale?: string;
+  exchange_slug?: string;
+  page_type?: string;
+  query_cluster_id?: string;
+  primary_query?: string;
+  landing_page_key?: string;
+  cta_target_type?: string;
+  session_id?: string;
+  visitor_id?: string;
   properties?: Record<string, string | number | boolean | null>;
 };
 
@@ -87,7 +98,79 @@ function sanitizeClickPayload(body: unknown): ClickPayload | null {
       256
     ),
     utm_term: sanitizeString((body as Record<string, unknown>).utm_term, 256),
+    locale: sanitizeString((body as Record<string, unknown>).locale, 32),
+    exchange_slug: sanitizeString(
+      (body as Record<string, unknown>).exchange_slug,
+      64
+    ),
+    page_type: sanitizeString((body as Record<string, unknown>).page_type, 128),
+    query_cluster_id: sanitizeString(
+      (body as Record<string, unknown>).query_cluster_id,
+      256
+    ),
+    primary_query: sanitizeString(
+      (body as Record<string, unknown>).primary_query,
+      256
+    ),
+    landing_page_key: sanitizeString(
+      (body as Record<string, unknown>).landing_page_key,
+      256
+    ),
+    cta_target_type: sanitizeString(
+      (body as Record<string, unknown>).cta_target_type,
+      64
+    ),
+    session_id: sanitizeString(
+      (body as Record<string, unknown>).session_id,
+      128
+    ),
+    visitor_id: sanitizeString(
+      (body as Record<string, unknown>).visitor_id,
+      128
+    ),
     properties: sanitizeProperties((body as Record<string, unknown>).properties),
+  };
+}
+
+function deriveAttribution(payload: ClickPayload) {
+  const exchangeSlug =
+    payload.exchange_slug ??
+    (typeof payload.properties?.content_exchange_slug === "string"
+      ? payload.properties.content_exchange_slug
+      : undefined);
+  const locale =
+    payload.locale ??
+    (typeof payload.properties?.content_locale === "string"
+      ? payload.properties.content_locale
+      : undefined);
+  const pageType =
+    payload.page_type ??
+    (typeof payload.properties?.content_page_type === "string"
+      ? payload.properties.content_page_type
+      : undefined);
+  const queryClusterId =
+    payload.query_cluster_id ??
+    (typeof payload.properties?.content_cluster === "string"
+      ? payload.properties.content_cluster
+      : undefined);
+  const primaryQuery =
+    payload.primary_query ??
+    (typeof payload.properties?.content_primary_query === "string"
+      ? payload.properties.content_primary_query
+      : undefined);
+
+  return {
+    exchangeSlug,
+    locale,
+    pageType,
+    queryClusterId,
+    primaryQuery,
+    landingPageKey:
+      payload.landing_page_key ??
+      ([locale, exchangeSlug, pageType].filter(Boolean).join(":") || undefined),
+    ctaTargetType: payload.cta_target_type,
+    sessionId: payload.session_id,
+    visitorId: payload.visitor_id,
   };
 }
 
@@ -106,10 +189,12 @@ export async function POST(request: Request) {
   }
 
   const requestHeaders = await headers();
+  const attribution = deriveAttribution(payload);
   console.info(
     "[cryptorebate.click]",
     JSON.stringify({
       ...payload,
+      attribution,
       request_meta: {
         host: requestHeaders.get("host"),
         user_agent: sanitizeString(requestHeaders.get("user-agent"), 256),
@@ -117,6 +202,48 @@ export async function POST(request: Request) {
       },
     })
   );
+
+  if (
+    process.env.VERCEL !== "1" &&
+    attribution.exchangeSlug &&
+    attribution.locale &&
+    attribution.pageType &&
+    attribution.queryClusterId
+  ) {
+    try {
+      const exchange = getExchangeBySlug(attribution.exchangeSlug);
+      if (!exchange) {
+        throw new Error(`Unknown exchange slug: ${attribution.exchangeSlug}`);
+      }
+      await appendClicksToDisk([
+        {
+          exchangeSlug: exchange.slug,
+          locale: attribution.locale,
+          pageType: attribution.pageType,
+          pageUrl: payload.page_url,
+          queryClusterId: attribution.queryClusterId,
+          clickedAt: payload.timestamp,
+          source: "client",
+          dataSource: "real",
+          targetUrl: payload.target_url,
+          sessionId: attribution.sessionId,
+          visitorId: attribution.visitorId,
+          primaryQuery: attribution.primaryQuery,
+          utmSource: payload.utm_source,
+          utmMedium: payload.utm_medium,
+          utmCampaign: payload.utm_campaign,
+          utmContent: payload.utm_content,
+          utmTerm: payload.utm_term,
+          referrer: payload.referrer,
+        },
+      ]);
+    } catch (error) {
+      console.warn(
+        "[cryptorebate.click.persist_failed]",
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  }
 
   return NextResponse.json({ ok: true }, { status: 202 });
 }

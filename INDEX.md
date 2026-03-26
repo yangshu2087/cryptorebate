@@ -15,6 +15,10 @@
 - `revenue-tracking-v1.md`
 - `risk-guardrails-v1.md`
 - `launch-plan-p0-v1.md`
+- `real-data-vs-simulated-v1.md`
+- `admin-console-operator-guide-v1.md`
+- `partner-source-spec-v1.md`
+- `automation-alerts-runbook-v1.md`
 - `brand-assets-usage.md`
 - `logo-redesign-brief.md`
 - `logo-generation-prompts.md`
@@ -30,6 +34,7 @@
 - GEO 路由：每个交易所有 6 类子页，当前线上共 462 个 GEO URL
 - 分析策略：默认不采集，用户同意后才初始化 PostHog 并发送点击日志
 - 自动化架构：repo-driven SEO/GEO loop，生成 opportunities / pages / ROI / earnings / control state
+- 运营看板：`/en/admin/seo`，重点查看 CTA / GSC / Partner 状态卡、真实度分布、失败趋势、最近 7 天变化
 
 ## 当前覆盖快照
 - 交易所（7）：Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi/HTX

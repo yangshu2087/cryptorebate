@@ -147,9 +147,17 @@ export type AffiliateClick = {
   pageUrl: string;
   queryClusterId: string;
   clickedAt: string;
+  source?: "client" | "imported" | "synthetic";
+  dataSource?: "real" | "synthetic";
+  targetUrl?: string;
+  sessionId?: string;
+  visitorId?: string;
+  primaryQuery?: string;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
   referrer?: string;
 };
 
@@ -161,6 +169,8 @@ export type ConversionEvent = {
   tradedAt?: string;
   firstDepositUsd?: number;
   status: "registered" | "funded" | "traded";
+  source?: "api" | "csv" | "imported" | "synthetic";
+  dataSource?: "real" | "synthetic";
 };
 
 export type CommissionEvent = {
@@ -170,6 +180,7 @@ export type CommissionEvent = {
   commissionUsd: number;
   recordedAt: string;
   source: "api" | "csv" | "synthetic";
+  dataSource?: "real" | "synthetic";
 };
 
 export type EarningsSnapshot = {
@@ -298,6 +309,45 @@ export type AutomationMetrics = {
   averageQualityScore: number;
 };
 
+export type AttributionSummary = {
+  clicks: number;
+  realClicks: number;
+  syntheticClicks: number;
+  conversions: number;
+  realConversions: number;
+  syntheticConversions: number;
+  commissions: number;
+  realCommissions: number;
+  syntheticCommissions: number;
+  realCommissionUsd: number;
+  syntheticCommissionUsd: number;
+  sevenDayClicks: number;
+  sevenDayRegistrations: number;
+  sevenDayCommissionUsd: number;
+  realCoverageRate: number;
+  byLocale: Array<{
+    locale: string;
+    clicks: number;
+    conversions: number;
+    commissionsUsd: number;
+    dataSource: "real" | "synthetic" | "mixed" | "none";
+  }>;
+  byPageType: Array<{
+    pageType: string;
+    clicks: number;
+    conversions: number;
+    commissionsUsd: number;
+    dataSource: "real" | "synthetic" | "mixed" | "none";
+  }>;
+  byExchange: Array<{
+    exchangeSlug: Exchange["slug"];
+    clicks: number;
+    conversions: number;
+    commissionsUsd: number;
+    dataSource: "real" | "synthetic" | "mixed" | "none";
+  }>;
+};
+
 export type AutomationState = {
   version: 1;
   generatedAt: string;
@@ -317,4 +367,5 @@ export type AutomationState = {
   alerts: AutomationAlert[];
   externalSources: ExternalSourcesState;
   metrics: AutomationMetrics;
+  attribution: AttributionSummary;
 };

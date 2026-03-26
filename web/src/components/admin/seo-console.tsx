@@ -204,6 +204,76 @@ function AlertBadge({ level }: { level: AutomationAlert["level"] }) {
   return <Badge variant={variant}>{label}</Badge>;
 }
 
+function StatusCard({
+  title,
+  status,
+  description,
+  href,
+  meta,
+}: {
+  title: string;
+  status: string;
+  description: string;
+  href?: string | null;
+  meta?: string;
+}) {
+  return (
+    <Card className="border-border/70">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm text-muted-foreground">{title}</p>
+            <p className="mt-1 text-lg font-semibold">{status}</p>
+          </div>
+          <Badge variant={status.includes("失败") || status.includes("超时") ? "destructive" : "secondary"}>
+            状态卡
+          </Badge>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        {meta ? <p className="mt-3 text-xs text-muted-foreground">{meta}</p> : null}
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+          >
+            查看详情
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+function SummaryList({
+  title,
+  description,
+  items,
+}: {
+  title: string;
+  description: string;
+  items: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <Card className="border-border/70">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 px-4 py-3">
+            <span className="text-sm text-muted-foreground">{item.label}</span>
+            <span className="text-sm font-semibold text-foreground">{item.value}</span>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function SeoConsole({
   locale,
   view,
@@ -276,6 +346,22 @@ export function SeoConsole({
   const pageTypeOptions = Array.from(
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
+  const latestGscRun = state.runs.find((item) => item.job === "daily_gsc_ingest");
+  const latestPartnerRun = state.runs.find((item) => item.job === "daily_revenue_sync");
+  const latestPartnerSyncAt = state.externalSources.partners
+    .map((item) => item.lastSyncAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+  const exchangeRealityCounts = (["真实", "估算", "模拟", "未接通"] as const).map((reality) => ({
+    reality,
+    count: dataReality.partnerByExchange.filter((item) => item.reality === reality).length,
+  }));
+  const failureSummary = {
+    critical: combinedAlerts.filter((item) => item.level === "critical").length,
+    warning: combinedAlerts.filter((item) => item.level === "warning").length,
+    partnerFailed: state.externalSources.partners.filter((item) => item.status === "failed").length,
+  };
 
   const statsApiHref = buildApiHref("/api/stats/seo", {
     locale: selectedDataLocale === "all" ? undefined : selectedDataLocale,
@@ -379,6 +465,100 @@ export function SeoConsole({
           helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${state.metrics.averageQualityScore}`}
           reality={dataReality.metrics.alerts}
           realityHint="当前为规则型自动化告警，不等同于生产事故监控。"
+        />
+      </div>
+
+      <div className="mt-8 grid gap-4 xl:grid-cols-3">
+        <StatusCard
+          title="最近一次 CTA Live Audit"
+          status={
+            ctaLiveAuditStatus?.status === "completed"
+              ? STATUS_LABELS[ctaLiveAuditStatus.conclusion ?? "completed"] ??
+                ctaLiveAuditStatus.conclusion ??
+                "已完成"
+              : STATUS_LABELS[ctaLiveAuditStatus?.status ?? "never_run"] ??
+                ctaLiveAuditStatus?.status ??
+                "尚无运行记录"
+          }
+          description="用于确认线上 CTA 全量验收是否通过。成功只显示状态，失败会进入告警区。"
+          meta={
+            ctaLiveAuditStatus?.updatedAt
+              ? `最近更新时间：${formatDate(ctaLiveAuditStatus.updatedAt)} · Run #${ctaLiveAuditStatus.runNumber}`
+              : "当前还没有历史运行记录。"
+          }
+          href={ctaLiveAuditStatus?.htmlUrl}
+        />
+        <StatusCard
+          title="最近一次 GSC Sync"
+          status={STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}
+          description="用于确认真实 Search Console query 是否持续拉入自动化状态。"
+          meta={`最近同步：${
+            state.externalSources.gsc.lastSyncAt
+              ? formatDate(state.externalSources.gsc.lastSyncAt)
+              : latestGscRun?.completedAt
+                ? formatDate(latestGscRun.completedAt)
+                : "暂无"
+          } · rows ${formatNumber(state.externalSources.gsc.rowsFetched)} / signals ${formatNumber(
+            state.externalSources.gsc.signalsWritten
+          )}`}
+        />
+        <StatusCard
+          title="最近一次 Partner Sync"
+          status={
+            state.externalSources.partners.some((item) => item.status === "failed")
+              ? "失败"
+              : state.externalSources.partners.some((item) => item.status === "success")
+                ? "成功"
+                : "未接通"
+          }
+          description="用于确认真实 registration / commission 是否开始从 partner source 回流。"
+          meta={`最近同步：${
+            latestPartnerSyncAt
+              ? formatDate(latestPartnerSyncAt)
+              : latestPartnerRun?.completedAt
+                ? formatDate(latestPartnerRun.completedAt)
+                : "暂无"
+          } · 已配置 ${configuredPartnerCount} / 7`}
+        />
+      </div>
+
+      <div className="mt-8 grid gap-4 xl:grid-cols-3">
+        <SummaryList
+          title="7 家交易所真实度分布"
+          description="按 partner source 的当前接入情况看各交易所处于真实、估算、模拟还是未接通。"
+          items={exchangeRealityCounts.map((item) => ({
+            label: item.reality,
+            value: `${item.count} 家`,
+          }))}
+        />
+        <SummaryList
+          title="最近 7 天变化"
+          description="目前按 attribution 摘要看过去 7 天点击、注册、佣金与真实覆盖率。"
+          items={[
+            { label: "点击", value: formatNumber(state.attribution.sevenDayClicks) },
+            { label: "注册", value: formatNumber(state.attribution.sevenDayRegistrations) },
+            { label: "佣金", value: formatUsd(state.attribution.sevenDayCommissionUsd) },
+            { label: "真实覆盖率", value: `${(state.attribution.realCoverageRate * 100).toFixed(1)}%` },
+          ]}
+        />
+        <SummaryList
+          title="失败趋势"
+          description="把当前最需要运营关注的失败信号集中到一张卡片。"
+          items={[
+            { label: "严重告警", value: formatNumber(failureSummary.critical) },
+            { label: "警告告警", value: formatNumber(failureSummary.warning) },
+            { label: "Partner 失败源", value: formatNumber(failureSummary.partnerFailed) },
+            {
+              label: "CTA Live Audit",
+              value:
+                ctaLiveAuditStatus?.status === "completed" &&
+                ctaLiveAuditStatus.conclusion === "success"
+                  ? "成功"
+                  : STATUS_LABELS[ctaLiveAuditStatus?.status ?? "never_run"] ??
+                    ctaLiveAuditStatus?.status ??
+                    "尚无运行记录",
+            },
+          ]}
         />
       </div>
 
@@ -595,7 +775,15 @@ export function SeoConsole({
               <div key={item.slug} className="rounded-2xl border border-border/60 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold">{item.name}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold">{item.name}</p>
+                      <DataRealityBadge
+                        reality={
+                          dataReality.partnerByExchange.find((entry) => entry.exchangeSlug === item.slug)
+                            ?.reality ?? "未接通"
+                        }
+                      />
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       {item.opportunityCount} 个机会 · {item.alertCount} 个告警
                     </p>

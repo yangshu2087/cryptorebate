@@ -18,6 +18,8 @@
 - 分析采集已加 consent gate：用户同意前不初始化 PostHog，也不发送点击日志
 - SEO/GEO 自动化闭环已接入：opportunities、pages、ROI、earnings、control APIs、daily automation snapshot
 - GSC 真实 OAuth/拉取与 7 家交易所 partner earnings 外部同步框架已接入，当前只差生产环境凭据与数据源 URL
+- click → registration → commission 归因摘要已补到 automation state 与 `/api/stats/seo`
+- `/en/admin/seo` 已新增 CTA / GSC / Partner 最近状态卡、7 家交易所真实度分布、失败趋势、最近 7 天变化
 - 新增部署与质量门禁：
   - `web/vercel.json`：强制 `www -> apex` 301
   - `web/package.json`：新增 `npm run check` 与 Vercel 一键部署命令
@@ -39,6 +41,10 @@
 - `revenue-tracking-v1.md`
 - `risk-guardrails-v1.md`
 - `launch-plan-p0-v1.md`
+- `real-data-vs-simulated-v1.md`
+- `admin-console-operator-guide-v1.md`
+- `partner-source-spec-v1.md`
+- `automation-alerts-runbook-v1.md`
 - `brand-assets-usage.md`
 - `logo-redesign-brief.md`
 - `logo-generation-prompts.md`

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import clickImportsSeed from "@/data/automation/click-imports.json";
 import controlPlaneSeed from "@/data/automation/control-plane.json";
 import commissionImportsSeed from "@/data/automation/commission-imports.json";
 import conversionImportsSeed from "@/data/automation/conversion-imports.json";
@@ -25,6 +26,7 @@ import type {
   AutomationRun,
   AutomationSeoPage,
   AutomationState,
+  AttributionSummary,
   CommissionEvent,
   ContentBrief,
   ConversionEvent,
@@ -114,6 +116,10 @@ function getManualQuerySeeds() {
   return readAutomationJsonSync(["automation", "manual-query-seeds.json"], manualQuerySeedsSeed);
 }
 
+function getManualClickImports() {
+  return readAutomationJsonSync(["automation", "click-imports.json"], clickImportsSeed);
+}
+
 function getManualConversionImports() {
   return readAutomationJsonSync(["automation", "conversion-imports.json"], conversionImportsSeed);
 }
@@ -149,6 +155,22 @@ function getExternalSourcesState() {
 
 type BaseSeoLocale = (typeof SEO_CONTENT_LOCALES)[number];
 type BaseSeoPageType = (typeof SEO_PAGE_TYPES)[number];
+type RealRevenueContext = {
+  byClusterId: Map<
+    string,
+    {
+      conversions: number;
+      commissionsUsd: number;
+      clicks: number;
+      locales: Set<string>;
+      exchangeSlugs: Set<string>;
+      pageTypes: Set<string>;
+    }
+  >;
+  byExchangeSlug: Map<string, number>;
+  byLocale: Map<string, number>;
+  byPageType: Map<string, number>;
+};
 
 function round(value: number, digits = 2) {
   return Number(value.toFixed(digits));
@@ -156,6 +178,26 @@ function round(value: number, digits = 2) {
 
 function parsePercent(value: string) {
   return Number.parseFloat(value.replace("%", ""));
+}
+
+function parseClusterId(clusterId: string) {
+  const prefix = "cluster-";
+  if (!clusterId.startsWith(prefix)) {
+    return null;
+  }
+
+  const body = clusterId.slice(prefix.length);
+  for (const exchange of exchanges) {
+    const suffix = `-${exchange.slug}-`;
+    const matchIndex = body.indexOf(suffix);
+    if (matchIndex === -1) continue;
+    const locale = body.slice(0, matchIndex);
+    const pageType = body.slice(matchIndex + suffix.length);
+    if (!locale || !pageType) continue;
+    return { locale, exchangeSlug: exchange.slug, pageType };
+  }
+
+  return null;
 }
 
 function getComparisonPeers(slug: string): [string, string] {
@@ -275,6 +317,132 @@ function normalizeManualSignals(): QuerySignal[] {
   }));
 }
 
+function buildRealRevenueContext(): RealRevenueContext {
+  const byClusterId = new Map<
+    string,
+    {
+      conversions: number;
+      commissionsUsd: number;
+      clicks: number;
+      locales: Set<string>;
+      exchangeSlugs: Set<string>;
+      pageTypes: Set<string>;
+    }
+  >();
+  const byExchangeSlug = new Map<string, number>();
+  const byLocale = new Map<string, number>();
+  const byPageType = new Map<string, number>();
+
+  const ensure = (clusterId: string) => {
+    const existing = byClusterId.get(clusterId);
+    if (existing) return existing;
+    const created = {
+      conversions: 0,
+      commissionsUsd: 0,
+      clicks: 0,
+      locales: new Set<string>(),
+      exchangeSlugs: new Set<string>(),
+      pageTypes: new Set<string>(),
+    };
+    byClusterId.set(clusterId, created);
+    return created;
+  };
+
+  const registerScope = (clusterId: string, fallback?: {
+    locale?: string;
+    exchangeSlug?: string;
+    pageType?: string;
+  }) => {
+    const scope = parseClusterId(clusterId) ?? fallback;
+    const entry = ensure(clusterId);
+    if (scope?.locale) {
+      entry.locales.add(scope.locale);
+    }
+    if (scope?.exchangeSlug) {
+      entry.exchangeSlugs.add(scope.exchangeSlug);
+    }
+    if (scope?.pageType) {
+      entry.pageTypes.add(scope.pageType);
+    }
+    return entry;
+  };
+
+  for (const click of getManualClickImports() as Array<
+    Omit<AffiliateClick, "id"> & { id?: string }
+  >) {
+    const entry = registerScope(click.queryClusterId, {
+      locale: click.locale,
+      exchangeSlug: click.exchangeSlug,
+      pageType: click.pageType,
+    });
+    entry.clicks += 1;
+    byExchangeSlug.set(
+      click.exchangeSlug,
+      (byExchangeSlug.get(click.exchangeSlug) ?? 0) + 1
+    );
+    byLocale.set(click.locale, (byLocale.get(click.locale) ?? 0) + 1);
+    byPageType.set(click.pageType, (byPageType.get(click.pageType) ?? 0) + 1);
+  }
+
+  for (const conversion of [
+    ...(getManualConversionImports() as Array<
+      Omit<ConversionEvent, "id"> & { id?: string }
+    >),
+    ...(getGeneratedPartnerConversions() as Array<
+      Omit<ConversionEvent, "id"> & { id?: string }
+    >),
+  ]) {
+    const scope = parseClusterId(conversion.queryClusterId);
+    const entry = registerScope(conversion.queryClusterId, scope ?? {
+      exchangeSlug: conversion.exchangeSlug,
+    });
+    entry.conversions += 1;
+    byExchangeSlug.set(
+      conversion.exchangeSlug,
+      (byExchangeSlug.get(conversion.exchangeSlug) ?? 0) + 2
+    );
+    if (scope?.locale) {
+      byLocale.set(scope.locale, (byLocale.get(scope.locale) ?? 0) + 2);
+    }
+    if (scope?.pageType) {
+      byPageType.set(scope.pageType, (byPageType.get(scope.pageType) ?? 0) + 2);
+    }
+  }
+
+  for (const commission of [
+    ...(getManualCommissionImports() as Array<
+      Omit<CommissionEvent, "id"> & { id?: string }
+    >),
+    ...(getGeneratedPartnerCommissions() as Array<
+      Omit<CommissionEvent, "id"> & { id?: string }
+    >),
+  ]) {
+    const scope = parseClusterId(commission.queryClusterId);
+    const entry = registerScope(commission.queryClusterId, scope ?? {
+      exchangeSlug: commission.exchangeSlug,
+    });
+    entry.commissionsUsd = round(entry.commissionsUsd + commission.commissionUsd, 2);
+    byExchangeSlug.set(
+      commission.exchangeSlug,
+      round((byExchangeSlug.get(commission.exchangeSlug) ?? 0) + commission.commissionUsd / 10, 2)
+    );
+    if (scope?.locale) {
+      byLocale.set(
+        scope.locale,
+        round((byLocale.get(scope.locale) ?? 0) + commission.commissionUsd / 10, 2)
+      );
+    }
+    if (scope?.pageType) {
+      byPageType.set(
+        scope.pageType,
+        round((byPageType.get(scope.pageType) ?? 0) + commission.commissionUsd / 10, 2)
+      );
+    }
+  }
+
+  return { byClusterId, byExchangeSlug, byLocale, byPageType };
+}
+
 function buildSignals() {
   const baseSignals = SEO_CONTENT_LOCALES.flatMap((locale, localeIndex) =>
     exchanges.flatMap((exchange, exchangeIndex) =>
@@ -310,14 +478,29 @@ function buildSignals() {
   ];
 }
 
-function buildCluster(signal: QuerySignal): QueryCluster {
+function buildCluster(signal: QuerySignal, context: RealRevenueContext): QueryCluster {
+  const realCluster = context.byClusterId.get(
+    `cluster-${signal.locale}-${signal.exchangeSlug}-${signal.pageType}`
+  );
+  const realExchangeLift = context.byExchangeSlug.get(signal.exchangeSlug) ?? 0;
+  const realLocaleLift = context.byLocale.get(signal.locale) ?? 0;
+  const realPageTypeLift = context.byPageType.get(signal.pageType) ?? 0;
   const demand = round(signal.impressions / 100);
-  const monetization = round(signal.monetizationPotential * 10);
+  const monetization = round(
+    signal.monetizationPotential * 10 +
+      Math.min(12, realExchangeLift * 0.2 + realPageTypeLift * 0.15)
+  );
   const rankGap = round(Math.max(1, 12 - signal.position));
   const intentClarity = round((pageTypeWeights[signal.pageType] ?? 1) * 10);
-  const freshnessNeed = round(4 + signal.growthRate * 10);
-  const localePriority = round((localeWeights[signal.locale] ?? 1) * 8);
-  const exchangePriority = round((exchangeWeights[signal.exchangeSlug] ?? 1) * 8);
+  const freshnessNeed = round(
+    4 + signal.growthRate * 10 + Math.min(4, (realCluster?.conversions ?? 0) * 0.5)
+  );
+  const localePriority = round(
+    (localeWeights[signal.locale] ?? 1) * 8 + Math.min(4, realLocaleLift * 0.1)
+  );
+  const exchangePriority = round(
+    (exchangeWeights[signal.exchangeSlug] ?? 1) * 8 + Math.min(5, realExchangeLift * 0.12)
+  );
   const score =
     demand *
     monetization *
@@ -360,11 +543,24 @@ function getRecommendedAction(score: number): QueryOpportunity["recommendedActio
   return "prune";
 }
 
-function buildOpportunity(cluster: QueryCluster): QueryOpportunity {
-  const projectedEpcUsd = round(cluster.score * 0.03, 2);
+function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): QueryOpportunity {
+  const realCluster = context.byClusterId.get(cluster.id);
+  const realizedCommissionUsd = realCluster?.commissionsUsd ?? 0;
+  const realizedConversions = realCluster?.conversions ?? 0;
+  const projectedEpcUsd =
+    realizedCommissionUsd > 0
+      ? round(realizedCommissionUsd / Math.max(realizedConversions || realCluster?.clicks || 1, 1), 2)
+      : round(cluster.score * 0.03, 2);
   const projectedMonthlyRevenueUsd = round(projectedEpcUsd * 28, 2);
   const qualityScore = round(
-    Math.min(100, 46 + cluster.intentClarity + cluster.localePriority / 2 + cluster.exchangePriority / 2),
+    Math.min(
+      100,
+      46 +
+        cluster.intentClarity +
+        cluster.localePriority / 2 +
+        cluster.exchangePriority / 2 +
+        Math.min(10, realizedConversions * 1.5)
+    ),
     1
   );
 
@@ -616,6 +812,10 @@ function buildAffiliateArtifacts(pages: AutomationSeoPage[]) {
       pageUrl: `${SITE_URL}/${page.locale}/exchanges/${page.exchangeSlug}/${page.pageType}`,
       queryClusterId: page.queryClusterId,
       clickedAt: new Date().toISOString(),
+      source: "synthetic",
+      dataSource: "synthetic",
+      targetUrl: getExchangeBySlug(page.exchangeSlug)?.referralLink,
+      primaryQuery: page.primaryQuery,
       utmSource: "organic",
       utmMedium: "seo",
       utmCampaign: page.pageType,
@@ -630,6 +830,8 @@ function buildAffiliateArtifacts(pages: AutomationSeoPage[]) {
       tradedAt: new Date().toISOString(),
       firstDepositUsd: round(registrations * 35, 2),
       status: traded > 0 ? "traded" : "registered",
+      source: "synthetic",
+      dataSource: "synthetic",
     });
 
     commissions.push({
@@ -639,14 +841,265 @@ function buildAffiliateArtifacts(pages: AutomationSeoPage[]) {
       commissionUsd,
       recordedAt: new Date().toISOString(),
       source: "synthetic",
+      dataSource: "synthetic",
     });
   }
 
   return { affiliateClicks, conversions, commissions };
 }
 
+function normalizeManualClicks(): AffiliateClick[] {
+  return (getManualClickImports() as Array<
+    Omit<AffiliateClick, "id"> & { id?: string }
+  >).map((item, index) => ({
+    id: item.id ?? `manual-click-${index}`,
+    exchangeSlug: item.exchangeSlug,
+    locale: item.locale,
+    pageType: item.pageType,
+    pageUrl: item.pageUrl,
+    queryClusterId: item.queryClusterId,
+    clickedAt: item.clickedAt,
+    source: item.source ?? "imported",
+    dataSource: item.dataSource ?? "real",
+    targetUrl: item.targetUrl,
+    sessionId: item.sessionId,
+    visitorId: item.visitorId,
+    primaryQuery: item.primaryQuery,
+    utmSource: item.utmSource,
+    utmMedium: item.utmMedium,
+    utmCampaign: item.utmCampaign,
+    utmContent: item.utmContent,
+    utmTerm: item.utmTerm,
+    referrer: item.referrer,
+  }));
+}
+
+function preferRealAffiliateClicks(
+  syntheticClicks: AffiliateClick[],
+  manualClicks: AffiliateClick[]
+) {
+  const realByCluster = new Map(
+    manualClicks.map((click) => [click.queryClusterId, true] as const)
+  );
+  const keptSynthetic = syntheticClicks.filter(
+    (click) => !realByCluster.has(click.queryClusterId)
+  );
+  return [...manualClicks, ...keptSynthetic];
+}
+
+function preferRealConversions(
+  syntheticConversions: ConversionEvent[],
+  importedConversions: ConversionEvent[]
+) {
+  const realByCluster = new Map(
+    importedConversions.map((item) => [item.queryClusterId, true] as const)
+  );
+  const keptSynthetic = syntheticConversions.filter(
+    (item) => !realByCluster.has(item.queryClusterId)
+  );
+  return [...importedConversions, ...keptSynthetic];
+}
+
+function preferRealCommissions(
+  syntheticCommissions: CommissionEvent[],
+  importedCommissions: CommissionEvent[]
+) {
+  const realByCluster = new Map(
+    importedCommissions.map((item) => [item.queryClusterId, true] as const)
+  );
+  const keptSynthetic = syntheticCommissions.filter(
+    (item) => !realByCluster.has(item.queryClusterId)
+  );
+  return [...importedCommissions, ...keptSynthetic];
+}
+
+function buildAttributionSummary(
+  clicks: AffiliateClick[],
+  conversions: ConversionEvent[],
+  commissions: CommissionEvent[]
+): AttributionSummary {
+  const sevenDaysAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
+  const realClicks = clicks.filter((item) => item.dataSource === "real");
+  const realConversions = conversions.filter((item) => item.dataSource === "real");
+  const realCommissions = commissions.filter((item) => item.dataSource === "real");
+  const byExchange = new Map<
+    string,
+    {
+      clicks: number;
+      conversions: number;
+      commissionsUsd: number;
+      sources: Set<string>;
+    }
+  >();
+  const byLocale = new Map<
+    string,
+    {
+      clicks: number;
+      conversions: number;
+      commissionsUsd: number;
+      sources: Set<string>;
+    }
+  >();
+  const byPageType = new Map<
+    string,
+    {
+      clicks: number;
+      conversions: number;
+      commissionsUsd: number;
+      sources: Set<string>;
+    }
+  >();
+
+  const ensureBucket = (
+    map: Map<
+      string,
+      { clicks: number; conversions: number; commissionsUsd: number; sources: Set<string> }
+    >,
+    key: string
+  ) => {
+    const existing = map.get(key);
+    if (existing) return existing;
+    const created = { clicks: 0, conversions: 0, commissionsUsd: 0, sources: new Set<string>() };
+    map.set(key, created);
+    return created;
+  };
+
+  for (const click of clicks) {
+    const exchangeBucket = ensureBucket(byExchange, click.exchangeSlug);
+    exchangeBucket.clicks += 1;
+    exchangeBucket.sources.add(click.dataSource ?? "synthetic");
+
+    const localeBucket = ensureBucket(byLocale, click.locale);
+    localeBucket.clicks += 1;
+    localeBucket.sources.add(click.dataSource ?? "synthetic");
+
+    const pageTypeBucket = ensureBucket(byPageType, click.pageType);
+    pageTypeBucket.clicks += 1;
+    pageTypeBucket.sources.add(click.dataSource ?? "synthetic");
+  }
+
+  for (const conversion of conversions) {
+    const parsed = parseClusterId(conversion.queryClusterId);
+    const locale = parsed?.locale ?? "unknown";
+    const pageType = parsed?.pageType ?? "unknown";
+    const exchangeBucket = ensureBucket(byExchange, conversion.exchangeSlug);
+    exchangeBucket.conversions += 1;
+    exchangeBucket.sources.add(conversion.dataSource ?? "synthetic");
+
+    const localeBucket = ensureBucket(byLocale, locale);
+    localeBucket.conversions += 1;
+    localeBucket.sources.add(conversion.dataSource ?? "synthetic");
+
+    const pageTypeBucket = ensureBucket(byPageType, pageType);
+    pageTypeBucket.conversions += 1;
+    pageTypeBucket.sources.add(conversion.dataSource ?? "synthetic");
+  }
+
+  for (const commission of commissions) {
+    const parsed = parseClusterId(commission.queryClusterId);
+    const locale = parsed?.locale ?? "unknown";
+    const pageType = parsed?.pageType ?? "unknown";
+    const exchangeBucket = ensureBucket(byExchange, commission.exchangeSlug);
+    exchangeBucket.commissionsUsd = round(
+      exchangeBucket.commissionsUsd + commission.commissionUsd,
+      2
+    );
+    exchangeBucket.sources.add(commission.dataSource ?? "synthetic");
+
+    const localeBucket = ensureBucket(byLocale, locale);
+    localeBucket.commissionsUsd = round(
+      localeBucket.commissionsUsd + commission.commissionUsd,
+      2
+    );
+    localeBucket.sources.add(commission.dataSource ?? "synthetic");
+
+    const pageTypeBucket = ensureBucket(byPageType, pageType);
+    pageTypeBucket.commissionsUsd = round(
+      pageTypeBucket.commissionsUsd + commission.commissionUsd,
+      2
+    );
+    pageTypeBucket.sources.add(commission.dataSource ?? "synthetic");
+  }
+
+  const toReality = (sources: Set<string>): "real" | "synthetic" | "mixed" | "none" => {
+    if (sources.size === 0) return "none";
+    if (sources.size === 1) {
+      return sources.has("real") ? "real" : "synthetic";
+    }
+    return "mixed";
+  };
+
+  return {
+    clicks: clicks.length,
+    realClicks: realClicks.length,
+    syntheticClicks: clicks.length - realClicks.length,
+    conversions: conversions.length,
+    realConversions: realConversions.length,
+    syntheticConversions: conversions.length - realConversions.length,
+    commissions: commissions.length,
+    realCommissions: realCommissions.length,
+    syntheticCommissions: commissions.length - realCommissions.length,
+    realCommissionUsd: round(
+      realCommissions.reduce((sum, item) => sum + item.commissionUsd, 0),
+      2
+    ),
+    syntheticCommissionUsd: round(
+      commissions
+        .filter((item) => item.dataSource !== "real")
+        .reduce((sum, item) => sum + item.commissionUsd, 0),
+      2
+    ),
+    sevenDayClicks: clicks.filter(
+      (item) => new Date(item.clickedAt).getTime() >= sevenDaysAgo
+    ).length,
+    sevenDayRegistrations: conversions.filter(
+      (item) => new Date(item.registeredAt).getTime() >= sevenDaysAgo
+    ).length,
+    sevenDayCommissionUsd: round(
+      commissions
+        .filter((item) => new Date(item.recordedAt).getTime() >= sevenDaysAgo)
+        .reduce((sum, item) => sum + item.commissionUsd, 0),
+      2
+    ),
+    realCoverageRate: round(
+      (realClicks.length + realConversions.length + realCommissions.length) /
+        Math.max(clicks.length + conversions.length + commissions.length, 1),
+      4
+    ),
+    byLocale: [...byLocale.entries()].map(([locale, item]) => ({
+      locale,
+      clicks: item.clicks,
+      conversions: item.conversions,
+      commissionsUsd: item.commissionsUsd,
+      dataSource: toReality(item.sources),
+    })),
+    byPageType: [...byPageType.entries()].map(([pageType, item]) => ({
+      pageType,
+      clicks: item.clicks,
+      conversions: item.conversions,
+      commissionsUsd: item.commissionsUsd,
+      dataSource: toReality(item.sources),
+    })),
+    byExchange: exchanges.map((exchange) => {
+      const item = byExchange.get(exchange.slug) ?? {
+        clicks: 0,
+        conversions: 0,
+        commissionsUsd: 0,
+        sources: new Set<string>(),
+      };
+
+      return {
+        exchangeSlug: exchange.slug,
+        clicks: item.clicks,
+        conversions: item.conversions,
+        commissionsUsd: item.commissionsUsd,
+        dataSource: toReality(item.sources),
+      };
+    }),
+  };
+}
+
 function buildEarnings(
-  pages: AutomationSeoPage[],
   clicks: AffiliateClick[],
   conversions: ConversionEvent[],
   commissions: CommissionEvent[]
@@ -745,7 +1198,12 @@ function buildRoiEntries(
   return { pageRoiDaily, queryRoiDaily };
 }
 
-function buildAlerts(opportunities: QueryOpportunity[], controlPlane: AutomationControlPlane) {
+function buildAlerts(
+  opportunities: QueryOpportunity[],
+  controlPlane: AutomationControlPlane,
+  externalSources: ExternalSourcesState,
+  attribution: AttributionSummary
+) {
   const alerts: AutomationAlert[] = [];
   const quarantined = opportunities.filter((opportunity) => opportunity.stage === "quarantined");
   for (const opportunity of quarantined) {
@@ -792,12 +1250,55 @@ function buildAlerts(opportunities: QueryOpportunity[], controlPlane: Automation
     }))
   );
 
+  if (
+    externalSources.gsc.enabled &&
+    externalSources.gsc.configured &&
+    externalSources.gsc.status !== "success"
+  ) {
+    alerts.push({
+      id: "alert-gsc-sync",
+      level: "warning",
+      type: "sync_failure",
+      message: `GSC 同步状态为 ${externalSources.gsc.status}，需要检查真实 query 拉取链路。`,
+      scope: {},
+      triggeredAt: externalSources.gsc.lastSyncAt ?? new Date().toISOString(),
+    });
+  }
+
+  for (const partner of externalSources.partners) {
+    if (partner.configured && partner.status === "failed") {
+      alerts.push({
+        id: `alert-partner-${partner.exchangeSlug}`,
+        level: "critical",
+        type: "sync_failure",
+        message: `${partner.exchangeSlug} partner sync 失败：${partner.error ?? "请检查 provider / token / 报表接口"}`,
+        scope: {
+          exchangeSlug: partner.exchangeSlug,
+        },
+        triggeredAt: partner.lastSyncAt ?? new Date().toISOString(),
+      });
+    }
+  }
+
+  if (
+    attribution.realCoverageRate < 0.2 &&
+    attribution.commissions > 0
+  ) {
+    alerts.push({
+      id: "alert-real-coverage-low",
+      level: "warning",
+      type: "earnings_anomaly",
+      message: "真实收益覆盖率仍然偏低，当前多数 ROI 仍由模拟或估算数据支撑。",
+      scope: {},
+      triggeredAt: new Date().toISOString(),
+    });
+  }
+
   return alerts;
 }
 
-function buildRuns(): AutomationRun[] {
+function buildRuns(externalSources: ExternalSourcesState): AutomationRun[] {
   const now = new Date().toISOString();
-  const externalSources = getExternalSourcesState();
   return ([
     "daily_gsc_ingest",
     "daily_query_clustering",
@@ -812,7 +1313,20 @@ function buildRuns(): AutomationRun[] {
   ] as const).map((job, index) => ({
     id: `run-${index}-${job}`,
     job,
-    status: "success",
+    status:
+      job === "daily_gsc_ingest"
+        ? externalSources.gsc.status === "failed"
+          ? "failed"
+          : externalSources.gsc.status === "success"
+            ? "success"
+            : "warning"
+        : job === "daily_revenue_sync"
+          ? externalSources.partners.some((item) => item.status === "failed")
+            ? "failed"
+            : externalSources.partners.some((item) => item.status === "success")
+              ? "success"
+              : "warning"
+          : "success",
     startedAt: now,
     completedAt: now,
     summary:
@@ -831,8 +1345,11 @@ export function buildAutomationState(): AutomationState {
   const controlPlane = getControlPlaneSeed();
   const externalSources = getExternalSourcesState();
   const signals = buildSignals();
-  const clusters = signals.map(buildCluster);
-  const opportunities = clusters.map(buildOpportunity);
+  const realRevenueContext = buildRealRevenueContext();
+  const clusters = signals.map((signal) => buildCluster(signal, realRevenueContext));
+  const opportunities = clusters.map((cluster) =>
+    buildOpportunity(cluster, realRevenueContext)
+  );
   const briefs = opportunities.map(buildBrief);
 
   const basePages = SEO_CONTENT_LOCALES.flatMap((locale) =>
@@ -859,8 +1376,9 @@ export function buildAutomationState(): AutomationState {
 
   const pages = [...basePages, ...dynamicPages];
   const { affiliateClicks, conversions, commissions } = buildAffiliateArtifacts(pages);
-  const mergedConversions = [
-    ...conversions,
+  const importedClicks = normalizeManualClicks();
+  const mergedClicks = preferRealAffiliateClicks(affiliateClicks, importedClicks);
+  const importedConversions = [
     ...(getManualConversionImports() as Array<Omit<ConversionEvent, "id"> & { id?: string }>).map(
       (item, index) => ({
       id: item.id ?? `imported-conversion-${index}`,
@@ -870,6 +1388,8 @@ export function buildAutomationState(): AutomationState {
       tradedAt: item.tradedAt,
       firstDepositUsd: item.firstDepositUsd,
       status: item.status,
+      source: item.source ?? "imported",
+      dataSource: item.dataSource ?? "real",
       })
     ),
     ...(getGeneratedPartnerConversions() as Array<
@@ -882,10 +1402,12 @@ export function buildAutomationState(): AutomationState {
       tradedAt: item.tradedAt,
       firstDepositUsd: item.firstDepositUsd,
       status: item.status,
+      source: item.source ?? "api",
+      dataSource: item.dataSource ?? "real",
     })),
   ];
-  const mergedCommissions = [
-    ...commissions,
+  const mergedConversions = preferRealConversions(conversions, importedConversions);
+  const importedCommissions = [
     ...(getManualCommissionImports() as Array<Omit<CommissionEvent, "id"> & { id?: string }>).map(
       (item, index) => ({
       id: item.id ?? `imported-commission-${index}`,
@@ -894,6 +1416,7 @@ export function buildAutomationState(): AutomationState {
       commissionUsd: item.commissionUsd,
       recordedAt: item.recordedAt,
       source: item.source,
+      dataSource: item.dataSource ?? "real",
       })
     ),
     ...(getGeneratedPartnerCommissions() as Array<
@@ -905,16 +1428,23 @@ export function buildAutomationState(): AutomationState {
       commissionUsd: item.commissionUsd,
       recordedAt: item.recordedAt,
       source: item.source,
+      dataSource: item.dataSource ?? "real",
     })),
   ];
-  const earnings = buildEarnings(pages, affiliateClicks, mergedConversions, mergedCommissions);
+  const mergedCommissions = preferRealCommissions(commissions, importedCommissions);
+  const earnings = buildEarnings(mergedClicks, mergedConversions, mergedCommissions);
   const { pageRoiDaily, queryRoiDaily } = buildRoiEntries(
     pages,
-    affiliateClicks,
+    mergedClicks,
     mergedConversions,
     mergedCommissions
   );
-  const alerts = buildAlerts(opportunities, controlPlane);
+  const attribution = buildAttributionSummary(
+    mergedClicks,
+    mergedConversions,
+    mergedCommissions
+  );
+  const alerts = buildAlerts(opportunities, controlPlane, externalSources, attribution);
   const averageQualityScore = round(
     pages.reduce((sum, page) => sum + page.qualityScore, 0) / Math.max(pages.length, 1),
     1
@@ -928,13 +1458,13 @@ export function buildAutomationState(): AutomationState {
     version: 1,
     generatedAt: new Date().toISOString(),
     controlPlane,
-    runs: buildRuns(),
+    runs: buildRuns(externalSources),
     signals,
     clusters,
     opportunities,
     briefs,
     pages,
-    affiliateClicks,
+    affiliateClicks: mergedClicks,
     conversions: mergedConversions,
     commissions: mergedCommissions,
     earnings,
@@ -942,6 +1472,7 @@ export function buildAutomationState(): AutomationState {
     queryRoiDaily,
     alerts,
     externalSources,
+    attribution,
     metrics: {
       totalSignals: signals.length,
       totalOpportunities: opportunities.length,

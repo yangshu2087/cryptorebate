@@ -135,8 +135,8 @@ Minimal API coverage is now available under App Router route handlers:
 - `GET /api/exchanges?slug=binance`
   - Returns one exchange payload with numeric rebate fields
 - `POST /api/clicks`
-  - Accepts consent-gated click logs with `event`, `page_url`, `referrer`, `timestamp`, UTM fields, and analytics properties
-  - Current storage backend is Vercel/server logs; this is the P0 ingestion layer, not a reporting database
+  - Accepts consent-gated click logs with `event`, `page_url`, `referrer`, `timestamp`, UTM fields, analytics properties, and normalized attribution fields such as `locale`, `exchange_slug`, `page_type`, `query_cluster_id`, `landing_page_key`, `session_id`, and `visitor_id`
+  - In writable environments the route can append normalized click imports to disk; on Vercel it still logs a normalized attribution object to server logs
 
 ## Deployment
 
@@ -181,6 +181,7 @@ Important deployment rule:
 - `npm run automation:generate` recomputes signals, opportunities, pages, ROI, and earnings snapshot
 - `src/lib/automation/*` holds the automation engine, locale packs, catalog, and persistence logic
 - `src/app/api/opportunities`, `pages`, `stats/seo`, `earnings`, `roi`, `control/*`, `conversions/import`, and `earnings/sync/run` expose the automation control plane
+- `src/app/api/stats/seo` now also returns `attribution`, `dataReality`, and `operatorSummary` for the admin console and Telegram operator digests
 - `src/data/automation/*` stores the control plane and import seeds
 - `src/data/generated/automation-state.json` is the generated automation snapshot
 - `.github/workflows/automation-loop.yml` runs the automation pipeline daily and commits refreshed snapshot output
@@ -243,6 +244,12 @@ Where `<EXCHANGE>` is one of:
 - `HUOBI`
 
 The internal operator console is available at `/en/admin/seo`, but the UI copy is intentionally fixed to Simplified Chinese for operator consistency.
+
+Operator docs:
+- `../real-data-vs-simulated-v1.md`
+- `../admin-console-operator-guide-v1.md`
+- `../partner-source-spec-v1.md`
+- `../automation-alerts-runbook-v1.md`
 
 ## Minimal Analytics Events
 

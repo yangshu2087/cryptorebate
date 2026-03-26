@@ -47,27 +47,36 @@ function getPartnerReality(source: ExternalPartnerSyncState): DataReality {
   if (source.status === "success" && source.commissionsWritten + source.conversionsWritten > 0) {
     return "真实";
   }
-  return "估算";
+  return source.status === "failed" ? "未接通" : "估算";
 }
 
 export function getAutomationDataReality(state: AutomationState): DataRealitySummary {
   const hasRealGscSignals =
     state.externalSources.gsc.status === "success" &&
     (state.externalSources.gsc.signalsWritten ?? 0) > 0;
-  const hasRealPartnerData = state.externalSources.partners.some(
-    (item) => item.status === "success" && item.commissionsWritten + item.conversionsWritten > 0
-  );
+  const hasRealPartnerData =
+    state.attribution.realConversions > 0 ||
+    state.attribution.realCommissions > 0 ||
+    state.externalSources.partners.some(
+      (item) => item.status === "success" && item.commissionsWritten + item.conversionsWritten > 0
+    );
   const configuredPartnerCount = state.externalSources.partners.filter((item) => item.configured).length;
+  const realCoverage = state.attribution.realCoverageRate;
 
-  const signals: DataReality = hasRealGscSignals ? "真实" : "模拟";
-  const opportunities: DataReality = hasRealGscSignals ? "估算" : "模拟";
+  const signals: DataReality = hasRealGscSignals ? "真实" : state.externalSources.gsc.configured ? "估算" : "模拟";
+  const opportunities: DataReality =
+    hasRealPartnerData || hasRealGscSignals ? "估算" : "模拟";
   const publishedPages: DataReality = "真实";
   const projectedRevenue: DataReality = hasRealPartnerData ? "估算" : "模拟";
-  const alerts: DataReality = "模拟";
-  const partners: DataReality = configuredPartnerCount > 0 ? "真实" : "未接通";
-  const exchangeBoard: DataReality = hasRealPartnerData ? "估算" : "模拟";
-  const pageRoi: DataReality = hasRealPartnerData ? "真实" : "模拟";
-  const queryRoi: DataReality = hasRealPartnerData ? "真实" : "模拟";
+  const alerts: DataReality = configuredPartnerCount > 0 || state.externalSources.gsc.configured ? "估算" : "模拟";
+  const partners: DataReality =
+    configuredPartnerCount === 0 ? "未接通" : hasRealPartnerData ? "真实" : "估算";
+  const exchangeBoard: DataReality =
+    hasRealPartnerData ? (realCoverage >= 0.8 ? "真实" : "估算") : "模拟";
+  const pageRoi: DataReality =
+    hasRealPartnerData ? (realCoverage >= 0.8 ? "真实" : "估算") : "模拟";
+  const queryRoi: DataReality =
+    hasRealPartnerData ? (realCoverage >= 0.8 ? "真实" : "估算") : "模拟";
 
   return {
     metrics: {

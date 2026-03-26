@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type {
+  AffiliateClick,
   AutomationControlPlane,
   AutomationState,
   CommissionEvent,
@@ -17,6 +18,7 @@ function resolvePath(...parts: string[]) {
 
 export const AUTOMATION_PATHS = {
   controlPlane: resolvePath("src", "data", "automation", "control-plane.json"),
+  clickImports: resolvePath("src", "data", "automation", "click-imports.json"),
   conversionImports: resolvePath(
     "src",
     "data",
@@ -100,6 +102,23 @@ export async function appendConversionsToDisk(
   await writeJsonFile(AUTOMATION_PATHS.conversionImports, merged);
 }
 
+export async function appendClicksToDisk(
+  items: Omit<AffiliateClick, "id">[]
+) {
+  const current = await readJsonFile<Array<Partial<AffiliateClick>>>(
+    AUTOMATION_PATHS.clickImports
+  );
+  const timestamp = new Date().toISOString();
+  const merged = [
+    ...current,
+    ...items.map((item, index) => ({
+      id: `${item.exchangeSlug}-${item.queryClusterId}-${timestamp}-${index}`,
+      ...item,
+    })),
+  ];
+  await writeJsonFile(AUTOMATION_PATHS.clickImports, merged);
+}
+
 export async function appendCommissionsToDisk(
   items: Omit<CommissionEvent, "id">[]
 ) {
@@ -148,6 +167,7 @@ export async function writeAutomationStateSnapshot(state: AutomationState) {
     earnings: state.earnings,
     pageRoiDaily: state.pageRoiDaily.slice(0, 250),
     queryRoiDaily: state.queryRoiDaily.slice(0, 250),
+    attribution: state.attribution,
   });
 }
 
