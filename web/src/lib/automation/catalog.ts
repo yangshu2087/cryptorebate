@@ -105,6 +105,32 @@ function sortEntries(entries: UnifiedSeoEntry[]) {
   });
 }
 
+function orderEntriesWithInternalLinks(
+  locale: string,
+  slug: string,
+  entries: UnifiedSeoEntry[]
+) {
+  const manifestGroup = getState().internalLinks.exchangeGroups.find(
+    (group) => group.locale === locale && group.exchangeSlug === slug
+  );
+  if (!manifestGroup) {
+    return sortEntries(entries);
+  }
+
+  const manifestOrder = new Map(
+    manifestGroup.guides.map((guide, index) => [guide.pageType, index] as const)
+  );
+
+  return [...sortEntries(entries)].sort((a, b) => {
+    const aIndex = manifestOrder.get(a.pageType);
+    const bIndex = manifestOrder.get(b.pageType);
+    if (aIndex != null && bIndex != null) return aIndex - bIndex;
+    if (aIndex != null) return -1;
+    if (bIndex != null) return 1;
+    return 0;
+  });
+}
+
 export function getUnifiedSeoPageHref(slug: string, pageType: string) {
   return `/exchanges/${slug}/${pageType}`;
 }
@@ -176,7 +202,7 @@ export function getUnifiedSeoEntriesForExchange(locale: string, slug: string) {
     )
     .map(mapAutomationPageToUnifiedEntry);
 
-  return sortEntries([...baseEntries, ...dynamicEntries]);
+  return orderEntriesWithInternalLinks(locale, slug, [...baseEntries, ...dynamicEntries]);
 }
 
 export function getUnifiedSeoStaticParams() {

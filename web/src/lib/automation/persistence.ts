@@ -169,6 +169,7 @@ export async function writeAutomationStateSnapshot(state: AutomationState) {
     pageRoiDaily: state.pageRoiDaily.slice(0, 250),
     queryRoiDaily: state.queryRoiDaily.slice(0, 250),
     attribution: state.attribution,
+    internalLinks: state.internalLinks,
   });
 }
 

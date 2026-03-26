@@ -313,6 +313,28 @@ export type DistributionJob = {
   publishedAt?: string | null;
 };
 
+export type AutomationInternalLinkTarget = {
+  locale: string;
+  exchangeSlug: Exchange["slug"];
+  pageType: string;
+  href: string;
+  title: string;
+  primaryQuery: string;
+  source: "base" | "dynamic";
+  score: number;
+};
+
+export type AutomationInternalLinkGroup = {
+  locale: string;
+  exchangeSlug: Exchange["slug"];
+  guides: AutomationInternalLinkTarget[];
+};
+
+export type AutomationInternalLinkManifest = {
+  refreshedAt: string;
+  exchangeGroups: AutomationInternalLinkGroup[];
+};
+
 export type AutomationRun = {
   id: string;
   job:
@@ -416,4 +438,5 @@ export type AutomationState = {
   externalSources: ExternalSourcesState;
   metrics: AutomationMetrics;
   attribution: AttributionSummary;
+  internalLinks: AutomationInternalLinkManifest;
 };

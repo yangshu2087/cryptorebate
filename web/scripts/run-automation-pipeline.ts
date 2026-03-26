@@ -87,6 +87,24 @@ async function main() {
       await insertSyncRun(partnerRun.run, partnerRun.meta);
     }
 
+    const internalLinkGroups = state.internalLinks.exchangeGroups.length;
+    const surfacedGuides = state.internalLinks.exchangeGroups.reduce(
+      (sum, group) => sum + group.guides.length,
+      0
+    );
+    const internalLinkRun = createRun(
+      "daily_internal_link_refresh",
+      internalLinkGroups > 0 ? "success" : "warning",
+      `Refreshed ${internalLinkGroups} exchange-link groups / ${surfacedGuides} surfaced guides`,
+      startedAt,
+      {
+        refreshedAt: state.internalLinks.refreshedAt,
+        exchangeGroups: internalLinkGroups,
+        surfacedGuides,
+      }
+    );
+    await insertSyncRun(internalLinkRun.run, internalLinkRun.meta);
+
     const distributionJobsEnqueued =
       mode === "daily" || mode === "publish" || mode === "distribute"
         ? await enqueueDistributionJobsFromDb(state)

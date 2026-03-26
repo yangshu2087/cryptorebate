@@ -17,6 +17,7 @@ import {
 import { exchanges, getExchangeBySlug } from "@/data/exchanges";
 import { LOCALES, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { getAutomationLocaleCopy } from "./locale-copy";
+import { buildInternalLinkManifest } from "./internal-links";
 import type {
   AffiliateClick,
   AutomationAlert,
@@ -1444,6 +1445,11 @@ export function buildAutomationState(): AutomationState {
     mergedConversions,
     mergedCommissions
   );
+  const internalLinks = buildInternalLinkManifest({
+    pages,
+    opportunities,
+    pageRoiDaily,
+  });
   const alerts = buildAlerts(opportunities, controlPlane, externalSources, attribution);
   const averageQualityScore = round(
     pages.reduce((sum, page) => sum + page.qualityScore, 0) / Math.max(pages.length, 1),
@@ -1473,6 +1479,7 @@ export function buildAutomationState(): AutomationState {
     alerts,
     externalSources,
     attribution,
+    internalLinks,
     metrics: {
       totalSignals: signals.length,
       totalOpportunities: opportunities.length,
