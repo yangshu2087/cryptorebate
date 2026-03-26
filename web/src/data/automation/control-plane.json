@@ -1,0 +1,10 @@
+{
+  "paused": false,
+  "rolloutMode": "full-automatic",
+  "publishDailyLimitPerExchange": 8,
+  "refreshDailyLimitPerExchange": 12,
+  "quarantinedLocales": [],
+  "quarantinedExchanges": [],
+  "quarantinedPageTypes": [],
+  "quarantinedPageKeys": []
+}

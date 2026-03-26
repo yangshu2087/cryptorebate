@@ -29,18 +29,18 @@ import {
 } from "@/components/seo/json-ld";
 import {
   SEO_CONTENT_LOCALES,
-  getExchangeSeoClusterLabels,
-  getExchangeSeoEntriesForExchange,
-  getExchangeSeoEntry,
-  getExchangeSeoPageHref,
-  getExchangeSeoPageLabels,
-  getExchangeSeoStaticParams,
+  getUnifiedSeoClusterLabels,
+  getUnifiedSeoEntriesForExchange,
+  getUnifiedSeoEntry,
+  getUnifiedSeoPageHref,
+  getUnifiedSeoPageLabels,
+  getUnifiedSeoStaticParams,
   isSeoContentLocale,
-} from "@/data/exchange-seo";
+} from "@/lib/automation/catalog";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 
 export function generateStaticParams() {
-  return getExchangeSeoStaticParams();
+  return getUnifiedSeoStaticParams();
 }
 
 export async function generateMetadata({
@@ -49,13 +49,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string; pageType: string }>;
 }): Promise<Metadata> {
   const { locale, slug, pageType } = await params;
-  const entry = getExchangeSeoEntry(locale, slug, pageType);
+  const entry = getUnifiedSeoEntry(locale, slug, pageType);
 
   if (!entry) {
     return {};
   }
 
-  const pathname = getExchangeSeoPageHref(slug, entry.pageType);
+  const pathname = getUnifiedSeoPageHref(slug, entry.pageType);
 
   return {
     title: entry.metadata.title,
@@ -93,7 +93,7 @@ export default async function ExchangeSeoPage({
   params: Promise<{ locale: string; slug: string; pageType: string }>;
 }) {
   const { locale, slug, pageType } = await params;
-  const entry = getExchangeSeoEntry(locale, slug, pageType);
+  const entry = getUnifiedSeoEntry(locale, slug, pageType);
 
   if (!entry || !isSeoContentLocale(locale)) {
     notFound();
@@ -101,12 +101,12 @@ export default async function ExchangeSeoPage({
 
   const seoLocale = locale;
   const t = await getTranslations({ locale });
-  const clusterLabels = getExchangeSeoClusterLabels(seoLocale);
-  const pageLabels = getExchangeSeoPageLabels(seoLocale, entry.pageType);
-  const siblingEntries = getExchangeSeoEntriesForExchange(seoLocale, slug).filter(
+  const clusterLabels = getUnifiedSeoClusterLabels(seoLocale);
+  const pageLabels = getUnifiedSeoPageLabels(seoLocale, entry.pageType);
+  const siblingEntries = getUnifiedSeoEntriesForExchange(seoLocale, slug).filter(
     (item) => item.pageType !== entry.pageType
   );
-  const pageUrl = getLocalizedUrl(locale, getExchangeSeoPageHref(slug, entry.pageType));
+  const pageUrl = getLocalizedUrl(locale, getUnifiedSeoPageHref(slug, entry.pageType));
   const hubUrl = getLocalizedUrl(locale, `/exchanges/${slug}`);
 
   return (
@@ -292,11 +292,11 @@ export default async function ExchangeSeoPage({
               </p>
               <div className="mt-4 space-y-3">
                 {siblingEntries.map((item) => {
-                  const labels = getExchangeSeoPageLabels(seoLocale, item.pageType);
+                  const labels = getUnifiedSeoPageLabels(seoLocale, item.pageType);
                   return (
                     <TrackedInternalLink
                       key={item.pageType}
-                      href={getExchangeSeoPageHref(slug, item.pageType)}
+                      href={getUnifiedSeoPageHref(slug, item.pageType)}
                       analytics={{
                         content_locale: locale,
                         content_exchange_slug: slug,

@@ -16,10 +16,12 @@
 - 线上 `sitemap.xml` 已纳入 462 个 GEO 路径，并已重新提交给 Google Search Console
 - 最小后端闭环已补齐：`GET /api/exchanges` 与 `POST /api/clicks`
 - 分析采集已加 consent gate：用户同意前不初始化 PostHog，也不发送点击日志
+- SEO/GEO 自动化闭环已接入：opportunities、pages、ROI、earnings、control APIs、daily automation snapshot
 - 新增部署与质量门禁：
   - `web/vercel.json`：强制 `www -> apex` 301
   - `web/package.json`：新增 `npm run check` 与 Vercel 一键部署命令
   - `.github/workflows/quality-gates.yml`：PR / Push 自动跑 lint + test + build
+  - `.github/workflows/automation-loop.yml`：每日自动跑 SEO/GEO automation pipeline 并提交新 snapshot
 
 ## 当前覆盖
 - 交易所（7）：Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi/HTX
@@ -32,6 +34,7 @@
 - `PRD-v1.md`
 - `information-architecture-v1.md`
 - `growth-and-seo-v1.md`
+- `seo-geo-automation-architecture-v1.md`
 - `revenue-tracking-v1.md`
 - `risk-guardrails-v1.md`
 - `launch-plan-p0-v1.md`
@@ -49,6 +52,7 @@
 cd web
 npm run check
 npm run dev
+npm run automation:generate
 npm run deploy:vercel   # safe from web/, delegates to repo root
 ```
 

@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import {
   SEO_CONTENT_LOCALES,
-  SEO_PAGE_TYPES,
-  getExchangeSeoPageHref,
-} from "@/data/exchange-seo";
+  getUnifiedSeoPageHref,
+  getUnifiedSeoStaticParams,
+} from "@/lib/automation/catalog";
 import { getAllExchangeSlugs } from "@/data/exchanges";
 import { LOCALES, SITE_URL } from "@/lib/constants";
 import { getLocaleAlternateUrls } from "@/lib/i18n";
@@ -42,21 +42,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  for (const locale of SEO_CONTENT_LOCALES) {
-    for (const slug of exchangeSlugs) {
-      for (const pageType of SEO_PAGE_TYPES) {
-        const pathname = getExchangeSeoPageHref(slug, pageType);
-        entries.push({
-          url: `${SITE_URL}/${locale}${pathname}`,
-          lastModified: now,
-          changeFrequency: "weekly",
-          priority: 0.75,
-          alternates: {
-            languages: getLocaleAlternateUrls(pathname, SEO_CONTENT_LOCALES),
-          },
-        });
-      }
-    }
+  for (const param of getUnifiedSeoStaticParams()) {
+    const pathname = getUnifiedSeoPageHref(param.slug, param.pageType);
+    entries.push({
+      url: `${SITE_URL}/${param.locale}${pathname}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+      alternates: {
+        languages: getLocaleAlternateUrls(pathname, SEO_CONTENT_LOCALES),
+      },
+    });
   }
 
   return entries;

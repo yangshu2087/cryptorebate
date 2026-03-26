@@ -1,0 +1,53 @@
+name: Automation Loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+jobs:
+  automation-loop:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: web
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run automation pipeline
+        run: npm run automation:daily
+
+      - name: Run quality gates
+        run: npm run check
+
+      - name: Commit automation snapshot
+        working-directory: .
+        run: |
+          if git diff --quiet -- web/src/data/generated/automation-state.json; then
+            echo "No automation snapshot changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/src/data/generated/automation-state.json
+          git commit -m "chore(automation): refresh SEO/GEO automation snapshot"
+          git push

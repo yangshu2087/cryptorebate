@@ -11,6 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seo:search-console": "node ./scripts/analyze-search-console.mjs",
+    "automation:generate": "tsx ./scripts/run-automation-pipeline.ts",
+    "automation:daily": "tsx ./scripts/run-automation-pipeline.ts --mode daily",
+    "automation:sync-earnings": "tsx ./scripts/run-automation-pipeline.ts --mode earnings",
     "deploy:vercel": "bash ../scripts/deploy-vercel.sh production",
     "deploy:vercel:preview": "bash ../scripts/deploy-vercel.sh preview"
   },
@@ -41,6 +44,7 @@
     "eslint-config-next": "16.1.7",
     "jsdom": "^29.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5",
     "vitest": "^4.1.0"
   }

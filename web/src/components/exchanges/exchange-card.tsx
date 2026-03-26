@@ -6,11 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TrackedInternalLink } from "@/components/analytics/tracked-internal-link";
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
 import {
-  getExchangeSeoEntriesForExchange,
-  getExchangeSeoPageHref,
-  getExchangeSeoPageLabels,
+  getUnifiedSeoEntriesForExchange,
+  getUnifiedSeoPageHref,
+  getUnifiedSeoPageLabels,
   isSeoContentLocale,
-} from "@/data/exchange-seo";
+} from "@/lib/automation/catalog";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import type { Exchange } from "@/types/exchange";
 
@@ -28,7 +28,7 @@ export function ExchangeCard({
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
   const geoEntries =
     showSeoLinks && seoLocale
-      ? getExchangeSeoEntriesForExchange(seoLocale, exchange.slug)
+      ? getUnifiedSeoEntriesForExchange(seoLocale, exchange.slug)
       : [];
   const geoSectionLabel = locale === "zh" ? "问题页入口" : "SEO / GEO guides";
 
@@ -85,12 +85,12 @@ export function ExchangeCard({
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {geoEntries.map((entry) => {
-                const labels = getExchangeSeoPageLabels(seoLocale!, entry.pageType);
+                const labels = getUnifiedSeoPageLabels(seoLocale!, entry.pageType);
 
                 return (
                   <TrackedInternalLink
                     key={entry.pageType}
-                    href={getExchangeSeoPageHref(exchange.slug, entry.pageType)}
+                    href={getUnifiedSeoPageHref(exchange.slug, entry.pageType)}
                     analytics={{
                       content_locale: locale,
                       content_exchange_slug: exchange.slug,

@@ -1,0 +1,72 @@
+[
+  {
+    "source": "manual",
+    "locale": "en",
+    "exchangeSlug": "binance",
+    "query": "binance login",
+    "intent": "login",
+    "pageType": "login",
+    "impressions": 420,
+    "clicks": 36,
+    "ctr": 0.0857,
+    "position": 7.2,
+    "growthRate": 0.19,
+    "monetizationPotential": 0.78
+  },
+  {
+    "source": "manual",
+    "locale": "zh",
+    "exchangeSlug": "okx",
+    "query": "okx 登录",
+    "intent": "login",
+    "pageType": "login",
+    "impressions": 390,
+    "clicks": 31,
+    "ctr": 0.0795,
+    "position": 6.4,
+    "growthRate": 0.17,
+    "monetizationPotential": 0.74
+  },
+  {
+    "source": "manual",
+    "locale": "ja",
+    "exchangeSlug": "bybit",
+    "query": "bybit 本人確認 失敗",
+    "intent": "verification-troubleshooting",
+    "pageType": "verification-troubleshooting",
+    "impressions": 280,
+    "clicks": 20,
+    "ctr": 0.0714,
+    "position": 8.1,
+    "growthRate": 0.23,
+    "monetizationPotential": 0.69
+  },
+  {
+    "source": "manual",
+    "locale": "es",
+    "exchangeSlug": "gate",
+    "query": "gate.io país disponible",
+    "intent": "country-availability",
+    "pageType": "country-availability",
+    "impressions": 260,
+    "clicks": 19,
+    "ctr": 0.0731,
+    "position": 7.8,
+    "growthRate": 0.21,
+    "monetizationPotential": 0.62
+  },
+  {
+    "source": "manual",
+    "locale": "pt",
+    "exchangeSlug": "kucoin",
+    "query": "kucoin saque demora",
+    "intent": "deposit-withdrawal",
+    "pageType": "deposit-withdrawal",
+    "impressions": 240,
+    "clicks": 17,
+    "ctr": 0.0708,
+    "position": 8.4,
+    "growthRate": 0.18,
+    "monetizationPotential": 0.88
+  }
+]

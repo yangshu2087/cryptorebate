@@ -5,13 +5,13 @@ import { TrackedInternalLink } from "@/components/analytics/tracked-internal-lin
 import { Card, CardContent } from "@/components/ui/card";
 import { ExchangeFilters } from "@/components/exchanges/exchange-filters";
 import {
-  SEO_PAGE_TYPES,
-  getExchangeSeoGuidesForLocale,
-  getExchangeSeoClusterLabels,
-  getExchangeSeoPageHref,
-  getExchangeSeoPageLabels,
+  getTopAutomationOpportunities,
+  getUnifiedSeoGuidesForLocale,
+  getUnifiedSeoClusterLabels,
+  getUnifiedSeoPageHref,
+  getUnifiedSeoPageLabels,
   isSeoContentLocale,
-} from "@/data/exchange-seo";
+} from "@/lib/automation/catalog";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import type { Metadata } from "next";
 
@@ -57,8 +57,12 @@ export default function ExchangesPage() {
   const locale = useLocale();
   const t = useTranslations("exchanges");
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
-  const geoGuides = seoLocale ? getExchangeSeoGuidesForLocale(seoLocale) : [];
-  const geoLabels = seoLocale ? getExchangeSeoClusterLabels(seoLocale) : null;
+  const geoGuides = seoLocale ? getUnifiedSeoGuidesForLocale(seoLocale) : [];
+  const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
+  const topOpportunities = seoLocale ? getTopAutomationOpportunities(seoLocale, 9) : [];
+  const pageTypes = Array.from(
+    new Set(geoGuides.flatMap((group) => group.guides.map((guide) => guide.pageType)))
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -79,8 +83,8 @@ export default function ExchangesPage() {
           </Card>
 
           <div className="grid gap-4 md:grid-cols-3">
-            {SEO_PAGE_TYPES.map((pageType) => {
-              const pageLabels = getExchangeSeoPageLabels(seoLocale!, pageType);
+            {pageTypes.map((pageType) => {
+              const pageLabels = getUnifiedSeoPageLabels(seoLocale!, pageType);
 
               return (
                 <Card key={pageType}>
@@ -93,7 +97,7 @@ export default function ExchangesPage() {
                       {geoGuides.map((group) => (
                         <TrackedInternalLink
                           key={`${group.exchange.slug}-${pageType}`}
-                          href={getExchangeSeoPageHref(group.exchange.slug, pageType)}
+                          href={getUnifiedSeoPageHref(group.exchange.slug, pageType)}
                           analytics={{
                             content_locale: locale,
                             content_exchange_slug: group.exchange.slug,
@@ -117,6 +121,46 @@ export default function ExchangesPage() {
               );
             })}
           </div>
+        </section>
+      ) : null}
+
+      {seoLocale ? (
+        <section className="mb-10">
+          <Card className="border-border/70">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold">Automated monetization queue</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
+                These are the highest-scoring pages generated from query, click, and
+                projected revenue signals.
+              </p>
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                {topOpportunities.map((item) => (
+                  <TrackedInternalLink
+                    key={item.id}
+                    href={getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}
+                    analytics={{
+                      content_locale: locale,
+                      content_exchange_slug: item.exchangeSlug,
+                      content_page_type: item.pageType,
+                      content_cluster: "autonomous_geo",
+                      content_primary_query: item.primaryQuery,
+                      hub_page_type: "exchange_list_autonomous",
+                      cta_target_type: item.pageType,
+                    }}
+                    className="rounded-2xl border border-border/70 p-4 transition-colors hover:border-brand/30 hover:bg-muted/20"
+                  >
+                    <p className="text-sm font-semibold">
+                      {item.exchangeSlug} · {getUnifiedSeoPageLabels(seoLocale, item.pageType).short}
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">{item.primaryQuery}</p>
+                    <p className="mt-3 text-sm font-medium text-brand">
+                      Score {item.score} · ${item.projectedMonthlyRevenueUsd}/mo
+                    </p>
+                  </TrackedInternalLink>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </section>
       ) : null}
 

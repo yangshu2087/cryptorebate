@@ -153,6 +153,7 @@ Quick deploy commands:
 
 ```bash
 npm run check
+npm run automation:generate
 npm run deploy:vercel
 ```
 
@@ -171,6 +172,15 @@ Important deployment rule:
 - Logo paths are validated against files under `public/`
 - Referral links are validated as URLs and checked against an approved partner-domain allowlist
 - GitHub Actions workflow `.github/workflows/quality-gates.yml` enforces these checks on `push` and `pull_request`
+
+## SEO / GEO Automation Loop
+
+- `npm run automation:generate` recomputes signals, opportunities, pages, ROI, and earnings snapshot
+- `src/lib/automation/*` holds the automation engine, locale packs, catalog, and persistence logic
+- `src/app/api/opportunities`, `pages`, `stats/seo`, `earnings`, `roi`, `control/*`, `conversions/import`, and `earnings/sync/run` expose the automation control plane
+- `src/data/automation/*` stores the control plane and import seeds
+- `src/data/generated/automation-state.json` is the generated automation snapshot
+- `.github/workflows/automation-loop.yml` runs the automation pipeline daily and commits refreshed snapshot output
 
 ## Minimal Analytics Events
 

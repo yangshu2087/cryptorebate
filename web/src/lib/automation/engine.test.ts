@@ -1,0 +1,73 @@
+import { describe, expect, it } from "vitest";
+import sitemap from "@/app/sitemap";
+import { exchanges } from "@/data/exchanges";
+import {
+  getAutomationState,
+  getTopAutomationOpportunities,
+  getUnifiedSeoEntry,
+  getUnifiedSeoStaticParams,
+} from "./catalog";
+import { AUTOMATION_DYNAMIC_PAGE_TYPES } from "./types";
+
+describe("automation engine", () => {
+  it("builds a full automation state with monetization metrics", () => {
+    const state = getAutomationState();
+
+    expect(state.metrics.totalSignals).toBeGreaterThan(1000);
+    expect(state.metrics.totalOpportunities).toBeGreaterThan(1000);
+    expect(state.metrics.publishedPages).toBeGreaterThan(
+      exchanges.length * 6 * 11
+    );
+    expect(state.metrics.monthlyProjectedRevenueUsd).toBeGreaterThan(0);
+    expect(state.pageRoiDaily.length).toBe(state.pages.length);
+    expect(state.queryRoiDaily.length).toBe(state.pages.length);
+    expect(state.earnings).toHaveLength(exchanges.length);
+    expect(state.controlPlane.rolloutMode).toBe("full-automatic");
+  });
+
+  it("exposes auto-generated dynamic SEO pages in the unified catalog", () => {
+    const state = getAutomationState();
+    const dynamicPage = state.pages.find((page) =>
+      AUTOMATION_DYNAMIC_PAGE_TYPES.includes(
+        page.pageType as (typeof AUTOMATION_DYNAMIC_PAGE_TYPES)[number]
+      )
+    );
+
+    expect(dynamicPage).toBeDefined();
+
+    const entry = getUnifiedSeoEntry(
+      dynamicPage!.locale,
+      dynamicPage!.exchangeSlug,
+      dynamicPage!.pageType
+    );
+
+    expect(entry).toBeDefined();
+    expect(entry?.automationSource).toBe("dynamic");
+    expect(entry?.metadata.title.toLowerCase()).toContain(
+      dynamicPage!.exchangeSlug.toLowerCase()
+    );
+    expect(entry?.faq.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("adds automation pages to static params and sitemap", () => {
+    const params = getUnifiedSeoStaticParams();
+    const topOpportunity = getTopAutomationOpportunities(undefined, 1)[0];
+    const dynamicParam = params.find(
+      (item) =>
+        item.locale === topOpportunity.locale &&
+        item.slug === topOpportunity.exchangeSlug &&
+        item.pageType === topOpportunity.pageType
+    );
+
+    expect(dynamicParam).toBeDefined();
+
+    const entries = sitemap();
+    expect(
+      entries.some((entry) =>
+        entry.url.endsWith(
+          `/${topOpportunity.locale}/exchanges/${topOpportunity.exchangeSlug}/${topOpportunity.pageType}`
+        )
+      )
+    ).toBe(true);
+  });
+});

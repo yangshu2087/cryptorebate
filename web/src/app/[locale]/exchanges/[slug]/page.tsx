@@ -18,12 +18,12 @@ import { TrackedInternalLink } from "@/components/analytics/tracked-internal-lin
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
 import { FAQJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import {
-  getExchangeSeoClusterLabels,
-  getExchangeSeoEntriesForExchange,
-  getExchangeSeoPageHref,
-  getExchangeSeoPageLabels,
+  getUnifiedSeoClusterLabels,
+  getUnifiedSeoEntriesForExchange,
+  getUnifiedSeoPageHref,
+  getUnifiedSeoPageLabels,
   isSeoContentLocale,
-} from "@/data/exchange-seo";
+} from "@/lib/automation/catalog";
 import { exchanges, getExchangeBySlug, getAllExchangeSlugs } from "@/data/exchanges";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import {
@@ -135,8 +135,8 @@ function ExchangeDetailView({
   const tutorial = t.raw(`exchanges.${slug}.tutorial`) as string[];
   const faq = t.raw(`exchanges.${slug}.faq`) as { q: string; a: string }[];
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
-  const geoGuides = seoLocale ? getExchangeSeoEntriesForExchange(seoLocale, slug) : [];
-  const geoLabels = seoLocale ? getExchangeSeoClusterLabels(seoLocale) : null;
+  const geoGuides = seoLocale ? getUnifiedSeoEntriesForExchange(seoLocale, slug) : [];
+  const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
 
   const relatedExchanges = exchanges
     .filter((e) => e.slug !== slug)
@@ -239,12 +239,12 @@ function ExchangeDetailView({
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             {geoGuides.map((guide) => {
-              const labels = getExchangeSeoPageLabels(seoLocale!, guide.pageType);
+              const labels = getUnifiedSeoPageLabels(seoLocale!, guide.pageType);
 
               return (
                 <TrackedInternalLink
                   key={guide.pageType}
-                  href={getExchangeSeoPageHref(exchange.slug, guide.pageType)}
+                  href={getUnifiedSeoPageHref(exchange.slug, guide.pageType)}
                   analytics={{
                     content_locale: locale,
                     content_exchange_slug: exchange.slug,
