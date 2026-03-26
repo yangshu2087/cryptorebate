@@ -131,6 +131,14 @@ export type SeoDashboardData = {
         configuredCount: number;
         failedCount: number;
       };
+      internalLinkRefresh: {
+        status: string;
+        label: string;
+        updatedAt: string;
+        exchangeGroups: number;
+        surfacedGuides: number;
+        localesCovered: number;
+      };
       distribution: {
         status: string;
         label: string;
@@ -190,6 +198,12 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const partnerFailures = state.externalSources.partners.filter(
     (item) => item.status === "failed"
   ).length;
+  const internalLinkGroups = state.internalLinks.exchangeGroups;
+  const surfacedGuides = internalLinkGroups.reduce(
+    (sum, group) => sum + group.guides.length,
+    0
+  );
+  const localesCovered = new Set(internalLinkGroups.map((group) => group.locale)).size;
 
   return {
     state,
@@ -250,6 +264,14 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
               .at(-1) ?? latestPartnerRun?.completedAt ?? "",
           configuredCount: dataReality.flags.configuredPartnerCount,
           failedCount: partnerFailures,
+        },
+        internalLinkRefresh: {
+          status: internalLinkGroups.length > 0 ? "success" : "warning",
+          label: internalLinkGroups.length > 0 ? "已刷新" : "待刷新",
+          updatedAt: state.internalLinks.refreshedAt,
+          exchangeGroups: internalLinkGroups.length,
+          surfacedGuides,
+          localesCovered,
         },
         distribution: {
           status:

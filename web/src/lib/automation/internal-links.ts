@@ -1,4 +1,5 @@
 import {
+  getExchangeSeoEntry,
   getExchangeSeoEntriesForExchange,
   isExchangeSeoPageType,
   type ExchangeSeoContentEntry,
@@ -175,6 +176,23 @@ type InternalLinkState = {
   pageRoiDaily: RoiEntry[];
 };
 
+type InternalLinkDistributionState = InternalLinkState & {
+  internalLinks: AutomationInternalLinkManifest;
+};
+
+export type InternalLinkDistributionCandidate = {
+  locale: string;
+  exchangeSlug: string;
+  pageType: string;
+  routePath: string;
+  title: string;
+  summary: string;
+  primaryQuery: string;
+  source: "base" | "dynamic";
+  score: number;
+  tags: string[];
+};
+
 export function buildInternalLinkManifest(
   state: InternalLinkState
 ): AutomationInternalLinkManifest {
@@ -191,4 +209,103 @@ export function buildInternalLinkManifest(
     refreshedAt: new Date().toISOString(),
     exchangeGroups,
   };
+}
+
+function buildDistributionCandidate(
+  state: InternalLinkDistributionState,
+  guide: AutomationInternalLinkTarget
+): InternalLinkDistributionCandidate | null {
+  const dynamicPage = state.pages.find(
+    (page) =>
+      page.locale === guide.locale &&
+      page.exchangeSlug === guide.exchangeSlug &&
+      page.pageType === guide.pageType &&
+      page.stage === "published"
+  );
+
+  if (dynamicPage) {
+    return {
+      locale: guide.locale,
+      exchangeSlug: guide.exchangeSlug,
+      pageType: guide.pageType,
+      routePath: `/exchanges/${guide.exchangeSlug}/${guide.pageType}`,
+      title: dynamicPage.heroTitle,
+      summary: dynamicPage.heroDescription,
+      primaryQuery: dynamicPage.primaryQuery,
+      source: "dynamic",
+      score: guide.score,
+      tags: [
+        "internal-link-refresh",
+        "top-opportunity",
+        dynamicPage.exchangeSlug,
+        dynamicPage.pageType,
+        "dynamic-guide",
+      ],
+    };
+  }
+
+  const baseEntry = getExchangeSeoEntry(guide.locale, guide.exchangeSlug, guide.pageType);
+  if (!baseEntry) return null;
+
+  return {
+    locale: guide.locale,
+    exchangeSlug: guide.exchangeSlug,
+    pageType: guide.pageType,
+    routePath: `/exchanges/${guide.exchangeSlug}/${guide.pageType}`,
+    title: baseEntry.heroTitle,
+    summary: baseEntry.heroDescription,
+    primaryQuery: baseEntry.primaryQuery,
+    source: "base",
+    score: guide.score,
+    tags: [
+      "internal-link-refresh",
+      "top-opportunity",
+      baseEntry.exchange.slug,
+      baseEntry.pageType,
+      "base-guide",
+    ],
+  };
+}
+
+export function getInternalLinkDistributionCandidates(
+  state: InternalLinkDistributionState,
+  limit = 24,
+  perGroupLimit = 2
+) {
+  const groups = [...state.internalLinks.exchangeGroups]
+    .filter((group) => group.guides.length > 0)
+    .map((group) => ({
+      ...group,
+      guides: [...group.guides]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, perGroupLimit),
+    }))
+    .sort((a, b) => (b.guides[0]?.score ?? 0) - (a.guides[0]?.score ?? 0));
+
+  const picked: AutomationInternalLinkTarget[] = [];
+  const seen = new Set<string>();
+  let depth = 0;
+
+  while (picked.length < limit) {
+    let addedThisRound = false;
+    for (const group of groups) {
+      const guide = group.guides[depth];
+      if (!guide) continue;
+      const key = `${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      picked.push(guide);
+      addedThisRound = true;
+      if (picked.length >= limit) break;
+    }
+
+    if (!addedThisRound) break;
+    depth += 1;
+  }
+
+  return picked
+    .map((guide) => buildDistributionCandidate(state, guide))
+    .filter((candidate): candidate is InternalLinkDistributionCandidate =>
+      Boolean(candidate)
+    );
 }

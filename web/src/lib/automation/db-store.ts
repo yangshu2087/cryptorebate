@@ -9,6 +9,7 @@ import {
   getQueuedStatusForChannel,
   publishDistributionJob,
 } from "./distribution";
+import { getInternalLinkDistributionCandidates } from "./internal-links";
 import type {
   AffiliateClick,
   AutomationAlert,
@@ -874,6 +875,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
   if (!isAutomationDbEnabled()) return null;
 
   const brandPages = buildBrandPages(state).slice(0, 12);
+  const internalLinkCandidates = getInternalLinkDistributionCandidates(state, 24, 2);
   const candidatePages = state.pages
     .filter((page: AutomationSeoPage) => page.stage === 'published')
     .sort((a: AutomationSeoPage, b: AutomationSeoPage) => b.qualityScore - a.qualityScore)
@@ -937,6 +939,10 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           url: `${SITE_URL}/${page.locale}${routePath}`,
           exchangeSlug: page.exchangeSlug,
           pageType: page.pageType,
+          primaryQuery: page.primaryQuery,
+          source: "page",
+          sourceLabel: "自动新页",
+          tags: ["page-publish", page.exchangeSlug, page.pageType],
         };
         await upsertJob(client, {
           channel: "telegram",
@@ -958,12 +964,49 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
         });
       }
 
+      for (const candidate of internalLinkCandidates) {
+        const payload: DistributionJobPayload = {
+          title: candidate.title,
+          summary: candidate.summary,
+          url: `${SITE_URL}/${candidate.locale}${candidate.routePath}`,
+          exchangeSlug: candidate.exchangeSlug,
+          pageType: candidate.pageType,
+          primaryQuery: candidate.primaryQuery,
+          refreshScore: candidate.score,
+          source: "internal-link-refresh",
+          sourceLabel: "内链刷新推荐位",
+          tags: candidate.tags,
+        };
+        await upsertJob(client, {
+          channel: "telegram",
+          locale: candidate.locale,
+          exchangeSlug: candidate.exchangeSlug,
+          pageType: candidate.pageType,
+          topic: null,
+          routePath: candidate.routePath,
+          payload,
+        });
+        await upsertJob(client, {
+          channel: "x",
+          locale: candidate.locale,
+          exchangeSlug: candidate.exchangeSlug,
+          pageType: candidate.pageType,
+          topic: null,
+          routePath: candidate.routePath,
+          payload,
+        });
+      }
+
       for (const page of brandPages) {
         const payload: DistributionJobPayload = {
           title: page.heroTitle,
           summary: page.heroDescription,
           url: `${SITE_URL}/${page.locale}${page.routePath}`,
           topic: page.topic,
+          primaryQuery: page.metadata.keywords[0] ?? page.metadata.title,
+          source: "brand",
+          sourceLabel: "品牌页",
+          tags: ["brand-page", page.topic],
         };
         await upsertJob(client, {
           channel: "telegram",

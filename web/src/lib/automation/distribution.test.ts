@@ -40,15 +40,19 @@ describe("distribution queue helpers", () => {
       url: "https://cryptorebate.app/en/exchanges/binance/referral-code",
       exchangeSlug: "binance" as const,
       pageType: "referral-code",
+      sourceLabel: "内链刷新推荐位",
+      tags: ["internal-link-refresh", "top-opportunity"],
     };
 
     const telegramText = buildTelegramDistributionMessage(payload);
     const xText = buildXDistributionMessage(payload);
 
     expect(telegramText).toContain(payload.title);
+    expect(telegramText).toContain(payload.sourceLabel);
     expect(telegramText).toContain(payload.url);
     expect(xText).toContain(payload.url);
     expect(xText.length).toBeLessThanOrEqual(280);
     expect(xText).toContain("#CryptoRebate");
+    expect(xText).toContain("内链刷新推荐位");
   });
 });

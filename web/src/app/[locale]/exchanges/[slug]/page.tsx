@@ -18,6 +18,7 @@ import { TrackedInternalLink } from "@/components/analytics/tracked-internal-lin
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
 import { FAQJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import {
+  getExchangeOpportunityGuides,
   getUnifiedSeoClusterLabels,
   getUnifiedSeoEntriesForExchange,
   getUnifiedSeoPageHref,
@@ -136,6 +137,9 @@ function ExchangeDetailView({
   const faq = t.raw(`exchanges.${slug}.faq`) as { q: string; a: string }[];
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
   const geoGuides = seoLocale ? getUnifiedSeoEntriesForExchange(seoLocale, slug) : [];
+  const opportunityGuides = seoLocale
+    ? getExchangeOpportunityGuides(seoLocale, slug, 4, 6)
+    : { featured: [], supporting: [] };
   const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
 
   const relatedExchanges = exchanges
@@ -238,7 +242,7 @@ function ExchangeDetailView({
             </p>
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
-            {geoGuides.map((guide) => {
+            {(opportunityGuides.featured.length ? opportunityGuides.featured : geoGuides.slice(0, 4)).map((guide) => {
               const labels = getUnifiedSeoPageLabels(seoLocale!, guide.pageType);
 
               return (
@@ -256,7 +260,10 @@ function ExchangeDetailView({
                   }}
                   className="block rounded-2xl border border-border/70 bg-background p-5 transition-colors hover:border-brand/30 hover:bg-muted/20"
                 >
-                  <p className="text-sm font-semibold">{labels.nav}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold">{labels.nav}</p>
+                    <Badge variant="outline">每日刷新推荐</Badge>
+                  </div>
                   <p className="mt-2 text-sm leading-7 text-muted-foreground">
                     {guide.answerBox.body}
                   </p>
@@ -268,6 +275,40 @@ function ExchangeDetailView({
               );
             })}
           </div>
+          {opportunityGuides.supporting.length ? (
+            <div className="mt-4 rounded-2xl border border-border/70 bg-muted/20 p-5">
+              <div className="flex flex-col gap-2">
+                <h3 className="text-sm font-semibold">更多高意图问题</h3>
+                <p className="text-sm text-muted-foreground">
+                  这些链接由 daily_internal_link_refresh 按机会分数、点击与收益倾向补位，不只是默认排序。
+                </p>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {opportunityGuides.supporting.map((guide) => {
+                  const labels = getUnifiedSeoPageLabels(seoLocale!, guide.pageType);
+                  return (
+                    <TrackedInternalLink
+                      key={`support-${guide.pageType}`}
+                      href={getUnifiedSeoPageHref(exchange.slug, guide.pageType)}
+                      analytics={{
+                        content_locale: locale,
+                        content_exchange_slug: exchange.slug,
+                        content_page_type: guide.pageType,
+                        content_cluster: "exchange_geo_supporting",
+                        content_primary_query: guide.primaryQuery,
+                        hub_page_type: "exchange_detail_supporting",
+                        cta_target_type: guide.pageType,
+                      }}
+                      className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                    >
+                      {labels.short}
+                      <ArrowRight className="h-3 w-3" />
+                    </TrackedInternalLink>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
         </section>
       ) : null}
 

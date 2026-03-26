@@ -12,7 +12,8 @@ import {
 import { ArrowRight, Shield, BarChart3, Globe, RefreshCw, Users, TrendingUp, Percent, Coins } from "lucide-react";
 import {
   getAutomationAlerts,
-  getTopAutomationOpportunities,
+  getOpportunityQuestionGroupsForLocale,
+  getTopOpportunityEntriesForLocale,
   getTopAutomationRoiPages,
   getUnifiedSeoClusterLabels,
   getUnifiedSeoGuidesForLocale,
@@ -73,7 +74,8 @@ export default function HomePage() {
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
   const geoGuides = seoLocale ? getUnifiedSeoGuidesForLocale(seoLocale) : [];
   const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
-  const topOpportunities = seoLocale ? getTopAutomationOpportunities(seoLocale, 6) : [];
+  const topOpportunityEntries = seoLocale ? getTopOpportunityEntriesForLocale(seoLocale, 6) : [];
+  const questionGroups = seoLocale ? getOpportunityQuestionGroupsForLocale(seoLocale, 8, 6) : [];
   const topRoiPages = seoLocale ? getTopAutomationRoiPages(seoLocale, 6) : [];
   const automationAlerts = seoLocale ? getAutomationAlerts(seoLocale, 4) : [];
 
@@ -211,7 +213,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {Array.from(new Set(geoGuides.flatMap((group) => group.guides.map((guide) => guide.pageType)))).map((pageType) => {
+              {questionGroups.map(({ pageType, guides }) => {
                 const pageLabels = getUnifiedSeoPageLabels(seoLocale!, pageType);
 
                 return (
@@ -222,17 +224,19 @@ export default function HomePage() {
                         {pageLabels.question}
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
-                        {geoGuides.map((group) => {
-                          const guide = group.guides.find((item) => item.pageType === pageType);
-                          if (!guide) return null;
+                        {guides.map((guide) => {
+                          const guideExchange = exchanges.find(
+                            (exchange) => exchange.slug === guide.exchange.slug
+                          );
+                          if (!guideExchange) return null;
 
                           return (
                             <TrackedInternalLink
-                              key={`${group.exchange.slug}-${pageType}`}
-                              href={getUnifiedSeoPageHref(group.exchange.slug, pageType)}
+                              key={`${guide.exchange.slug}-${pageType}`}
+                              href={getUnifiedSeoPageHref(guide.exchange.slug, pageType)}
                               analytics={{
                                 content_locale: locale,
-                                content_exchange_slug: group.exchange.slug,
+                                content_exchange_slug: guide.exchange.slug,
                                 content_page_type: pageType,
                                 content_cluster: "exchange_geo",
                                 content_primary_query: guide.primaryQuery,
@@ -241,7 +245,7 @@ export default function HomePage() {
                               }}
                               className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
                             >
-                              {group.exchange.name}
+                              {guideExchange.name}
                               <ArrowRight className="h-3 w-3" />
                             </TrackedInternalLink>
                           );
@@ -272,13 +276,13 @@ export default function HomePage() {
               <CardContent className="p-5">
                 <h3 className="text-lg font-semibold">Top opportunity pages</h3>
                 <div className="mt-4 space-y-3">
-                  {topOpportunities.map((item) => (
+                  {topOpportunityEntries.map((item) => (
                     <TrackedInternalLink
-                      key={item.id}
-                      href={getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}
+                      key={`${item.exchange.slug}-${item.pageType}`}
+                      href={getUnifiedSeoPageHref(item.exchange.slug, item.pageType)}
                       analytics={{
                         content_locale: locale,
-                        content_exchange_slug: item.exchangeSlug,
+                        content_exchange_slug: item.exchange.slug,
                         content_page_type: item.pageType,
                         content_cluster: "autonomous_geo",
                         content_primary_query: item.primaryQuery,
@@ -290,13 +294,17 @@ export default function HomePage() {
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-semibold">
-                            {item.exchangeSlug} · {getUnifiedSeoPageLabels(seoLocale, item.pageType).nav}
+                            {item.exchange.name} · {getUnifiedSeoPageLabels(seoLocale, item.pageType).nav}
                           </p>
                           <p className="mt-1 text-sm text-muted-foreground">{item.primaryQuery}</p>
                         </div>
                         <div className="text-right text-sm">
-                          <p className="font-semibold text-brand">{item.score}</p>
-                          <p className="text-muted-foreground">${item.projectedMonthlyRevenueUsd}/mo</p>
+                          <p className="font-semibold text-brand">
+                            {Math.round(item.opportunityScore ?? 0)}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {item.automationSource === "dynamic" ? "动态长尾" : "核心 GEO"}
+                          </p>
                         </div>
                       </div>
                     </TrackedInternalLink>

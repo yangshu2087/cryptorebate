@@ -291,6 +291,10 @@ export type DistributionJobPayload = {
   exchangeSlug?: Exchange["slug"] | null;
   pageType?: string | null;
   topic?: string | null;
+  primaryQuery?: string | null;
+  refreshScore?: number | null;
+  source?: "page" | "brand" | "internal-link-refresh";
+  sourceLabel?: string | null;
   tags?: string[];
 };
 

@@ -68,6 +68,7 @@ function buildHashtags(payload: DistributionJobPayload) {
 
 export function buildTelegramDistributionMessage(payload: DistributionJobPayload) {
   const lines = [
+    payload.sourceLabel ? `【${payload.sourceLabel}】` : "",
     payload.title.trim(),
     payload.summary.trim(),
     payload.url.trim(),
@@ -81,7 +82,10 @@ export function buildXDistributionMessage(payload: DistributionJobPayload) {
   const reservedForUrl = url ? url.length + 1 : 0;
   const reservedForTags = hashtags ? hashtags.length + 1 : 0;
   const maxBody = Math.max(40, 280 - reservedForUrl - reservedForTags);
-  const headline = trimText(payload.title.trim(), Math.min(110, maxBody));
+  const headline = trimText(
+    `${payload.sourceLabel ? `[${payload.sourceLabel}] ` : ""}${payload.title.trim()}`,
+    Math.min(110, maxBody)
+  );
   const remaining = maxBody - headline.length - 1;
   const summary =
     remaining > 32 ? trimText(payload.summary.trim(), remaining) : "";

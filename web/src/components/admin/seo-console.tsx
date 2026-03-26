@@ -356,6 +356,28 @@ export function SeoConsole({
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
+  const internalLinkTopPageTypes = Object.entries(
+    state.internalLinks.exchangeGroups.flatMap((group) => group.guides).reduce<Record<string, number>>(
+      (acc, guide) => {
+        acc[guide.pageType] = (acc[guide.pageType] ?? 0) + 1;
+        return acc;
+      },
+      {}
+    )
+  )
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4);
+  const selectedInternalLinkGroup =
+    selectedExchange !== "all" && selectedDataLocale !== "all"
+      ? state.internalLinks.exchangeGroups.find(
+          (group) =>
+            group.exchangeSlug === selectedExchange && group.locale === selectedDataLocale
+        )
+      : state.internalLinks.exchangeGroups.find(
+          (group) =>
+            (selectedExchange === "all" || group.exchangeSlug === selectedExchange) &&
+            (selectedDataLocale === "all" || group.locale === selectedDataLocale)
+        );
   const exchangeRealityCounts = (["真实", "估算", "模拟", "未接通"] as const).map((reality) => ({
     reality,
     count: dataReality.partnerByExchange.filter((item) => item.reality === reality).length,
@@ -511,6 +533,18 @@ export function SeoConsole({
           } · 已配置 ${statusCards.partnerSync.configuredCount} / 7`}
         />
         <StatusCard
+          title="最近一次内链刷新"
+          status={statusCards.internalLinkRefresh.label}
+          description="显示 daily_internal_link_refresh 最近一次产出的内链刷新结果，用于驱动首页、列表页和交易所详情页推荐位。"
+          meta={`最近刷新：${
+            statusCards.internalLinkRefresh.updatedAt
+              ? formatDate(statusCards.internalLinkRefresh.updatedAt)
+              : "暂无"
+          } · 语言 ${formatNumber(statusCards.internalLinkRefresh.localesCovered)} · 交易所分组 ${formatNumber(
+            statusCards.internalLinkRefresh.exchangeGroups
+          )} · 已浮出链接 ${formatNumber(statusCards.internalLinkRefresh.surfacedGuides)}`}
+        />
+        <StatusCard
           title="自有渠道分发队列"
           status={statusCards.distribution.label}
           description="Telegram / X 的发布队列、待发布和失败状态会在这里统一显示。"
@@ -591,6 +625,22 @@ export function SeoConsole({
               value: `${formatNumber(dashboardData.distributionSummary.queued)} / ${formatNumber(
                 dashboardData.distributionSummary.pending
               )}`,
+            },
+          ]}
+        />
+        <SummaryList
+          title="内链刷新结果"
+          description="显示当前 internal link refresh 把哪些页型和分组实际推到了推荐位。"
+          items={[
+            { label: "已覆盖语言", value: formatNumber(statusCards.internalLinkRefresh.localesCovered) },
+            { label: "交易所分组", value: formatNumber(statusCards.internalLinkRefresh.exchangeGroups) },
+            { label: "已浮出链接", value: formatNumber(statusCards.internalLinkRefresh.surfacedGuides) },
+            {
+              label: "最常浮出页型",
+              value:
+                internalLinkTopPageTypes
+                  .map(([pageType]) => getUnifiedSeoPageLabels(labelsLocale, pageType).short)
+                  .join(" / ") || "暂无",
             },
           ]}
         />
@@ -869,6 +919,59 @@ export function SeoConsole({
         <Card className="border-border/70">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>内链刷新浮出结果</CardTitle>
+              <DataRealityBadge reality="真实" />
+            </div>
+            <CardDescription>
+              这里直接显示 daily_internal_link_refresh 最近一次选出来的推荐位链接，不再只是页面排序上的隐式变化。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {selectedInternalLinkGroup ? (
+              <>
+                <div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
+                  当前展示：
+                  <span className="ml-1 font-medium text-foreground">
+                    {selectedInternalLinkGroup.exchangeSlug} · {ZH_LOCALE_LABELS[selectedInternalLinkGroup.locale] ?? selectedInternalLinkGroup.locale}
+                  </span>
+                </div>
+                {selectedInternalLinkGroup.guides.map((guide) => (
+                  <div key={`${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`} className="rounded-2xl border border-border/60 p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline">{guide.exchangeSlug}</Badge>
+                          <Badge variant="outline">{ZH_LOCALE_LABELS[guide.locale] ?? guide.locale}</Badge>
+                          <Badge variant="outline">{getUnifiedSeoPageLabels(labelsLocale, guide.pageType).short}</Badge>
+                          <Badge variant={guide.source === "dynamic" ? "secondary" : "outline"}>
+                            {guide.source === "dynamic" ? "动态" : "基础"}
+                          </Badge>
+                        </div>
+                        <p className="mt-3 font-semibold">{guide.title}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{guide.primaryQuery}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-brand">{guide.score.toFixed(1)}</p>
+                        <p className="text-xs text-muted-foreground">refresh score</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">{guide.href}</div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-sm text-muted-foreground">
+                当前筛选条件下暂无内链刷新结果。
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
               <CardTitle>自有渠道分发队列</CardTitle>
               <DataRealityBadge reality="真实" />
             </div>
@@ -895,11 +998,22 @@ export function SeoConsole({
                         >
                           {STATUS_LABELS[job.status] ?? job.status}
                         </Badge>
+                        {job.payload.sourceLabel ? (
+                          <Badge variant="secondary">{job.payload.sourceLabel}</Badge>
+                        ) : null}
                         {job.exchangeSlug ? <Badge variant="outline">{job.exchangeSlug}</Badge> : null}
                         {job.pageType ? <Badge variant="outline">{job.pageType}</Badge> : null}
+                        {job.payload.refreshScore != null ? (
+                          <Badge variant="outline">刷新分 {job.payload.refreshScore.toFixed(1)}</Badge>
+                        ) : null}
                       </div>
                       <p className="mt-3 font-semibold">{job.payload.title}</p>
                       <p className="mt-1 text-sm text-muted-foreground">{job.payload.summary}</p>
+                      {job.payload.primaryQuery ? (
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          主查询：{job.payload.primaryQuery}
+                        </p>
+                      ) : null}
                     </div>
                     <div className="text-right text-xs text-muted-foreground">
                       <p>{ZH_LOCALE_LABELS[job.locale] ?? job.locale}</p>

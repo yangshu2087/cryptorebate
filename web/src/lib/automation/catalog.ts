@@ -30,6 +30,11 @@ export type UnifiedSeoEntry = ExchangeSeoContentEntry & {
   opportunityScore?: number;
 };
 
+export type OpportunityQuestionGroup = {
+  pageType: string;
+  guides: UnifiedSeoEntry[];
+};
+
 let cachedState: AutomationState | null = null;
 
 function getState() {
@@ -129,6 +134,121 @@ function orderEntriesWithInternalLinks(
     if (bIndex != null) return 1;
     return 0;
   });
+}
+
+function getInternalLinkGroupsForLocale(locale: string) {
+  return getState().internalLinks.exchangeGroups.filter((group) => group.locale === locale);
+}
+
+function mapTargetsToEntries(
+  locale: string,
+  targets: Array<{ exchangeSlug: string; pageType: string }>
+) {
+  const unique = new Map<string, UnifiedSeoEntry>();
+  for (const target of targets) {
+    const entry = getUnifiedSeoEntry(locale, target.exchangeSlug, target.pageType);
+    if (!entry) continue;
+    unique.set(`${target.exchangeSlug}:${target.pageType}`, entry);
+  }
+  return [...unique.values()];
+}
+
+export function getTopOpportunityEntriesForLocale(locale: string, limit = 6) {
+  const groups = getInternalLinkGroupsForLocale(locale)
+    .map((group) => ({
+      exchangeSlug: group.exchangeSlug,
+      guides: [...group.guides].sort((a, b) => b.score - a.score),
+    }))
+    .filter((group) => group.guides.length > 0)
+    .sort((a, b) => (b.guides[0]?.score ?? 0) - (a.guides[0]?.score ?? 0));
+
+  const picked: Array<{ exchangeSlug: string; pageType: string }> = [];
+  const seen = new Set<string>();
+  let depth = 0;
+
+  while (picked.length < limit) {
+    let addedThisRound = false;
+    for (const group of groups) {
+      const guide = group.guides[depth];
+      if (!guide) continue;
+      const key = `${guide.exchangeSlug}:${guide.pageType}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      picked.push({ exchangeSlug: guide.exchangeSlug, pageType: guide.pageType });
+      addedThisRound = true;
+      if (picked.length >= limit) break;
+    }
+    if (!addedThisRound) break;
+    depth += 1;
+  }
+
+  return mapTargetsToEntries(locale, picked);
+}
+
+export function getOpportunityQuestionGroupsForLocale(
+  locale: string,
+  maxPageTypes = 8,
+  limitPerType = 6
+): OpportunityQuestionGroup[] {
+  const byPageType = new Map<
+    string,
+    Array<{ exchangeSlug: string; pageType: string; score: number }>
+  >();
+
+  for (const group of getInternalLinkGroupsForLocale(locale)) {
+    for (const guide of group.guides) {
+      const existing = byPageType.get(guide.pageType) ?? [];
+      existing.push({
+        exchangeSlug: guide.exchangeSlug,
+        pageType: guide.pageType,
+        score: guide.score,
+      });
+      byPageType.set(guide.pageType, existing);
+    }
+  }
+
+  return [...byPageType.entries()]
+    .map(([pageType, guides]) => ({
+      pageType,
+      guides: mapTargetsToEntries(
+        locale,
+        guides
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limitPerType)
+          .map((guide) => ({
+            exchangeSlug: guide.exchangeSlug,
+            pageType: guide.pageType,
+          }))
+      ),
+      score: guides[0]?.score ?? 0,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxPageTypes)
+    .map(({ pageType, guides }) => ({ pageType, guides }));
+}
+
+export function getExchangeOpportunityGuides(
+  locale: string,
+  slug: string,
+  featuredLimit = 4,
+  supportingLimit = 6
+) {
+  const group = getState().internalLinks.exchangeGroups.find(
+    (item) => item.locale === locale && item.exchangeSlug === slug
+  );
+  const featured = mapTargetsToEntries(
+    locale,
+    (group?.guides ?? []).slice(0, featuredLimit).map((guide) => ({
+      exchangeSlug: guide.exchangeSlug,
+      pageType: guide.pageType,
+    }))
+  );
+  const featuredPageTypes = new Set(featured.map((guide) => guide.pageType));
+  const supporting = getUnifiedSeoEntriesForExchange(locale, slug)
+    .filter((guide) => !featuredPageTypes.has(guide.pageType))
+    .slice(0, supportingLimit);
+
+  return { featured, supporting };
 }
 
 export function getUnifiedSeoPageHref(slug: string, pageType: string) {
