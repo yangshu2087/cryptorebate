@@ -13,6 +13,7 @@ import {
 } from "@/lib/automation/catalog";
 import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import type { DataReality } from "@/lib/automation/data-reality";
+import type { CtaLiveAuditStatus } from "@/lib/automation/github-actions";
 import type { AutomationAlert, QueryOpportunity, RoiEntry } from "@/lib/automation/types";
 
 const views = ["overview", "opportunities", "roi", "alerts", "pages"] as const;
@@ -45,6 +46,14 @@ const STATUS_LABELS: Record<string, string> = {
   warning: "警告",
   disabled: "已禁用",
   skipped: "已跳过",
+  never_run: "尚无运行记录",
+  queued: "排队中",
+  in_progress: "运行中",
+  completed: "已完成",
+  cancelled: "已取消",
+  timed_out: "超时",
+  action_required: "需要处理",
+  startup_failure: "启动失败",
   generated: "已生成",
   validated: "已校验",
   published: "已发布",
@@ -67,6 +76,8 @@ type SeoConsoleProps = {
   exchange: string | undefined;
   dataLocale: string | undefined;
   pageType: string | undefined;
+  externalAlerts?: AutomationAlert[];
+  ctaLiveAuditStatus?: CtaLiveAuditStatus | null;
 };
 
 function isViewMode(value: string | undefined): value is ViewMode {
@@ -193,9 +204,22 @@ function AlertBadge({ level }: { level: AutomationAlert["level"] }) {
   return <Badge variant={variant}>{label}</Badge>;
 }
 
-export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: SeoConsoleProps) {
+export function SeoConsole({
+  locale,
+  view,
+  exchange,
+  dataLocale,
+  pageType,
+  externalAlerts = [],
+  ctaLiveAuditStatus = null,
+}: SeoConsoleProps) {
   const state = getAutomationState();
   const dataReality = getAutomationDataReality(state);
+  const combinedAlerts = [...externalAlerts, ...state.alerts].sort(
+    (a, b) =>
+      new Date(b.triggeredAt).getTime() -
+      new Date(a.triggeredAt).getTime()
+  );
   const activeView: ViewMode = isViewMode(view) ? view : "overview";
   const selectedExchange: string = exchanges.some((item) => item.slug === exchange) ? exchange ?? "all" : "all";
   const selectedDataLocale = isKnownLocale(dataLocale) ? String(dataLocale) : "all";
@@ -227,7 +251,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
     .filter((item) => (!pageType || pageType === "all" ? true : item.pageType === pageType))
     .sort((a, b) => b.qualityScore - a.qualityScore);
 
-  const filteredAlerts = state.alerts.filter((item) => {
+  const filteredAlerts = combinedAlerts.filter((item) => {
     const exchangePass = selectedExchange === "all" ? true : item.scope.exchangeSlug === selectedExchange;
     const localePass = selectedDataLocale === "all" ? true : item.scope.locale === selectedDataLocale;
     return exchangePass && localePass;
@@ -237,7 +261,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
     .map((item) => {
       const opps = state.opportunities.filter((opp) => opp.exchangeSlug === item.slug);
       const roi = state.pageRoiDaily.filter((entry) => entry.exchangeSlug === item.slug);
-      const alerts = state.alerts.filter((alert) => alert.scope.exchangeSlug === item.slug);
+      const alerts = combinedAlerts.filter((alert) => alert.scope.exchangeSlug === item.slug);
       return {
         slug: item.slug,
         name: item.name,
@@ -348,10 +372,10 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
               : "当前仍是模型估算，不代表真实已结算佣金。"
           }
         />
-        <MetricCard
+          <MetricCard
           icon={CircleAlert}
           label="告警数"
-          value={formatNumber(state.alerts.length)}
+          value={formatNumber(combinedAlerts.length)}
           helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${state.metrics.averageQualityScore}`}
           reality={dataReality.metrics.alerts}
           realityHint="当前为规则型自动化告警，不等同于生产事故监控。"
@@ -550,6 +574,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
               <p>GSC 同步状态：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}</span></p>
               <p>Partner 同步源数：<span className="font-medium text-foreground">{state.externalSources.partners.length}</span></p>
               <p>Partner 已配置源：<span className="font-medium text-foreground">{configuredPartnerCount}</span></p>
+              <p>CTA Live Audit：<span className="font-medium text-foreground">{ctaLiveAuditStatus ? `${STATUS_LABELS[ctaLiveAuditStatus.status] ?? ctaLiveAuditStatus.status}${ctaLiveAuditStatus.conclusion ? ` / ${STATUS_LABELS[ctaLiveAuditStatus.conclusion] ?? ctaLiveAuditStatus.conclusion}` : ""}` : "未读取"}</span></p>
               <p>数据判读：<span className="font-medium text-foreground">真实 = 线上接口 / 已接入源；估算 = 模型推算；模拟 = seed / synthetic；未接通 = 尚未配置真实源</span></p>
             </div>
           </CardContent>
@@ -728,8 +753,20 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
                         {item.scope.exchangeSlug ? <span>交易所：{item.scope.exchangeSlug}</span> : null}
                         {item.scope.locale ? <span>语言：{ZH_LOCALE_LABELS[item.scope.locale] ?? item.scope.locale}</span> : null}
                         {item.scope.pageType ? <span>类型：{getUnifiedSeoPageLabels(labelsLocale, item.scope.pageType).short}</span> : null}
+                        {item.sourceLabel ? <span>来源：{item.sourceLabel}</span> : null}
                       </div>
                       <p className="mt-3 text-xs text-muted-foreground">触发时间：{formatDate(item.triggeredAt)}</p>
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+                        >
+                          查看运行
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      ) : null}
                     </CardContent>
                   </Card>
                 ))}

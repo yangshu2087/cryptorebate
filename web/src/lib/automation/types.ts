@@ -205,6 +205,7 @@ export type AutomationAlert = {
   type:
     | "publish_rate_limit"
     | "sync_failure"
+    | "external_workflow_failure"
     | "schema_validation"
     | "ctr_collapse"
     | "index_no_click"
@@ -217,6 +218,9 @@ export type AutomationAlert = {
     pageType?: string;
   };
   triggeredAt: string;
+  href?: string;
+  source?: "internal" | "external";
+  sourceLabel?: string;
 };
 
 export type ExternalGscSyncState = {
