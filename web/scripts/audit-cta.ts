@@ -12,11 +12,11 @@ import {
   getUnifiedSeoPageHref,
 } from "@/lib/automation/catalog";
 
-const SITE = "https://cryptorebate.app";
+const SITE = process.env.AUDIT_CTA_SITE ?? "https://cryptorebate.app";
 const ROOT_DIR = path.resolve(process.cwd(), "..");
 const OUTPUT_DIR = path.join(ROOT_DIR, "output");
 
-type AuditMode = "base" | "dynamic" | "all";
+type AuditMode = "base" | "dynamic" | "all" | "code";
 
 type CodeMismatch = {
   scope: "base" | "dynamic";
@@ -57,7 +57,7 @@ function parseMode(argv: string[]): AuditMode {
     return "all";
   }
 
-  if (value === "base" || value === "dynamic" || value === "all") {
+  if (value === "base" || value === "dynamic" || value === "all" || value === "code") {
     return value;
   }
 
@@ -244,6 +244,38 @@ function summarizeByKey(
   );
 }
 
+function summarizeCodeByKey(
+  pages: AuditPage[],
+  mismatches: CodeMismatch[],
+  keys: string[]
+): Record<string, { checked: number; failures: number }> {
+  return Object.fromEntries(
+    keys.map((key) => {
+      const checked = pages.filter((page) => {
+        if (exchanges.some((exchange) => exchange.slug === key)) {
+          return page.slug === key;
+        }
+        if (SEO_CONTENT_LOCALES.includes(key as (typeof SEO_CONTENT_LOCALES)[number])) {
+          return page.locale === key;
+        }
+        return page.pageType === key;
+      }).length;
+
+      const failures = mismatches.filter((mismatch) => {
+        if (exchanges.some((exchange) => exchange.slug === key)) {
+          return mismatch.slug === key;
+        }
+        if (SEO_CONTENT_LOCALES.includes(key as (typeof SEO_CONTENT_LOCALES)[number])) {
+          return mismatch.locale === key;
+        }
+        return mismatch.pageType === key;
+      }).length;
+
+      return [key, { checked, failures }];
+    })
+  );
+}
+
 async function main() {
   const mode = parseMode(process.argv.slice(2));
   const basePages = mode === "dynamic" ? [] : buildBasePages();
@@ -253,7 +285,8 @@ async function main() {
     ...(mode === "dynamic" ? [] : collectBaseCodeMismatches()),
     ...(mode === "base" ? [] : collectDynamicCodeMismatches()),
   ];
-  const onlineResults = await auditOnline(pages);
+  const shouldAuditOnline = mode !== "code";
+  const onlineResults = shouldAuditOnline ? await auditOnline(pages) : [];
   const onlineFailures = onlineResults.filter((result) => !result.ok);
   const exchangeKeys = exchanges.map((exchange) => exchange.slug);
   const localeKeys = [...new Set(pages.map((page) => page.locale))].sort();
@@ -265,6 +298,18 @@ async function main() {
       : `${mode}-cta-audit-${getTimestamp()}.json`
   );
 
+  const keySummary = shouldAuditOnline
+    ? {
+        byExchange: summarizeByKey(onlineResults, exchangeKeys),
+        byLocale: summarizeByKey(onlineResults, localeKeys),
+        byPageType: summarizeByKey(onlineResults, pageTypeKeys),
+      }
+    : {
+        byExchange: summarizeCodeByKey(pages, codeMismatches, exchangeKeys),
+        byLocale: summarizeCodeByKey(pages, codeMismatches, localeKeys),
+        byPageType: summarizeCodeByKey(pages, codeMismatches, pageTypeKeys),
+      };
+
   const summary = {
     site: SITE,
     mode,
@@ -272,9 +317,8 @@ async function main() {
     totalChecked: pages.length,
     codeMismatches: codeMismatches.length,
     onlineFailures: onlineFailures.length,
-    byExchange: summarizeByKey(onlineResults, exchangeKeys),
-    byLocale: summarizeByKey(onlineResults, localeKeys),
-    byPageType: summarizeByKey(onlineResults, pageTypeKeys),
+    auditKind: shouldAuditOnline ? "code-and-live" : "code-only",
+    ...keySummary,
     codeMismatchesPreview: codeMismatches.slice(0, 20),
     onlineFailuresPreview: onlineFailures.slice(0, 20),
   };

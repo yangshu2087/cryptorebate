@@ -15,6 +15,7 @@
     "automation:daily": "tsx ./scripts/run-automation-pipeline.ts --mode daily",
     "automation:sync-gsc": "tsx ./scripts/run-automation-pipeline.ts --mode gsc",
     "automation:sync-earnings": "tsx ./scripts/run-automation-pipeline.ts --mode earnings",
+    "audit:cta:code": "tsx ./scripts/audit-cta.ts --mode code",
     "audit:cta": "tsx ./scripts/audit-cta.ts --mode all",
     "audit:cta:base": "tsx ./scripts/audit-cta.ts --mode base",
     "audit:cta:dynamic": "tsx ./scripts/audit-cta.ts --mode dynamic",

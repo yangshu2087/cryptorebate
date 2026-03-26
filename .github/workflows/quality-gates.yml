@@ -4,13 +4,17 @@ on:
   pull_request:
     paths:
       - "web/**"
+      - "scripts/**"
       - ".github/workflows/quality-gates.yml"
+      - ".github/workflows/cta-live-audit.yml"
   push:
     branches:
       - main
     paths:
       - "web/**"
+      - "scripts/**"
       - ".github/workflows/quality-gates.yml"
+      - ".github/workflows/cta-live-audit.yml"
 
 jobs:
   web-check:
@@ -36,3 +40,6 @@ jobs:
 
       - name: Run quality gates
         run: npm run check
+
+      - name: Run CTA audit gate
+        run: npm run audit:cta:code
