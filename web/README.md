@@ -186,7 +186,11 @@ Important deployment rule:
 - `.github/workflows/automation-loop.yml` runs the automation pipeline daily and commits refreshed snapshot output
 - The same automation loop can now ingest real external sources when secrets are configured:
   - Google Search Console via service-account or refresh-token OAuth
-  - Partner earnings feeds for Binance / OKX / Bybit / Bitget / Gate / KuCoin / Huobi via JSON or CSV endpoints
+  - Partner earnings feeds for Binance / OKX / Bybit / Bitget / Gate / KuCoin / Huobi via provider-aware sync modes
+    - `generic`: direct JSON / CSV endpoint
+    - `csv-portal`: portal/export CSV endpoint
+    - `okx-broker`: signed OKX Broker API rebate download flow
+    - `gate-api4`: signed Gate APIv4 broker/report endpoint
 - Generated external snapshots are written to:
   - `src/data/generated/gsc-query-signals.json`
   - `src/data/generated/partner-conversions.json`
@@ -210,12 +214,23 @@ Core GSC variables:
 Partner sync variables follow the pattern:
 
 - `AUTOMATION_PARTNER_<EXCHANGE>_ENABLED`
+- `AUTOMATION_PARTNER_<EXCHANGE>_PROVIDER`
 - `AUTOMATION_PARTNER_<EXCHANGE>_URL`
 - `AUTOMATION_PARTNER_<EXCHANGE>_FORMAT`
 - `AUTOMATION_PARTNER_<EXCHANGE>_MODE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_METHOD`
 - `AUTOMATION_PARTNER_<EXCHANGE>_AUTH_TYPE`
 - `AUTOMATION_PARTNER_<EXCHANGE>_AUTH_HEADER`
 - `AUTOMATION_PARTNER_<EXCHANGE>_TOKEN`
+- `AUTOMATION_PARTNER_<EXCHANGE>_KEY`
+- `AUTOMATION_PARTNER_<EXCHANGE>_SECRET`
+- `AUTOMATION_PARTNER_<EXCHANGE>_PASSPHRASE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_REPORT_KIND`
+- `AUTOMATION_PARTNER_<EXCHANGE>_BROKER_TYPE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_WINDOW_DAYS`
+- `AUTOMATION_PARTNER_<EXCHANGE>_BODY_JSON`
+- `AUTOMATION_PARTNER_<EXCHANGE>_FALLBACK_LOCALE`
+- `AUTOMATION_PARTNER_<EXCHANGE>_FALLBACK_PAGE_TYPE`
 
 Where `<EXCHANGE>` is one of:
 

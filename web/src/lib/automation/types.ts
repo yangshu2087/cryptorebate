@@ -236,8 +236,12 @@ export type ExternalPartnerSyncState = {
   enabled: boolean;
   configured: boolean;
   status: ExternalSyncStatus;
+  provider?: "generic" | "csv-portal" | "okx-broker" | "gate-api4";
   format?: "json" | "csv";
+  method?: "GET" | "POST";
   mode?: "combined" | "commissions" | "conversions";
+  fallbackLocale?: string;
+  fallbackPageType?: string;
   lastSyncAt?: string;
   recordsFetched: number;
   conversionsWritten: number;

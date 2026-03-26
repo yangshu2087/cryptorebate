@@ -52,6 +52,13 @@ const STATUS_LABELS: Record<string, string> = {
   deprecated: "已废弃",
 };
 
+const PARTNER_PROVIDER_LABELS: Record<string, string> = {
+  generic: "通用 URL 源",
+  "csv-portal": "CSV 报表源",
+  "okx-broker": "OKX Broker API",
+  "gate-api4": "Gate APIv4",
+};
+
 type SeoConsoleProps = {
   locale: string;
   view: string | undefined;
@@ -172,6 +179,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
   const selectedDataLocale = isKnownLocale(dataLocale) ? String(dataLocale) : "all";
   const labelsLocale = "zh";
   const generatedAt = formatDate(state.generatedAt);
+  const configuredPartnerCount = state.externalSources.partners.filter((item) => item.configured).length;
 
   const filteredOpportunities = state.opportunities
     .filter((item) => (selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange))
@@ -471,6 +479,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
               <p>隔离语言数：<span className="font-medium text-foreground">{state.controlPlane.quarantinedLocales.length}</span></p>
               <p>GSC 同步状态：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}</span></p>
               <p>Partner 同步源数：<span className="font-medium text-foreground">{state.externalSources.partners.length}</span></p>
+              <p>Partner 已配置源：<span className="font-medium text-foreground">{configuredPartnerCount}</span></p>
             </div>
           </CardContent>
         </Card>
@@ -525,6 +534,41 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
                   </Badge>
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">{formatDate(run.completedAt)}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <CardTitle>Partner Earnings 同步源</CardTitle>
+            <CardDescription>区分 API-native 与门户报表型接入，方便快速判断哪家交易所已经具备真实外部自动源。</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {state.externalSources.partners.map((source) => (
+              <div key={source.exchangeSlug} className="rounded-2xl border border-border/60 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">
+                      {exchanges.find((item) => item.slug === source.exchangeSlug)?.name ?? source.exchangeSlug}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {PARTNER_PROVIDER_LABELS[source.provider ?? "generic"] ?? source.provider ?? "通用 URL 源"}
+                    </p>
+                  </div>
+                  <Badge variant={source.status === "failed" ? "destructive" : source.status === "success" ? "default" : "outline"}>
+                    {STATUS_LABELS[source.status] ?? source.status}
+                  </Badge>
+                </div>
+                <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                  <p>配置状态：<span className="font-medium text-foreground">{source.configured ? "已配置" : "未配置"}</span></p>
+                  <p>请求方式：<span className="font-medium text-foreground">{source.method ?? "GET"}</span></p>
+                  <p>Fallback 页面：<span className="font-medium text-foreground">{source.fallbackLocale}/{source.exchangeSlug}/{source.fallbackPageType}</span></p>
+                  <p>写入记录：<span className="font-medium text-foreground">{formatNumber(source.commissionsWritten + source.conversionsWritten)}</span></p>
+                  {source.error ? <p className="text-destructive">错误：{source.error}</p> : null}
+                </div>
               </div>
             ))}
           </CardContent>

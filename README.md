@@ -64,7 +64,10 @@ bash scripts/sync-automation-secrets.sh   # push automation envs to GitHub + Ver
 - GSC 真实拉取已支持两种模式：
   - Service Account
   - Refresh Token
-- partner earnings 已支持 7 家交易所按 `URL + JSON/CSV + auth` 外部同步
+- partner earnings 已升级为 provider-aware 外部同步：
+  - `generic` / `csv-portal`
+  - `okx-broker`（官方 OKX Broker API 签名流）
+  - `gate-api4`（Gate APIv4 签名流）
 - 本地环境变量样例见：`web/.env.example`
 - GitHub Actions 每日 automation loop 已支持读取对应 secrets 并回写：
   - `web/src/data/generated/gsc-query-signals.json`

@@ -4,6 +4,10 @@ export type GscAuthMode = "service-account" | "refresh-token";
 export type PartnerSourceFormat = "json" | "csv";
 export type PartnerSyncMode = "combined" | "commissions" | "conversions";
 export type PartnerAuthType = "none" | "bearer" | "header";
+export type PartnerSyncProvider = "generic" | "csv-portal" | "okx-broker" | "gate-api4";
+export type PartnerSyncMethod = "GET" | "POST";
+export type PartnerBrokerType = "api" | "oauth";
+export type PartnerReportKind = "fd" | "dma";
 
 export type SearchConsoleConfig = {
   enabled: boolean;
@@ -22,12 +26,25 @@ export type SearchConsoleConfig = {
 export type PartnerSyncConfig = {
   exchangeSlug: (typeof exchanges)[number]["slug"];
   enabled: boolean;
+  provider: PartnerSyncProvider;
   url?: string;
   format: PartnerSourceFormat;
   mode: PartnerSyncMode;
+  method: PartnerSyncMethod;
   authType: PartnerAuthType;
   authHeaderName?: string;
   token?: string;
+  apiKey?: string;
+  apiSecret?: string;
+  apiPassphrase?: string;
+  brokerType?: PartnerBrokerType;
+  reportKind?: PartnerReportKind;
+  windowDays: number;
+  requestBody?: string;
+  fallbackAttribution: {
+    locale: string;
+    pageType: string;
+  };
 };
 
 function parseBoolean(value: string | undefined, fallback = false) {
@@ -78,22 +95,43 @@ function getPartnerConfigForExchange(
   slug: (typeof exchanges)[number]["slug"]
 ): PartnerSyncConfig {
   const prefix = `AUTOMATION_PARTNER_${slug.toUpperCase().replace(/-/g, "_")}`;
+  const provider =
+    (process.env[`${prefix}_PROVIDER`] as PartnerSyncProvider | undefined) ?? "generic";
   const format =
     (process.env[`${prefix}_FORMAT`] as PartnerSourceFormat | undefined) ?? "json";
   const mode =
     (process.env[`${prefix}_MODE`] as PartnerSyncMode | undefined) ?? "combined";
+  const method =
+    (process.env[`${prefix}_METHOD`] as PartnerSyncMethod | undefined) ?? "GET";
   const authType =
     (process.env[`${prefix}_AUTH_TYPE`] as PartnerAuthType | undefined) ?? "none";
+  const reportKind =
+    (process.env[`${prefix}_REPORT_KIND`] as PartnerReportKind | undefined) ?? undefined;
+  const brokerType =
+    (process.env[`${prefix}_BROKER_TYPE`] as PartnerBrokerType | undefined) ?? undefined;
 
   return {
     exchangeSlug: slug,
     enabled: parseBoolean(process.env[`${prefix}_ENABLED`], false),
+    provider,
     url: process.env[`${prefix}_URL`],
     format,
     mode,
+    method,
     authType,
     authHeaderName: process.env[`${prefix}_AUTH_HEADER`] ?? "X-API-Key",
     token: process.env[`${prefix}_TOKEN`],
+    apiKey: process.env[`${prefix}_KEY`],
+    apiSecret: process.env[`${prefix}_SECRET`],
+    apiPassphrase: process.env[`${prefix}_PASSPHRASE`],
+    brokerType,
+    reportKind,
+    windowDays: parseNumber(process.env[`${prefix}_WINDOW_DAYS`], 30),
+    requestBody: process.env[`${prefix}_BODY_JSON`],
+    fallbackAttribution: {
+      locale: process.env[`${prefix}_FALLBACK_LOCALE`] ?? "en",
+      pageType: process.env[`${prefix}_FALLBACK_PAGE_TYPE`] ?? "official-site",
+    },
   };
 }
 
