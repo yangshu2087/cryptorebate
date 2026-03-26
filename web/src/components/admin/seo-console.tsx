@@ -64,10 +64,10 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const PARTNER_PROVIDER_LABELS: Record<string, string> = {
-  generic: "通用 URL 源",
-  "csv-portal": "CSV 报表源",
-  "okx-broker": "OKX Broker API",
-  "gate-api4": "Gate APIv4",
+  generic: "Affiliate 通用报表源",
+  "csv-portal": "Affiliate CSV 月度导入",
+  "okx-broker": "OKX Broker API（高级可选）",
+  "gate-api4": "Gate APIv4（高级可选）",
 };
 
 type SeoConsoleProps = {

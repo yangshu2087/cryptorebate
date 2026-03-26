@@ -35,6 +35,7 @@
 - 分析策略：默认不采集，用户同意后才初始化 PostHog 并发送点击日志
 - 自动化架构：repo-driven SEO/GEO loop，生成 opportunities / pages / ROI / earnings / control state
 - 运营看板：`/en/admin/seo`，重点查看 CTA / GSC / Partner 状态卡、真实度分布、失败趋势、最近 7 天变化
+- Partner 接入口径：默认 **affiliate-first + 月初 CSV 导入**，API / broker 仅作为高级可选路径
 
 ## 当前覆盖快照
 - 交易所（7）：Binance、OKX、Bybit、Bitget、Gate.io、KuCoin、Huobi/HTX

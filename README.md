@@ -20,6 +20,7 @@
 - GSC 真实 OAuth/拉取与 7 家交易所 partner earnings 外部同步框架已接入，当前只差生产环境凭据与数据源 URL
 - click → registration → commission 归因摘要已补到 automation state 与 `/api/stats/seo`
 - `/en/admin/seo` 已新增 CTA / GSC / Partner 最近状态卡、7 家交易所真实度分布、失败趋势、最近 7 天变化
+- 所有交易所 partner 接入策略已统一收口为 **affiliate-first**：默认按月初 CSV 导出/导入，API/broker 仅作为高级可选方案
 - 新增部署与质量门禁：
   - `web/vercel.json`：强制 `www -> apex` 301
   - `web/package.json`：新增 `npm run check` 与 Vercel 一键部署命令
@@ -71,9 +72,9 @@ bash scripts/sync-automation-secrets.sh   # push automation envs to GitHub + Ver
   - Service Account
   - Refresh Token
 - partner earnings 已升级为 provider-aware 外部同步：
-  - `generic` / `csv-portal`
-  - `okx-broker`（官方 OKX Broker API 签名流）
-  - `gate-api4`（Gate APIv4 签名流）
+  - 默认主路径：`csv-portal`（月初 affiliate CSV 导出/导入）
+  - 次选：`generic`（affiliate portal 如果有固定 JSON / CSV 报表链接）
+  - 高级可选：`okx-broker`、`gate-api4`
 - 本地环境变量样例见：`web/.env.example`
 - GitHub Actions 每日 automation loop 已支持读取对应 secrets 并回写：
   - `web/src/data/generated/gsc-query-signals.json`

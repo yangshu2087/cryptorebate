@@ -96,9 +96,9 @@ function getPartnerConfigForExchange(
 ): PartnerSyncConfig {
   const prefix = `AUTOMATION_PARTNER_${slug.toUpperCase().replace(/-/g, "_")}`;
   const provider =
-    (process.env[`${prefix}_PROVIDER`] as PartnerSyncProvider | undefined) ?? "generic";
+    (process.env[`${prefix}_PROVIDER`] as PartnerSyncProvider | undefined) ?? "csv-portal";
   const format =
-    (process.env[`${prefix}_FORMAT`] as PartnerSourceFormat | undefined) ?? "json";
+    (process.env[`${prefix}_FORMAT`] as PartnerSourceFormat | undefined) ?? "csv";
   const mode =
     (process.env[`${prefix}_MODE`] as PartnerSyncMode | undefined) ?? "combined";
   const method =

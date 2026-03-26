@@ -22,8 +22,9 @@
 ### Partner Sync 失败
 - 看是哪个交易所失败
 - 核对 provider / URL / token / key / secret
-- 如果是 portal CSV，确认下载链接仍有效
-- 如果是 OKX/Gate，优先检查签名参数
+- 如果是 portal CSV，先确认月初导出的 CSV 格式和下载链接仍有效
+- 如果当前业务身份只是 affiliate/referral，不要默认切去 broker
+- 只有你后来真的拿到高级 API / broker 凭据时，才检查 OKX/Gate 签名参数
 
 ### 真实覆盖率过低
 - 说明当前 ROI 仍混有大量模拟或估算数据

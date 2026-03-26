@@ -33,6 +33,12 @@
 - **最近 7 天变化**：看 clicks / registrations / commissions / 真实覆盖率
 - **失败趋势**：看 critical alerts、warning alerts、partner failures、CTA 状态
 
+## Partner 运营默认动作
+- 当前默认不是 broker-first
+- 当前默认是 **affiliate-first**
+- 建议每个月初从 7 家交易所 affiliate / referral 后台导出 CSV
+- 再导入系统，让 partner sync 从“未接通/估算”逐步转成“真实”
+
 ## 告警区怎么用
 - CTA Live Audit 失败：优先检查 GitHub Actions 运行详情
 - GSC Sync 失败：检查 Google 凭据、property、query rows

@@ -188,10 +188,11 @@ Important deployment rule:
 - The same automation loop can now ingest real external sources when secrets are configured:
   - Google Search Console via service-account or refresh-token OAuth
   - Partner earnings feeds for Binance / OKX / Bybit / Bitget / Gate / KuCoin / Huobi via provider-aware sync modes
-    - `generic`: direct JSON / CSV endpoint
-    - `csv-portal`: portal/export CSV endpoint
-    - `okx-broker`: signed OKX Broker API rebate download flow
-    - `gate-api4`: signed Gate APIv4 broker/report endpoint
+    - Default operating model: **affiliate-first + monthly CSV import**
+    - `csv-portal`: portal/export CSV endpoint (recommended default)
+    - `generic`: direct JSON / CSV endpoint if an affiliate portal exposes one
+    - `okx-broker`: signed OKX Broker API rebate download flow (advanced optional)
+    - `gate-api4`: signed Gate APIv4 broker/report endpoint (advanced optional)
 - Generated external snapshots are written to:
   - `src/data/generated/gsc-query-signals.json`
   - `src/data/generated/partner-conversions.json`
@@ -250,6 +251,13 @@ Operator docs:
 - `../admin-console-operator-guide-v1.md`
 - `../partner-source-spec-v1.md`
 - `../automation-alerts-runbook-v1.md`
+
+### Recommended monthly workflow
+For the current business model, treat partner sync as:
+1. affiliate/referral first
+2. monthly CSV export from each exchange portal at the beginning of the month
+3. import into automation state
+4. use advanced API/broker providers only if you later obtain real partner credentials and want to automate beyond CSV
 
 ## Minimal Analytics Events
 
