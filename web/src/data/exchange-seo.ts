@@ -3339,8 +3339,8 @@ function buildOfficialSiteContent(
       ],
       cta: {
         label: `打开 ${exchange.name} 官方站点`,
-        helperText: "先确认官网域名和注册链接，再决定是否继续注册。",
-        href: officialSiteUrl,
+        helperText: "点击后将直接进入当前追踪的官方返佣注册链接。",
+        href: exchange.referralLink,
       },
     };
   }
@@ -3408,8 +3408,8 @@ function buildOfficialSiteContent(
       ],
       cta: {
         label: `Open the official ${exchange.name} site`,
-        helperText: "Confirm the hostname and signup path before you register or download anything.",
-        href: officialSiteUrl,
+        helperText: "This button takes you directly to the tracked referral signup URL.",
+        href: exchange.referralLink,
       },
     };
   }
@@ -3466,8 +3466,8 @@ function buildOfficialSiteContent(
     faq: message.faq.slice(0, 3),
     cta: {
       label: `${pageLabels.short} · ${exchange.name}`,
-      helperText: officialSiteUrl,
-      href: officialSiteUrl,
+      helperText: exchange.referralLink,
+      href: exchange.referralLink,
     },
   };
 }
@@ -3556,8 +3556,8 @@ function buildAppDownloadContent(
       ],
       cta: {
         label: `打开 ${exchange.name} 官网查看 App 入口`,
-        helperText: "先从官网找 App，再判断是否继续注册或登录。",
-        href: officialSiteUrl,
+        helperText: "点击后将直接进入当前追踪的官方返佣注册链接。",
+        href: exchange.referralLink,
       },
       howToSteps: [
         `先打开 ${exchange.name} 官方主站 ${officialHost}。`,
@@ -3631,8 +3631,8 @@ function buildAppDownloadContent(
       ],
       cta: {
         label: `Open the official ${exchange.name} site for app access`,
-        helperText: "Use the official site as your starting point before installing or signing up.",
-        href: officialSiteUrl,
+        helperText: "This button takes you directly to the tracked referral signup URL.",
+        href: exchange.referralLink,
       },
       howToSteps: [
         `Open the official ${exchange.name} site at ${officialHost}.`,
@@ -3692,8 +3692,8 @@ function buildAppDownloadContent(
     faq: message.faq.slice(0, 3),
     cta: {
       label: `${pageLabels.short} · ${exchange.name}`,
-      helperText: officialSiteUrl,
-      href: officialSiteUrl,
+      helperText: exchange.referralLink,
+      href: exchange.referralLink,
     },
     howToSteps: buildHowToSteps(locale, exchange),
   };
@@ -3710,7 +3710,6 @@ function buildSafetyReviewContent(
 > {
   const [peerA, peerB] = comparisonPeers;
   const peerNames = [getExchangeName(peerA), getExchangeName(peerB)];
-  const officialSiteUrl = getOfficialSiteUrl(exchange);
 
   if (locale === "zh") {
     return {
@@ -3775,8 +3774,8 @@ function buildSafetyReviewContent(
       ],
       cta: {
         label: `查看 ${exchange.name} 官方入口并继续比较`,
-        helperText: "安全评估的第一步，始终是从官方域名和官方注册路径开始。",
-        href: officialSiteUrl,
+        helperText: "点击后将直接进入当前追踪的官方返佣注册链接。",
+        href: exchange.referralLink,
       },
     };
   }
@@ -3844,8 +3843,8 @@ function buildSafetyReviewContent(
       ],
       cta: {
         label: `Open the official ${exchange.name} path and continue comparing`,
-        helperText: "The first step in any safety review is to stay on the official domain family.",
-        href: officialSiteUrl,
+        helperText: "This button takes you directly to the tracked referral signup URL.",
+        href: exchange.referralLink,
       },
     };
   }
@@ -3899,8 +3898,8 @@ function buildSafetyReviewContent(
     faq: message.faq.slice(0, 3),
     cta: {
       label: `${pageLabels.short} · ${exchange.name}`,
-      helperText: getOfficialSiteUrl(exchange),
-      href: officialSiteUrl,
+      helperText: exchange.referralLink,
+      href: exchange.referralLink,
     },
   };
 }

@@ -42,7 +42,7 @@ const allowedReferralHosts: Record<string, string[]> = {
   okx: ["www.okx.com", "okx.com"],
   bybit: ["partner.bybit.com", "www.bybit.com", "bybit.com"],
   bitget: ["partner.bitget.com", "www.bitget.com", "bitget.com"],
-  gate: ["www.gate.com", "gate.com", "www.gate.io", "gate.io"],
+  gate: ["www.gate.com", "gate.com", "www.gate.io", "gate.io", "www.gateport.company", "gateport.company"],
   kucoin: ["www.kucoin.com", "kucoin.com"],
   huobi: ["www.htx.com", "htx.com", "www.htx.com.gt", "htx.com.gt"],
 };

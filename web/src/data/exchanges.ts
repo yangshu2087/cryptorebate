@@ -146,7 +146,7 @@ export const exchanges: Exchange[] = [
     name: "Gate.io",
     logo: "/images/exchanges/gate.png",
     referralCode: "CRYPTORE",
-    referralLink: "https://www.gate.com/en-us/signup?ref=CRYPTORE",
+    referralLink: "https://www.gateport.company/share/cryptore",
     fees: {
       spotMaker: 0.001,
       spotTaker: 0.001,
@@ -218,7 +218,7 @@ export const exchanges: Exchange[] = [
     name: "Huobi",
     logo: "/images/exchanges/huobi.svg",
     referralCode: "cryptore",
-    referralLink: "https://www.htx.com/invite/zh-cn/1h?invite_code=cryptore",
+    referralLink: "https://www.htx.com.gt/invite/zh-cn/1h?invite_code=cryptore",
     fees: {
       spotMaker: 0.002,
       spotTaker: 0.002,
