@@ -57,6 +57,7 @@ npm run automation:generate
 npm run automation:sync-gsc
 npm run automation:sync-earnings
 npm run deploy:vercel   # safe from web/, delegates to repo root
+bash scripts/sync-automation-secrets.sh   # push automation envs to GitHub + Vercel
 ```
 
 ## 外部自动源（GSC / Partner Earnings）

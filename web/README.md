@@ -157,6 +157,7 @@ npm run automation:generate
 npm run automation:sync-gsc
 npm run automation:sync-earnings
 npm run deploy:vercel
+bash ../scripts/sync-automation-secrets.sh
 ```
 
 Important deployment rule:
