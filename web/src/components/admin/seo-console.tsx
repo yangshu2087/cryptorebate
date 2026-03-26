@@ -11,6 +11,8 @@ import {
   getUnifiedSeoPageHref,
   getUnifiedSeoPageLabels,
 } from "@/lib/automation/catalog";
+import { getAutomationDataReality } from "@/lib/automation/data-reality";
+import type { DataReality } from "@/lib/automation/data-reality";
 import type { AutomationAlert, QueryOpportunity, RoiEntry } from "@/lib/automation/types";
 
 const views = ["overview", "opportunities", "roi", "alerts", "pages"] as const;
@@ -58,8 +60,6 @@ const PARTNER_PROVIDER_LABELS: Record<string, string> = {
   "okx-broker": "OKX Broker API",
   "gate-api4": "Gate APIv4",
 };
-
-type DataReality = "真实" | "估算" | "模拟" | "未接通";
 
 type SeoConsoleProps = {
   locale: string;
@@ -195,28 +195,13 @@ function AlertBadge({ level }: { level: AutomationAlert["level"] }) {
 
 export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: SeoConsoleProps) {
   const state = getAutomationState();
+  const dataReality = getAutomationDataReality(state);
   const activeView: ViewMode = isViewMode(view) ? view : "overview";
   const selectedExchange: string = exchanges.some((item) => item.slug === exchange) ? exchange ?? "all" : "all";
   const selectedDataLocale = isKnownLocale(dataLocale) ? String(dataLocale) : "all";
   const labelsLocale = "zh";
   const generatedAt = formatDate(state.generatedAt);
-  const configuredPartnerCount = state.externalSources.partners.filter((item) => item.configured).length;
-  const hasRealGscSignals =
-    state.externalSources.gsc.status === "success" &&
-    (state.externalSources.gsc.signalsWritten ?? 0) > 0;
-  const hasRealPartnerData = state.externalSources.partners.some(
-    (item) => item.status === "success" && item.commissionsWritten + item.conversionsWritten > 0
-  );
-
-  const signalReality: DataReality = hasRealGscSignals ? "真实" : "模拟";
-  const opportunityReality: DataReality = hasRealGscSignals ? "估算" : "模拟";
-  const publishedReality: DataReality = "真实";
-  const projectedRevenueReality: DataReality = hasRealPartnerData ? "估算" : "模拟";
-  const alertsReality: DataReality = "模拟";
-  const partnerReality: DataReality = configuredPartnerCount > 0 ? "真实" : "未接通";
-  const exchangeBoardReality: DataReality = hasRealPartnerData ? "估算" : "模拟";
-  const pageRoiReality: DataReality = hasRealPartnerData ? "真实" : "模拟";
-  const queryRoiReality: DataReality = hasRealPartnerData ? "真实" : "模拟";
+  const configuredPartnerCount = dataReality.flags.configuredPartnerCount;
 
   const filteredOpportunities = state.opportunities
     .filter((item) => (selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange))
@@ -300,8 +285,8 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
             <Badge variant={state.controlPlane.paused ? "destructive" : "default"}>
               {state.controlPlane.paused ? "已暂停" : "自动化运行中"}
             </Badge>
-            <DataRealityBadge reality={signalReality} />
-            <DataRealityBadge reality={projectedRevenueReality} />
+            <DataRealityBadge reality={dataReality.metrics.signals} />
+            <DataRealityBadge reality={dataReality.metrics.projectedRevenue} />
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
             SEO / GEO 自动化控制台
@@ -328,9 +313,9 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           label="信号数"
           value={formatNumber(state.metrics.totalSignals)}
           helper="当前进入引擎的 query 与需求信号数量"
-          reality={signalReality}
+          reality={dataReality.metrics.signals}
           realityHint={
-            hasRealGscSignals
+            dataReality.flags.hasRealGscSignals
               ? "当前已包含真实 Search Console query 信号。"
               : "当前仍以系统种子、规则生成与手工 seed 为主。"
           }
@@ -340,7 +325,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           label="机会数"
           value={formatNumber(state.metrics.totalOpportunities)}
           helper="跨语言、跨交易所排序后的页面机会"
-          reality={opportunityReality}
+          reality={dataReality.metrics.opportunities}
           realityHint="机会分数来自评分模型，不是实际流量或实际收入。"
         />
         <MetricCard
@@ -348,7 +333,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           label="已发布页面"
           value={formatNumber(state.metrics.publishedPages)}
           helper="当前被自动化系统视为有效的页面数"
-          reality={publishedReality}
+          reality={dataReality.metrics.publishedPages}
           realityHint="这是系统真实已生成/已纳入状态快照的页面资产数。"
         />
         <MetricCard
@@ -356,9 +341,9 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           label="月度预估收益"
           value={formatUsd(state.metrics.monthlyProjectedRevenueUsd)}
           helper="基于机会分数与收益模型的当前预估"
-          reality={projectedRevenueReality}
+          reality={dataReality.metrics.projectedRevenue}
           realityHint={
-            hasRealPartnerData
+            dataReality.flags.hasRealPartnerData
               ? "当前为模型估算值，已开始受真实 partner 数据影响。"
               : "当前仍是模型估算，不代表真实已结算佣金。"
           }
@@ -368,7 +353,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           label="告警数"
           value={formatNumber(state.alerts.length)}
           helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${state.metrics.averageQualityScore}`}
-          reality={alertsReality}
+          reality={dataReality.metrics.alerts}
           realityHint="当前为规则型自动化告警，不等同于生产事故监控。"
         />
       </div>
@@ -531,7 +516,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle>实时接口</CardTitle>
-              <DataRealityBadge reality="真实" />
+              <DataRealityBadge reality={dataReality.modules.realtimeApi} />
             </div>
             <CardDescription>这些链接会直接打开当前线上 API 返回的数据，也是自动化系统和运营查看所依赖的同一份来源。</CardDescription>
           </CardHeader>
@@ -576,7 +561,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle>交易所变现看板</CardTitle>
-              <DataRealityBadge reality={exchangeBoardReality} />
+              <DataRealityBadge reality={dataReality.modules.exchangeBoard} />
             </div>
             <CardDescription>按 7 家交易所快速查看预估收益和页面侧已实现佣金。</CardDescription>
           </CardHeader>
@@ -609,7 +594,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle>最近自动化任务</CardTitle>
-              <DataRealityBadge reality="真实" />
+              <DataRealityBadge reality={dataReality.modules.runs} />
             </div>
             <CardDescription>当前快照里记录的最新 pipeline 任务结果。</CardDescription>
           </CardHeader>
@@ -637,7 +622,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle>Partner Earnings 同步源</CardTitle>
-              <DataRealityBadge reality={partnerReality} />
+              <DataRealityBadge reality={dataReality.modules.partnerSources} />
             </div>
             <CardDescription>区分 API-native 与门户报表型接入，方便快速判断哪家交易所已经具备真实外部自动源。</CardDescription>
           </CardHeader>
@@ -657,7 +642,12 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
                     <Badge variant={source.status === "failed" ? "destructive" : source.status === "success" ? "default" : "outline"}>
                       {STATUS_LABELS[source.status] ?? source.status}
                     </Badge>
-                    <DataRealityBadge reality={source.configured ? (source.status === "success" ? "真实" : "估算") : "未接通"} />
+                    <DataRealityBadge
+                      reality={
+                        dataReality.partnerByExchange.find((item) => item.exchangeSlug === source.exchangeSlug)?.reality ??
+                        "未接通"
+                      }
+                    />
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
@@ -677,7 +667,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
         {(activeView === "overview" || activeView === "opportunities") && (
           <section>
             <SectionHeading title="高优先级机会" description="在当前筛选条件下分数最高的一批页面机会。" />
-            <div className="mb-4"><DataRealityBadge reality={opportunityReality} /></div>
+            <div className="mb-4"><DataRealityBadge reality={dataReality.modules.opportunities} /></div>
             <div className="grid gap-4 lg:grid-cols-2">
               {filteredOpportunities.slice(0, 12).map((item) => (
                 <OpportunityCard key={item.id} locale={locale} item={item} />
@@ -689,7 +679,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
         {(activeView === "overview" || activeView === "roi") && (
           <section>
             <SectionHeading title="页面 ROI 排行" description="当前带来最强佣金信号的页面。" />
-            <div className="mb-4"><DataRealityBadge reality={pageRoiReality} /></div>
+            <div className="mb-4"><DataRealityBadge reality={dataReality.modules.pageRoi} /></div>
             <div className="grid gap-4 lg:grid-cols-2">
               {filteredPageRoi.slice(0, 12).map((item) => (
                 <RoiCard key={item.id} locale={locale} item={item} mode="page" />
@@ -701,7 +691,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
         {(activeView === "overview" || activeView === "roi") && (
           <section>
             <SectionHeading title="查询 ROI 排行" description="按佣金贡献排序的 query cluster。" />
-            <div className="mb-4"><DataRealityBadge reality={queryRoiReality} /></div>
+            <div className="mb-4"><DataRealityBadge reality={dataReality.modules.queryRoi} /></div>
             <div className="grid gap-4 lg:grid-cols-2">
               {filteredQueryRoi.slice(0, 12).map((item) => (
                 <RoiCard key={item.id} locale={locale} item={item} mode="query" />
@@ -713,7 +703,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
         {(activeView === "overview" || activeView === "alerts") && (
           <section>
             <SectionHeading title="告警" description="当前筛选条件下的自动化告警与异常状态。" />
-            <div className="mb-4"><DataRealityBadge reality={alertsReality} /></div>
+            <div className="mb-4"><DataRealityBadge reality={dataReality.modules.alerts} /></div>
             {filteredAlerts.length ? (
               <div className="grid gap-4 lg:grid-cols-2">
                 {filteredAlerts.map((item) => (
@@ -758,7 +748,7 @@ export function SeoConsole({ locale, view, exchange, dataLocale, pageType }: Seo
         {(activeView === "overview" || activeView === "pages") && (
           <section>
             <SectionHeading title="已生成页面" description="当前 automation state 中的页面，按质量分排序。" />
-            <div className="mb-4"><DataRealityBadge reality={publishedReality} /></div>
+            <div className="mb-4"><DataRealityBadge reality={dataReality.modules.pages} /></div>
             <div className="grid gap-4 lg:grid-cols-2">
               {filteredPages.slice(0, 12).map((page) => (
                 <Card key={page.id} className="border-border/70">

@@ -5,16 +5,19 @@ import {
   getTopAutomationOpportunities,
   getTopAutomationRoiPages,
 } from "@/lib/automation/catalog";
+import { getAutomationDataReality } from "@/lib/automation/data-reality";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const locale = searchParams.get("locale") ?? undefined;
   const state = getAutomationState();
+  const dataReality = getAutomationDataReality(state);
 
   return NextResponse.json(
     {
       data: {
         metrics: state.metrics,
+        dataReality,
         externalSources: state.externalSources,
         topOpportunities: getTopAutomationOpportunities(locale, 10),
         topRoiPages: getTopAutomationRoiPages(locale, 10),
