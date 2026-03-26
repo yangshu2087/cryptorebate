@@ -7,13 +7,11 @@ import { LOCALES, LOCALE_LABELS, SITE_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { exchanges } from "@/data/exchanges";
 import {
-  getAutomationState,
   getUnifiedSeoPageHref,
   getUnifiedSeoPageLabels,
 } from "@/lib/automation/catalog";
-import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import type { DataReality } from "@/lib/automation/data-reality";
-import type { CtaLiveAuditStatus } from "@/lib/automation/github-actions";
+import type { SeoDashboardData } from "@/lib/automation/operator-console";
 import type { AutomationAlert, QueryOpportunity, RoiEntry } from "@/lib/automation/types";
 
 const views = ["overview", "opportunities", "roi", "alerts", "pages"] as const;
@@ -76,8 +74,7 @@ type SeoConsoleProps = {
   exchange: string | undefined;
   dataLocale: string | undefined;
   pageType: string | undefined;
-  externalAlerts?: AutomationAlert[];
-  ctaLiveAuditStatus?: CtaLiveAuditStatus | null;
+  dashboardData: SeoDashboardData;
 };
 
 function isViewMode(value: string | undefined): value is ViewMode {
@@ -98,6 +95,12 @@ function formatUsd(value: number) {
     currency: "USD",
     maximumFractionDigits: value >= 1000 ? 0 : 2,
   }).format(value);
+}
+
+function formatSuccessRate(published: number, failed: number) {
+  const attempts = published + failed;
+  if (attempts === 0) return "0.0%";
+  return `${((published / attempts) * 100).toFixed(1)}%`;
 }
 
 function formatDate(value: string) {
@@ -280,22 +283,19 @@ export function SeoConsole({
   exchange,
   dataLocale,
   pageType,
-  externalAlerts = [],
-  ctaLiveAuditStatus = null,
+  dashboardData,
 }: SeoConsoleProps) {
-  const state = getAutomationState();
-  const dataReality = getAutomationDataReality(state);
-  const combinedAlerts = [...externalAlerts, ...state.alerts].sort(
-    (a, b) =>
-      new Date(b.triggeredAt).getTime() -
-      new Date(a.triggeredAt).getTime()
-  );
+  const state = dashboardData.state;
+  const dataReality = dashboardData.dataReality;
+  const combinedAlerts = dashboardData.alerts;
+  const ctaLiveAuditStatus = dashboardData.ctaLiveAudit;
   const activeView: ViewMode = isViewMode(view) ? view : "overview";
   const selectedExchange: string = exchanges.some((item) => item.slug === exchange) ? exchange ?? "all" : "all";
   const selectedDataLocale = isKnownLocale(dataLocale) ? String(dataLocale) : "all";
   const labelsLocale = "zh";
   const generatedAt = formatDate(state.generatedAt);
   const configuredPartnerCount = dataReality.flags.configuredPartnerCount;
+  const displayMetrics = dashboardData.metrics as Record<string, number>;
 
   const filteredOpportunities = state.opportunities
     .filter((item) => (selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange))
@@ -326,6 +326,15 @@ export function SeoConsole({
     const localePass = selectedDataLocale === "all" ? true : item.scope.locale === selectedDataLocale;
     return exchangePass && localePass;
   });
+  const filteredDistributionJobs = dashboardData.distributionJobs.filter((item) => {
+    const exchangePass =
+      selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange;
+    const localePass =
+      selectedDataLocale === "all" ? true : item.locale === selectedDataLocale;
+    const pageTypePass =
+      !pageType || pageType === "all" ? true : item.pageType === pageType;
+    return exchangePass && localePass && pageTypePass;
+  });
 
   const exchangeSummaries = exchanges
     .map((item) => {
@@ -346,21 +355,16 @@ export function SeoConsole({
   const pageTypeOptions = Array.from(
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
-  const latestGscRun = state.runs.find((item) => item.job === "daily_gsc_ingest");
-  const latestPartnerRun = state.runs.find((item) => item.job === "daily_revenue_sync");
-  const latestPartnerSyncAt = state.externalSources.partners
-    .map((item) => item.lastSyncAt)
-    .filter(Boolean)
-    .sort()
-    .at(-1);
+  const statusCards = dashboardData.operatorSummary.statusCards;
   const exchangeRealityCounts = (["真实", "估算", "模拟", "未接通"] as const).map((reality) => ({
     reality,
     count: dataReality.partnerByExchange.filter((item) => item.reality === reality).length,
   }));
   const failureSummary = {
-    critical: combinedAlerts.filter((item) => item.level === "critical").length,
-    warning: combinedAlerts.filter((item) => item.level === "warning").length,
-    partnerFailed: state.externalSources.partners.filter((item) => item.status === "failed").length,
+    critical: dashboardData.operatorSummary.failureTrend.criticalAlerts,
+    warning: dashboardData.operatorSummary.failureTrend.warningAlerts,
+    partnerFailed: dashboardData.operatorSummary.failureTrend.partnerFailures,
+    distributionFailed: dashboardData.operatorSummary.failureTrend.distributionFailures,
   };
 
   const statsApiHref = buildApiHref("/api/stats/seo", {
@@ -411,7 +415,7 @@ export function SeoConsole({
             <p className="text-sm text-muted-foreground">快照生成时间</p>
             <p className="mt-1 text-lg font-semibold">{generatedAt}</p>
             <p className="mt-2 text-xs text-muted-foreground">
-              当前数据来源：automation state + 线上 API（<span className="font-medium">{SITE_URL}</span>）
+              当前数据来源：DB-first operator payload，必要时回退到 snapshot / 本地 JSON（<span className="font-medium">{SITE_URL}</span>）
             </p>
           </CardContent>
         </Card>
@@ -421,7 +425,7 @@ export function SeoConsole({
         <MetricCard
           icon={Sparkles}
           label="信号数"
-          value={formatNumber(state.metrics.totalSignals)}
+          value={formatNumber(displayMetrics.totalSignals ?? state.metrics.totalSignals)}
           helper="当前进入引擎的 query 与需求信号数量"
           reality={dataReality.metrics.signals}
           realityHint={
@@ -433,7 +437,7 @@ export function SeoConsole({
         <MetricCard
           icon={TrendingUp}
           label="机会数"
-          value={formatNumber(state.metrics.totalOpportunities)}
+          value={formatNumber(displayMetrics.totalOpportunities ?? state.metrics.totalOpportunities)}
           helper="跨语言、跨交易所排序后的页面机会"
           reality={dataReality.metrics.opportunities}
           realityHint="机会分数来自评分模型，不是实际流量或实际收入。"
@@ -441,7 +445,7 @@ export function SeoConsole({
         <MetricCard
           icon={Bot}
           label="已发布页面"
-          value={formatNumber(state.metrics.publishedPages)}
+          value={formatNumber(displayMetrics.publishedPages ?? state.metrics.publishedPages)}
           helper="当前被自动化系统视为有效的页面数"
           reality={dataReality.metrics.publishedPages}
           realityHint="这是系统真实已生成/已纳入状态快照的页面资产数。"
@@ -449,7 +453,7 @@ export function SeoConsole({
         <MetricCard
           icon={LineChart}
           label="月度预估收益"
-          value={formatUsd(state.metrics.monthlyProjectedRevenueUsd)}
+          value={formatUsd(displayMetrics.monthlyProjectedRevenueUsd ?? state.metrics.monthlyProjectedRevenueUsd)}
           helper="基于机会分数与收益模型的当前预估"
           reality={dataReality.metrics.projectedRevenue}
           realityHint={
@@ -462,67 +466,63 @@ export function SeoConsole({
           icon={CircleAlert}
           label="告警数"
           value={formatNumber(combinedAlerts.length)}
-          helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${state.metrics.averageQualityScore}`}
+          helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${displayMetrics.averageQualityScore ?? state.metrics.averageQualityScore}`}
           reality={dataReality.metrics.alerts}
           realityHint="当前为规则型自动化告警，不等同于生产事故监控。"
         />
       </div>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-3">
+      <div className="mt-8 grid gap-4 xl:grid-cols-4">
         <StatusCard
           title="最近一次 CTA Live Audit"
-          status={
-            ctaLiveAuditStatus?.status === "completed"
-              ? STATUS_LABELS[ctaLiveAuditStatus.conclusion ?? "completed"] ??
-                ctaLiveAuditStatus.conclusion ??
-                "已完成"
-              : STATUS_LABELS[ctaLiveAuditStatus?.status ?? "never_run"] ??
-                ctaLiveAuditStatus?.status ??
-                "尚无运行记录"
-          }
+          status={statusCards.ctaLiveAudit.label}
           description="用于确认线上 CTA 全量验收是否通过。成功只显示状态，失败会进入告警区。"
           meta={
-            ctaLiveAuditStatus?.updatedAt
-              ? `最近更新时间：${formatDate(ctaLiveAuditStatus.updatedAt)} · Run #${ctaLiveAuditStatus.runNumber}`
+            statusCards.ctaLiveAudit.updatedAt
+              ? `最近更新时间：${formatDate(statusCards.ctaLiveAudit.updatedAt)} · Run #${statusCards.ctaLiveAudit.runNumber}`
               : "当前还没有历史运行记录。"
           }
-          href={ctaLiveAuditStatus?.htmlUrl}
+          href={statusCards.ctaLiveAudit.href}
         />
         <StatusCard
           title="最近一次 GSC Sync"
-          status={STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}
+          status={statusCards.gscSync.label}
           description="用于确认真实 Search Console query 是否持续拉入自动化状态。"
           meta={`最近同步：${
-            state.externalSources.gsc.lastSyncAt
-              ? formatDate(state.externalSources.gsc.lastSyncAt)
-              : latestGscRun?.completedAt
-                ? formatDate(latestGscRun.completedAt)
-                : "暂无"
-          } · rows ${formatNumber(state.externalSources.gsc.rowsFetched)} / signals ${formatNumber(
-            state.externalSources.gsc.signalsWritten
-          )}`}
+            statusCards.gscSync.updatedAt
+              ? formatDate(statusCards.gscSync.updatedAt)
+              : "暂无"
+          } · rows ${formatNumber(statusCards.gscSync.rowsFetched)} / signals ${formatNumber(
+            statusCards.gscSync.signalsWritten
+          )} · sitemap 提交 ${
+            STATUS_LABELS[statusCards.gscSync.sitemapSubmitStatus] ??
+            statusCards.gscSync.sitemapSubmitStatus ??
+            "未运行"
+          }`}
         />
         <StatusCard
           title="最近一次 Partner Sync"
-          status={
-            state.externalSources.partners.some((item) => item.status === "failed")
-              ? "失败"
-              : state.externalSources.partners.some((item) => item.status === "success")
-                ? "成功"
-                : "未接通"
-          }
+          status={statusCards.partnerSync.label}
           description="用于确认真实 registration / commission 是否开始从 partner source 回流。"
           meta={`最近同步：${
-            latestPartnerSyncAt
-              ? formatDate(latestPartnerSyncAt)
-              : latestPartnerRun?.completedAt
-                ? formatDate(latestPartnerRun.completedAt)
-                : "暂无"
-          } · 已配置 ${configuredPartnerCount} / 7`}
+            statusCards.partnerSync.updatedAt
+              ? formatDate(statusCards.partnerSync.updatedAt)
+              : "暂无"
+          } · 已配置 ${statusCards.partnerSync.configuredCount} / 7`}
+        />
+        <StatusCard
+          title="自有渠道分发队列"
+          status={statusCards.distribution.label}
+          description="Telegram / X 的发布队列、待发布和失败状态会在这里统一显示。"
+          meta={`已发布 ${formatNumber(statusCards.distribution.published)} · 排队中 ${formatNumber(
+            statusCards.distribution.queued
+          )} · 待发布 ${formatNumber(statusCards.distribution.pending)} · 失败 ${formatNumber(
+            statusCards.distribution.failed
+          )}`}
         />
       </div>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-3">
+      <div className="mt-8 grid gap-4 xl:grid-cols-4">
         <SummaryList
           title="7 家交易所真实度分布"
           description="按 partner source 的当前接入情况看各交易所处于真实、估算、模拟还是未接通。"
@@ -548,6 +548,7 @@ export function SeoConsole({
             { label: "严重告警", value: formatNumber(failureSummary.critical) },
             { label: "警告告警", value: formatNumber(failureSummary.warning) },
             { label: "Partner 失败源", value: formatNumber(failureSummary.partnerFailed) },
+            { label: "分发失败", value: formatNumber(failureSummary.distributionFailed) },
             {
               label: "CTA Live Audit",
               value:
@@ -557,6 +558,39 @@ export function SeoConsole({
                   : STATUS_LABELS[ctaLiveAuditStatus?.status ?? "never_run"] ??
                     ctaLiveAuditStatus?.status ??
                     "尚无运行记录",
+            },
+          ]}
+        />
+        <SummaryList
+          title="渠道发布成功率"
+          description="按当前 distribution_jobs 统计 Telegram / X 队列发布成功率，便于判断自有渠道是否通畅。"
+          items={[
+            {
+              label: "总体",
+              value: formatSuccessRate(
+                dashboardData.distributionSummary.published,
+                dashboardData.distributionSummary.failed
+              ),
+            },
+            {
+              label: "Telegram",
+              value: formatSuccessRate(
+                dashboardData.distributionSummary.byChannel.telegram.published,
+                dashboardData.distributionSummary.byChannel.telegram.failed
+              ),
+            },
+            {
+              label: "X",
+              value: formatSuccessRate(
+                dashboardData.distributionSummary.byChannel.x.published,
+                dashboardData.distributionSummary.byChannel.x.failed
+              ),
+            },
+            {
+              label: "排队 / 待发布",
+              value: `${formatNumber(dashboardData.distributionSummary.queued)} / ${formatNumber(
+                dashboardData.distributionSummary.pending
+              )}`,
             },
           ]}
         />
@@ -752,6 +786,7 @@ export function SeoConsole({
               <p>每家交易所每日刷新上限：<span className="font-medium text-foreground">{state.controlPlane.refreshDailyLimitPerExchange}</span></p>
               <p>隔离语言数：<span className="font-medium text-foreground">{state.controlPlane.quarantinedLocales.length}</span></p>
               <p>GSC 同步状态：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}</span></p>
+              <p>GSC sitemap 提交：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.sitemapSubmitStatus ?? "skipped"] ?? state.externalSources.gsc.sitemapSubmitStatus ?? "未运行"}</span></p>
               <p>Partner 同步源数：<span className="font-medium text-foreground">{state.externalSources.partners.length}</span></p>
               <p>Partner 已配置源：<span className="font-medium text-foreground">{configuredPartnerCount}</span></p>
               <p>CTA Live Audit：<span className="font-medium text-foreground">{ctaLiveAuditStatus ? `${STATUS_LABELS[ctaLiveAuditStatus.status] ?? ctaLiveAuditStatus.status}${ctaLiveAuditStatus.conclusion ? ` / ${STATUS_LABELS[ctaLiveAuditStatus.conclusion] ?? ctaLiveAuditStatus.conclusion}` : ""}` : "未读取"}</span></p>
@@ -826,6 +861,73 @@ export function SeoConsole({
                 <p className="mt-2 text-xs text-muted-foreground">{formatDate(run.completedAt)}</p>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>自有渠道分发队列</CardTitle>
+              <DataRealityBadge reality="真实" />
+            </div>
+            <CardDescription>
+              这里展示 distribution_jobs 的当前队列。Telegram / X 配置完凭据后会从待发布变成排队中并自动投递。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {filteredDistributionJobs.length ? (
+              filteredDistributionJobs.slice(0, 12).map((job) => (
+                <div key={job.id} className="rounded-2xl border border-border/60 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline">{job.channel === "telegram" ? "Telegram" : "X"}</Badge>
+                        <Badge
+                          variant={
+                            job.status === "failed"
+                              ? "destructive"
+                              : job.status === "published"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {STATUS_LABELS[job.status] ?? job.status}
+                        </Badge>
+                        {job.exchangeSlug ? <Badge variant="outline">{job.exchangeSlug}</Badge> : null}
+                        {job.pageType ? <Badge variant="outline">{job.pageType}</Badge> : null}
+                      </div>
+                      <p className="mt-3 font-semibold">{job.payload.title}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{job.payload.summary}</p>
+                    </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      <p>{ZH_LOCALE_LABELS[job.locale] ?? job.locale}</p>
+                      <p className="mt-1">
+                        {job.publishedAt ? `已发布：${formatDate(job.publishedAt)}` : `更新时间：${formatDate(job.updatedAt)}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+                    <span>{job.routePath}</span>
+                    <a
+                      href={job.payload.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+                    >
+                      打开页面
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
+                  {job.error ? <p className="mt-3 text-xs text-destructive">错误：{job.error}</p> : null}
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-sm text-muted-foreground">
+                当前筛选条件下暂无分发任务。
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

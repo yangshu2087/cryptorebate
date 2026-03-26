@@ -11,6 +11,7 @@ import type {
 } from "./types";
 import { buildAutomationState } from "./engine";
 import { resetAutomationStateCache } from "./catalog";
+import { persistAutomationStateToDb, upsertGscSignalsToDb } from "./db-store";
 
 function resolvePath(...parts: string[]) {
   return path.join(process.cwd(), ...parts);
@@ -175,6 +176,8 @@ export async function regenerateAutomationState() {
   resetAutomationStateCache();
   const state = buildAutomationState();
   await writeAutomationStateSnapshot(state);
+  await persistAutomationStateToDb(state);
+  await upsertGscSignalsToDb(state);
   resetAutomationStateCache();
   return state;
 }

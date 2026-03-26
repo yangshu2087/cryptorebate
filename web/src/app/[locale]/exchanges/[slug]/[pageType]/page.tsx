@@ -11,6 +11,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
+  getExchangeSeoStaticParams,
+  isExchangeSeoPageType,
+} from "@/data/exchange-seo";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -34,13 +38,46 @@ import {
   getUnifiedSeoEntry,
   getUnifiedSeoPageHref,
   getUnifiedSeoPageLabels,
-  getUnifiedSeoStaticParams,
+  mapAutomationPageToUnifiedEntry,
   isSeoContentLocale,
 } from "@/lib/automation/catalog";
+import { getLatestAutomationSnapshotFromDb, getPublishedSeoPageFromDb } from "@/lib/automation/db-store";
+import type { AutomationSeoPage } from "@/lib/automation/types";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 
+export const dynamicParams = true;
+export const revalidate = 3600;
+
 export function generateStaticParams() {
-  return getUnifiedSeoStaticParams();
+  return getExchangeSeoStaticParams();
+}
+
+async function getSeoEntry(locale: string, slug: string, pageType: string) {
+  if (isExchangeSeoPageType(pageType)) {
+    return getUnifiedSeoEntry(locale, slug, pageType);
+  }
+
+  const dbEntry = await getPublishedSeoPageFromDb(locale, slug, pageType);
+  if (dbEntry) {
+    return mapAutomationPageToUnifiedEntry(dbEntry as AutomationSeoPage);
+  }
+
+  const dbSnapshot = await getLatestAutomationSnapshotFromDb();
+  if (dbSnapshot) {
+    const page = dbSnapshot.snapshot.pages.find(
+      (item) =>
+        item.locale === locale &&
+        item.exchangeSlug === slug &&
+        item.pageType === pageType &&
+        item.stage !== "deprecated" &&
+        item.stage !== "quarantined"
+    );
+    if (page) {
+      return mapAutomationPageToUnifiedEntry(page);
+    }
+  }
+
+  return getUnifiedSeoEntry(locale, slug, pageType);
 }
 
 export async function generateMetadata({
@@ -49,7 +86,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string; pageType: string }>;
 }): Promise<Metadata> {
   const { locale, slug, pageType } = await params;
-  const entry = getUnifiedSeoEntry(locale, slug, pageType);
+  const entry = await getSeoEntry(locale, slug, pageType);
 
   if (!entry) {
     return {};
@@ -93,7 +130,7 @@ export default async function ExchangeSeoPage({
   params: Promise<{ locale: string; slug: string; pageType: string }>;
 }) {
   const { locale, slug, pageType } = await params;
-  const entry = getUnifiedSeoEntry(locale, slug, pageType);
+  const entry = await getSeoEntry(locale, slug, pageType);
 
   if (!entry || !isSeoContentLocale(locale)) {
     notFound();

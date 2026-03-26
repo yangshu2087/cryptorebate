@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { appendClicksToDisk } from "@/lib/automation/persistence";
+import { recordAffiliateClickToDb } from "@/lib/automation/db-store";
 import { getExchangeBySlug } from "@/data/exchanges";
 
 type ClickPayload = {
@@ -204,7 +205,6 @@ export async function POST(request: Request) {
   );
 
   if (
-    process.env.VERCEL !== "1" &&
     attribution.exchangeSlug &&
     attribution.locale &&
     attribution.pageType &&
@@ -215,28 +215,31 @@ export async function POST(request: Request) {
       if (!exchange) {
         throw new Error(`Unknown exchange slug: ${attribution.exchangeSlug}`);
       }
-      await appendClicksToDisk([
-        {
-          exchangeSlug: exchange.slug,
-          locale: attribution.locale,
-          pageType: attribution.pageType,
-          pageUrl: payload.page_url,
-          queryClusterId: attribution.queryClusterId,
-          clickedAt: payload.timestamp,
-          source: "client",
-          dataSource: "real",
-          targetUrl: payload.target_url,
-          sessionId: attribution.sessionId,
-          visitorId: attribution.visitorId,
-          primaryQuery: attribution.primaryQuery,
-          utmSource: payload.utm_source,
-          utmMedium: payload.utm_medium,
-          utmCampaign: payload.utm_campaign,
-          utmContent: payload.utm_content,
-          utmTerm: payload.utm_term,
-          referrer: payload.referrer,
-        },
-      ]);
+      const clickRecord = {
+        exchangeSlug: exchange.slug,
+        locale: attribution.locale,
+        pageType: attribution.pageType,
+        pageUrl: payload.page_url,
+        queryClusterId: attribution.queryClusterId,
+        clickedAt: payload.timestamp,
+        source: "client" as const,
+        dataSource: "real" as const,
+        targetUrl: payload.target_url,
+        sessionId: attribution.sessionId,
+        visitorId: attribution.visitorId,
+        primaryQuery: attribution.primaryQuery,
+        utmSource: payload.utm_source,
+        utmMedium: payload.utm_medium,
+        utmCampaign: payload.utm_campaign,
+        utmContent: payload.utm_content,
+        utmTerm: payload.utm_term,
+        referrer: payload.referrer,
+      };
+
+      const dbResult = await recordAffiliateClickToDb(clickRecord);
+      if (!dbResult && process.env.VERCEL !== "1") {
+        await appendClicksToDisk([clickRecord]);
+      }
     } catch (error) {
       console.warn(
         "[cryptorebate.click.persist_failed]",

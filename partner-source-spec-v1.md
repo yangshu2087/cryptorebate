@@ -48,6 +48,19 @@
 3. 用 `csv-portal` 或 `generic` 方式导入
 4. 只有在你真实拿到 partner API / broker API 凭据后，才改成高级 provider
 
+### 月初 CSV 导入命令
+```bash
+cd /Users/yangshu/.openclaw/workspace/projects/007-cryptorebate-restored/web
+npm run partner:import:csv -- --exchange okx --file /absolute/path/to/okx.csv
+npm run partner:import:csv -- --exchange gate --file /absolute/path/to/gate.csv --mode commissions
+npm run partner:import:csv:dry-run -- --exchange bybit --file /absolute/path/to/bybit.csv --locale en --pageType official-site
+```
+
+默认行为：
+- 自动解析常见 CSV 字段名（registeredAt / commissionUsd / date / timestamp 等）
+- 若 CSV 不含 `locale` / `pageType` / `queryClusterId`，会用 CLI fallback 生成 cluster id
+- 默认去重，重复导入同一批 CSV 不会重复写入；只有显式传 `--allow-duplicates` 才会重复追加
+
 ### 7 家交易所当前默认建议
 1. Binance → `csv-portal`
 2. OKX → `csv-portal`

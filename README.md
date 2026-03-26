@@ -14,12 +14,18 @@
 - 品牌资产与页面接入完成（wordmark / mark / icon / OG 图）
 - SEO/GEO 内容集群扩展到 6 类子页：`referral-code`、`signup-kyc`、`fees-rebate`、`official-site`、`app-download`、`safety-review`
 - 线上 `sitemap.xml` 已纳入 462 个 GEO 路径，并已重新提交给 Google Search Console
+- 搜索发现层已补齐更多自动化入口：
+  - `brand-sitemap.xml`
+  - `fresh-7d-sitemap.xml`
+  - `feed.xml`
+  - Search Console API 自动提交上述 sitemap / feed
 - 最小后端闭环已补齐：`GET /api/exchanges` 与 `POST /api/clicks`
 - 分析采集已加 consent gate：用户同意前不初始化 PostHog，也不发送点击日志
 - SEO/GEO 自动化闭环已接入：opportunities、pages、ROI、earnings、control APIs、daily automation snapshot
 - GSC 真实 OAuth/拉取与 7 家交易所 partner earnings 外部同步框架已接入，当前只差生产环境凭据与数据源 URL
 - click → registration → commission 归因摘要已补到 automation state 与 `/api/stats/seo`
 - `/en/admin/seo` 已新增 CTA / GSC / Partner 最近状态卡、7 家交易所真实度分布、失败趋势、最近 7 天变化
+- `/en/admin/seo` 现在会优先走 DB-first operator payload，并显示 Telegram / X 自有渠道分发队列状态
 - 所有交易所 partner 接入策略已统一收口为 **affiliate-first**：默认按月初 CSV 导出/导入，API/broker 仅作为高级可选方案
 - 新增部署与质量门禁：
   - `web/vercel.json`：强制 `www -> apex` 301
@@ -62,7 +68,9 @@ npm run check
 npm run dev
 npm run automation:generate
 npm run automation:sync-gsc
+npm run automation:submit:sitemaps
 npm run automation:sync-earnings
+npm run partner:import:csv -- --exchange okx --file /absolute/path/to/okx.csv
 npm run deploy:vercel   # safe from web/, delegates to repo root
 bash scripts/sync-automation-secrets.sh   # push automation envs to GitHub + Vercel
 ```
@@ -71,10 +79,22 @@ bash scripts/sync-automation-secrets.sh   # push automation envs to GitHub + Ver
 - GSC 真实拉取已支持两种模式：
   - Service Account
   - Refresh Token
+- GSC 现在还支持自动提交：
+  - `sitemap.xml`
+  - `brand-sitemap.xml`
+  - `fresh-7d-sitemap.xml`
+  - `feed.xml`
+- 自有渠道分发队列已接入：
+  - Telegram：配置 bot token + chat id 后自动发布
+  - X：配置 user access token 后自动发布
+  - 未配置时保留为 `pending` 队列，统一展示在 `/en/admin/seo`
 - partner earnings 已升级为 provider-aware 外部同步：
   - 默认主路径：`csv-portal`（月初 affiliate CSV 导出/导入）
   - 次选：`generic`（affiliate portal 如果有固定 JSON / CSV 报表链接）
   - 高级可选：`okx-broker`、`gate-api4`
+- 月初 CSV 导入正式命令：
+  - `cd web && npm run partner:import:csv -- --exchange okx --file /absolute/path/to/okx.csv`
+  - `cd web && npm run partner:import:csv:dry-run -- --exchange binance --file /absolute/path/to/binance.csv`
 - 本地环境变量样例见：`web/.env.example`
 - GitHub Actions 每日 automation loop 已支持读取对应 secrets 并回写：
   - `web/src/data/generated/gsc-query-signals.json`

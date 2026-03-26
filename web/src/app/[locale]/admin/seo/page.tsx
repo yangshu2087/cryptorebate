@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SeoConsole } from "@/components/admin/seo-console";
+import { buildSeoDashboardData } from "@/lib/automation/operator-console";
 import { SITE_NAME } from "@/lib/constants";
-import { deriveCtaLiveAuditAlert, getCtaLiveAuditStatus } from "@/lib/automation/github-actions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -35,8 +35,9 @@ export default async function SeoAdminPage({
 }) {
   const { locale } = await params;
   const filters = await searchParams;
-  const ctaLiveAuditStatus = await getCtaLiveAuditStatus();
-  const ctaLiveAuditAlert = deriveCtaLiveAuditAlert(ctaLiveAuditStatus);
+  const dashboardData = await buildSeoDashboardData(
+    filters.dataLocale ?? locale
+  );
 
   return (
     <SeoConsole
@@ -45,8 +46,7 @@ export default async function SeoAdminPage({
       exchange={filters.exchange}
       dataLocale={filters.dataLocale}
       pageType={filters.pageType}
-      externalAlerts={ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []}
-      ctaLiveAuditStatus={ctaLiveAuditStatus}
+      dashboardData={dashboardData}
     />
   );
 }

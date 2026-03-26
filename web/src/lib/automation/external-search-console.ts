@@ -28,6 +28,17 @@ export type SearchConsoleSyncReport = {
   error?: string;
 };
 
+export type SearchConsoleSitemapSubmitReport = {
+  enabled: boolean;
+  configured: boolean;
+  status: "success" | "failed" | "skipped" | "disabled";
+  property?: string;
+  authMode?: SearchConsoleConfig["authMode"];
+  submitted: string[];
+  lastSubmittedAt?: string;
+  error?: string;
+};
+
 const pageTypeKeywords: Record<string, string[]> = {
   "referral-code": [
     "referral",
@@ -178,7 +189,15 @@ function getTodayDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function getAccessToken(config: SearchConsoleConfig) {
+async function getAccessToken(
+  config: SearchConsoleConfig,
+  mode: "readonly" | "write" = "readonly"
+) {
+  const scopes =
+    mode === "write"
+      ? ["https://www.googleapis.com/auth/webmasters"]
+      : ["https://www.googleapis.com/auth/webmasters.readonly"];
+
   if (!config.authMode) {
     throw new Error("Missing AUTOMATION_GSC_AUTH_MODE");
   }
@@ -192,7 +211,7 @@ async function getAccessToken(config: SearchConsoleConfig) {
       const client = new JWT({
         email: credentials.client_email,
         key: credentials.private_key,
-        scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+        scopes,
       });
       const token = await client.getAccessToken();
       if (!token.token) throw new Error("Failed to obtain GSC service-account token");
@@ -206,7 +225,7 @@ async function getAccessToken(config: SearchConsoleConfig) {
     const client = new JWT({
       email: config.clientEmail,
       key: config.privateKey,
-      scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+      scopes,
     });
     const token = await client.getAccessToken();
     if (!token.token) throw new Error("Failed to obtain GSC service-account token");
@@ -365,7 +384,7 @@ export async function fetchSearchConsoleSignals(
   }
 
   try {
-    const token = await getAccessToken(config);
+    const token = await getAccessToken(config, "readonly");
     const endpoint = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(
       config.property
     )}/searchAnalytics/query`;
@@ -420,6 +439,95 @@ export async function fetchSearchConsoleSignals(
         signalsWritten: 0,
         error: error instanceof Error ? error.message : "Unknown GSC sync error",
       },
+    };
+  }
+}
+
+export async function submitSearchConsoleSitemaps(
+  config: SearchConsoleConfig,
+  sitemapUrls: string[]
+): Promise<SearchConsoleSitemapSubmitReport> {
+  const uniqueUrls = Array.from(new Set(sitemapUrls.filter(Boolean)));
+
+  if (!config.enabled) {
+    return {
+      enabled: false,
+      configured: false,
+      status: "disabled",
+      property: config.property,
+      authMode: config.authMode,
+      submitted: [],
+    };
+  }
+
+  if (!config.submitSitemaps) {
+    return {
+      enabled: true,
+      configured: Boolean(config.property && config.authMode),
+      status: "skipped",
+      property: config.property,
+      authMode: config.authMode,
+      submitted: [],
+    };
+  }
+
+  if (!config.property || !config.authMode) {
+    return {
+      enabled: true,
+      configured: false,
+      status: "skipped",
+      property: config.property,
+      authMode: config.authMode,
+      submitted: [],
+      error: "Missing property or auth mode",
+    };
+  }
+
+  try {
+    const token = await getAccessToken(config, "write");
+    const submitted: string[] = [];
+
+    for (const sitemapUrl of uniqueUrls) {
+      const endpoint = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(
+        config.property
+      )}/sitemaps/${encodeURIComponent(sitemapUrl)}`;
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Sitemap submit failed (${response.status}) for ${sitemapUrl}: ${body}`);
+      }
+
+      submitted.push(sitemapUrl);
+    }
+
+    return {
+      enabled: true,
+      configured: true,
+      status: "success",
+      property: config.property,
+      authMode: config.authMode,
+      submitted,
+      lastSubmittedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    return {
+      enabled: true,
+      configured: true,
+      status: "failed",
+      property: config.property,
+      authMode: config.authMode,
+      submitted: [],
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown Search Console sitemap submit error",
     };
   }
 }

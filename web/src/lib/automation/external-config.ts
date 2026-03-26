@@ -13,6 +13,7 @@ export type SearchConsoleConfig = {
   enabled: boolean;
   property?: string;
   authMode?: GscAuthMode;
+  submitSitemaps: boolean;
   startDaysAgo: number;
   rowLimit: number;
   serviceAccountJson?: string;
@@ -80,6 +81,7 @@ export function getSearchConsoleConfig(): SearchConsoleConfig {
     enabled: parseBoolean(process.env.AUTOMATION_GSC_ENABLED, false),
     property: process.env.AUTOMATION_GSC_PROPERTY,
     authMode,
+    submitSitemaps: parseBoolean(process.env.AUTOMATION_GSC_SUBMIT_SITEMAPS, true),
     startDaysAgo: parseNumber(process.env.AUTOMATION_GSC_START_DAYS_AGO, 28),
     rowLimit: parseNumber(process.env.AUTOMATION_GSC_ROW_LIMIT, 1000),
     serviceAccountJson,

@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
 import {
   SEO_CONTENT_LOCALES,
+  getAutomationState,
   getUnifiedSeoPageHref,
   getUnifiedSeoStaticParams,
 } from "@/lib/automation/catalog";
+import { buildBrandPages } from "@/lib/automation/brand-pages";
 import { getAllExchangeSlugs } from "@/data/exchanges";
 import { LOCALES, SITE_URL } from "@/lib/constants";
 import { getLocaleAlternateUrls } from "@/lib/i18n";
@@ -11,6 +13,7 @@ import { getLocaleAlternateUrls } from "@/lib/i18n";
 export default function sitemap(): MetadataRoute.Sitemap {
   const exchangeSlugs = getAllExchangeSlugs();
   const now = new Date();
+  const brandPages = buildBrandPages(getAutomationState());
 
   const staticPages = ["", "/exchanges", "/calculator", "/about", "/disclosure", "/legal"];
 
@@ -51,6 +54,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.75,
       alternates: {
         languages: getLocaleAlternateUrls(pathname, SEO_CONTENT_LOCALES),
+      },
+    });
+  }
+
+  for (const page of brandPages) {
+    entries.push({
+      url: `${SITE_URL}/${page.locale}${page.routePath}`,
+      lastModified: new Date(page.publishedAt),
+      changeFrequency: "weekly",
+      priority: 0.7,
+      alternates: {
+        languages: getLocaleAlternateUrls(page.routePath, SEO_CONTENT_LOCALES),
       },
     });
   }

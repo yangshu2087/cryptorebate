@@ -61,7 +61,7 @@ function getComparisonPeers(slug: string): [string, string] {
   return mapping[slug] ?? ["binance", "okx"];
 }
 
-function toUnifiedEntry(page: AutomationSeoPage): UnifiedSeoEntry {
+export function mapAutomationPageToUnifiedEntry(page: AutomationSeoPage): UnifiedSeoEntry {
   const exchange = getExchangeBySlug(page.exchangeSlug);
   if (!exchange) {
     throw new Error(`Missing exchange for automation page ${page.id}`);
@@ -152,7 +152,7 @@ export function getUnifiedSeoEntry(locale: string, slug: string, pageType: strin
       item.stage !== "quarantined"
   );
 
-  return page ? toUnifiedEntry(page) : null;
+  return page ? mapAutomationPageToUnifiedEntry(page) : null;
 }
 
 export function getUnifiedSeoEntriesForExchange(locale: string, slug: string) {
@@ -174,7 +174,7 @@ export function getUnifiedSeoEntriesForExchange(locale: string, slug: string) {
         page.stage !== "deprecated" &&
         page.stage !== "quarantined"
     )
-    .map(toUnifiedEntry);
+    .map(mapAutomationPageToUnifiedEntry);
 
   return sortEntries([...baseEntries, ...dynamicEntries]);
 }

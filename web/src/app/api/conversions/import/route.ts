@@ -4,6 +4,7 @@ import {
   appendConversionsToDisk,
   regenerateAutomationState,
 } from "@/lib/automation/persistence";
+import { importPartnerEventsToDb } from "@/lib/automation/db-store";
 
 type ImportPayload = {
   conversions?: Array<{
@@ -38,6 +39,11 @@ export async function POST(request: Request) {
   if (body.commissions?.length) {
     await appendCommissionsToDisk(body.commissions);
   }
+
+  await importPartnerEventsToDb({
+    conversions: body.conversions,
+    commissions: body.commissions,
+  });
 
   const state = await regenerateAutomationState();
 

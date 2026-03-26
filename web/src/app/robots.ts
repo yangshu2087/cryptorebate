@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { DISCOVERY_SITEMAP_PATHS } from "@/lib/automation/discovery";
+import { SITE_URL } from "@/lib/constants";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://cryptorebate.app/sitemap.xml",
+    sitemap: DISCOVERY_SITEMAP_PATHS.map((path) => `${SITE_URL}${path}`),
   };
 }

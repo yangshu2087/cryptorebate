@@ -243,6 +243,10 @@ export type ExternalGscSyncState = {
   lastSyncAt?: string;
   rowsFetched: number;
   signalsWritten: number;
+  sitemapSubmitStatus?: ExternalSyncStatus;
+  sitemapsSubmitted?: string[];
+  lastSitemapSubmitAt?: string;
+  sitemapSubmitError?: string;
   error?: string;
 };
 
@@ -270,6 +274,45 @@ export type ExternalSourcesState = {
   partners: ExternalPartnerSyncState[];
 };
 
+export type DistributionChannel = "telegram" | "x";
+
+export type DistributionJobStatus =
+  | "pending"
+  | "queued"
+  | "in_progress"
+  | "published"
+  | "failed"
+  | "skipped";
+
+export type DistributionJobPayload = {
+  title: string;
+  summary: string;
+  url: string;
+  exchangeSlug?: Exchange["slug"] | null;
+  pageType?: string | null;
+  topic?: string | null;
+  tags?: string[];
+};
+
+export type DistributionJob = {
+  id: string;
+  channel: DistributionChannel;
+  locale: string;
+  exchangeSlug?: Exchange["slug"] | null;
+  pageType?: string | null;
+  topic?: string | null;
+  routePath: string;
+  status: DistributionJobStatus;
+  payload: DistributionJobPayload;
+  retryCount: number;
+  lastAttemptAt?: string | null;
+  nextAttemptAt?: string | null;
+  error?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string | null;
+};
+
 export type AutomationRun = {
   id: string;
   job:
@@ -279,8 +322,13 @@ export type AutomationRun = {
     | "daily_page_generation"
     | "daily_page_publish"
     | "daily_page_refresh"
+    | "daily_internal_link_refresh"
+    | "daily_distribution_enqueue"
+    | "daily_distribution_publish"
+    | "daily_alert_eval"
     | "daily_revenue_sync"
     | "daily_roi_recompute"
+    | "monthly_partner_csv_import"
     | "weekly_staleness_audit"
     | "weekly_underperformance_pruning";
   status: "success" | "warning" | "failed";
