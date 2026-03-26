@@ -1,22 +1,18 @@
 {
-  "generatedAt": "2026-03-26T14:57:44.379Z",
+  "generatedAt": "2026-03-26T15:05:58.379Z",
   "gsc": {
     "enabled": true,
     "status": "success",
     "configured": true,
     "property": "https://cryptorebate.app/",
     "authMode": "service-account",
-    "lastSyncAt": "2026-03-26T14:57:42.601Z",
+    "lastSyncAt": "2026-03-26T15:05:58.285Z",
     "rowsFetched": 0,
     "signalsWritten": 0,
-    "sitemapSubmitStatus": "success",
-    "sitemapsSubmitted": [
-      "https://cryptorebate.app/sitemap.xml",
-      "https://cryptorebate.app/brand-sitemap.xml",
-      "https://cryptorebate.app/fresh-7d-sitemap.xml",
-      "https://cryptorebate.app/feed.xml"
-    ],
-    "lastSitemapSubmitAt": "2026-03-26T14:57:44.377Z"
+    "sitemapSubmitStatus": "failed",
+    "sitemapsSubmitted": [],
+    "lastSitemapSubmitAt": "2026-03-26T14:57:44.377Z",
+    "sitemapSubmitError": "Sitemap submit failed (400) for /sitemap.xml: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Could not process sitemap '/sitemap.xml'\",\n    \"errors\": [\n      {\n        \"message\": \"Could not process sitemap '/sitemap.xml'\",\n        \"domain\": \"global\",\n        \"reason\": \"invalidParameter\",\n        \"location\": \"feedpath\",\n        \"locationType\": \"parameter\"\n      }\n    ]\n  }\n}\n"
   },
   "partners": [
     {
