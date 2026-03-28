@@ -416,7 +416,7 @@ async function fetchProviderResults(
 ): Promise<LiveSerpResult[]> {
   switch (provider) {
     case "duckduckgo-html":
-      return fetchDuckDuckGoHtmlResults(query, fetchImpl);
+      return fetchDuckDuckGoHtmlResults(query);
     case "serper": {
       const apiKey = getSerperApiKey(env);
       if (!apiKey) throw new Error("Missing SERPER API key");
