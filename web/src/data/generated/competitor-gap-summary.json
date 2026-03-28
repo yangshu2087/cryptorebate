@@ -1,0 +1,68 @@
+{
+  "status": "success",
+  "generatedAt": "2026-03-28T13:15:18Z",
+  "summary": "最近一次竞品空缺扫描显示：高意图 SERP 的赢家主要是官方 help / referral FAQ 与强信任型 affiliate 页。对 CryptoRebate 来说，最该优先做的不是盲目扩更多低意图页，而是强化 official-site、referral-code、signup-kyc、fees-rebate 这四类页的第一屏答案、受限地区说明、手动输入邀请码 fallback、以及 help-center 风格的注册/验证障碍说明。",
+  "serpWinnersLearnedFrom": 6,
+  "topicsReviewed": 8,
+  "publishCandidates": 2,
+  "refreshCandidates": 3,
+  "internalLinkCandidates": 2,
+  "distributionCandidates": 2,
+  "findings": [
+    {
+      "id": "finding-binance-official-trust",
+      "exchangeSlug": "binance",
+      "locale": "en",
+      "topic": "binance official site / referral entry trust layer",
+      "competitorType": "affiliate",
+      "competitorPattern": "Live SERP results for Binance referral queries are crowded with low-trust affiliate pages and spammy code pages; winners repeatedly stress using the official domain and avoiding phishing.",
+      "ourGap": "Our official-site and referral-code pages should state the official domain, phishing warning, and exact fallback registration path more aggressively in the first screen instead of relying mainly on generic comparison framing.",
+      "suggestedAction": "refresh",
+      "confidence": "high"
+    },
+    {
+      "id": "finding-okx-signup-fallback",
+      "exchangeSlug": "okx",
+      "locale": "en",
+      "topic": "okx signup with referral code and regional restrictions",
+      "competitorType": "official",
+      "competitorPattern": "OKX help pages explain that users can sign up via referral link or manually enter a referral code, and they explicitly call out residence-based restrictions and what to do when sign-up fails.",
+      "ourGap": "CryptoRebate should make manual referral-code fallback and residence-based eligibility much more explicit on OKX signup/KYC pages, not just mention the invite link.",
+      "suggestedAction": "refresh",
+      "confidence": "high"
+    },
+    {
+      "id": "finding-okx-referral-faq-cluster",
+      "exchangeSlug": "okx",
+      "locale": "en",
+      "topic": "okx referral faq vs dex referral confusion",
+      "competitorType": "official",
+      "competitorPattern": "OKX surfaces both general referral FAQ pages and DEX referral pages; the SERP can mix them, which creates intent confusion for users trying to register a normal account.",
+      "ourGap": "We need a clearer page section or dedicated supporting coverage that separates account signup referral, campaign rewards, and DEX referral so users do not misread the path.",
+      "suggestedAction": "publish",
+      "confidence": "medium"
+    },
+    {
+      "id": "finding-bybit-signup-kyc-helpstyle",
+      "exchangeSlug": "bybit",
+      "locale": "en",
+      "topic": "bybit signup / kyc help-center style answers",
+      "competitorType": "official",
+      "competitorPattern": "Bybit help-center pages answer registration and KYC questions directly, including country restrictions, supported signup methods, and document expectations.",
+      "ourGap": "Our Bybit signup-kyc coverage should read more like an answer page with concrete steps, restricted-country warnings, and document expectations before the CTA.",
+      "suggestedAction": "refresh",
+      "confidence": "high"
+    },
+    {
+      "id": "finding-cross-exchange-signup-friction",
+      "exchangeSlug": "cross-exchange",
+      "locale": "multi-locale",
+      "topic": "registration friction and referral-link fallback",
+      "competitorType": "help-center",
+      "competitorPattern": "Official help content often ranks because it answers what happens when the referral link fails, the code is not applied, or the user is in a restricted jurisdiction.",
+      "ourGap": "This topic is still under-linked in our hubs; it should be surfaced as a recurring internal-link and distribution candidate across signup-kyc and official-site families.",
+      "suggestedAction": "internal-link",
+      "confidence": "medium"
+    }
+  ]
+}

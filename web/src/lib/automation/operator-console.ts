@@ -4,6 +4,7 @@ import {
   getTopAutomationOpportunities,
   getTopAutomationRoiPages,
 } from "@/lib/automation/catalog";
+import { readCompetitorGapSummary } from "@/lib/automation/competitor-gap";
 import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import { buildSeoStatsFromDb } from "@/lib/automation/db-store";
 import {
@@ -13,6 +14,7 @@ import {
 import type {
   AutomationAlert,
   AutomationState,
+  CompetitorGapSummary,
   DistributionJob,
 } from "@/lib/automation/types";
 
@@ -20,6 +22,8 @@ function toStatusLabel(status?: string | null) {
   switch (status) {
     case "success":
       return "成功";
+    case "warning":
+      return "警告";
     case "failed":
       return "失败";
     case "skipped":
@@ -102,6 +106,7 @@ export type SeoDashboardData = {
   topRoiPages: ReturnType<typeof getTopAutomationRoiPages>;
   distributionJobs: DistributionJob[];
   distributionSummary: ReturnType<typeof buildDistributionSummary>;
+  competitorGapSummary: CompetitorGapSummary;
   alerts: AutomationAlert[];
   operatorSummary: {
     statusCards: {
@@ -138,6 +143,15 @@ export type SeoDashboardData = {
         exchangeGroups: number;
         surfacedGuides: number;
         localesCovered: number;
+      };
+      competitorGap: {
+        status: string;
+        label: string;
+        updatedAt: string;
+        topicsReviewed: number;
+        publishCandidates: number;
+        refreshCandidates: number;
+        internalLinkCandidates: number;
       };
       distribution: {
         status: string;
@@ -179,6 +193,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const dataReality = dbStats?.dataReality ?? getAutomationDataReality(state);
   const ctaLiveAuditStatus = await getCtaLiveAuditStatus();
   const ctaLiveAuditAlert = deriveCtaLiveAuditAlert(ctaLiveAuditStatus);
+  const competitorGapSummary = await readCompetitorGapSummary();
   const distributionJobs = dbStats?.distributionJobs ?? [];
   const distributionSummary = buildDistributionSummary(distributionJobs);
   const alerts = [
@@ -218,6 +233,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       dbStats?.topRoiPages ?? getTopAutomationRoiPages(locale ?? undefined, 10),
     distributionJobs,
     distributionSummary,
+    competitorGapSummary,
     alerts,
     operatorSummary: {
       statusCards: {
@@ -272,6 +288,15 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           exchangeGroups: internalLinkGroups.length,
           surfacedGuides,
           localesCovered,
+        },
+        competitorGap: {
+          status: competitorGapSummary.status,
+          label: toStatusLabel(competitorGapSummary.status),
+          updatedAt: competitorGapSummary.generatedAt,
+          topicsReviewed: competitorGapSummary.topicsReviewed,
+          publishCandidates: competitorGapSummary.publishCandidates,
+          refreshCandidates: competitorGapSummary.refreshCandidates,
+          internalLinkCandidates: competitorGapSummary.internalLinkCandidates,
         },
         distribution: {
           status:

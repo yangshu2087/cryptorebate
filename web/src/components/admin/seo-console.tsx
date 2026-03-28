@@ -545,6 +545,20 @@ export function SeoConsole({
           )} · 已浮出链接 ${formatNumber(statusCards.internalLinkRefresh.surfacedGuides)}`}
         />
         <StatusCard
+          title="最近一次竞品空缺扫描"
+          status={statusCards.competitorGap.label}
+          description="显示 007-competitor-gap-monitor 最近一次输出的竞品空缺摘要，用于驱动 publish / refresh / 内链动作。"
+          meta={`最近扫描：${
+            statusCards.competitorGap.updatedAt
+              ? formatDate(statusCards.competitorGap.updatedAt)
+              : "暂无"
+          } · 主题 ${formatNumber(statusCards.competitorGap.topicsReviewed)} · publish ${formatNumber(
+            statusCards.competitorGap.publishCandidates
+          )} · refresh ${formatNumber(statusCards.competitorGap.refreshCandidates)} · 内链 ${formatNumber(
+            statusCards.competitorGap.internalLinkCandidates
+          )}`}
+        />
+        <StatusCard
           title="自有渠道分发队列"
           status={statusCards.distribution.label}
           description="Telegram / X 的发布队列、待发布和失败状态会在这里统一显示。"
@@ -642,6 +656,16 @@ export function SeoConsole({
                   .map(([pageType]) => getUnifiedSeoPageLabels(labelsLocale, pageType).short)
                   .join(" / ") || "暂无",
             },
+          ]}
+        />
+        <SummaryList
+          title="竞品空缺摘要"
+          description="显示最近一次 competitor gap monitor 的摘要和动作规模。"
+          items={[
+            { label: "SERP 样本", value: formatNumber(dashboardData.competitorGapSummary.serpWinnersLearnedFrom) },
+            { label: "主题数", value: formatNumber(dashboardData.competitorGapSummary.topicsReviewed) },
+            { label: "Publish 候选", value: formatNumber(dashboardData.competitorGapSummary.publishCandidates) },
+            { label: "Refresh 候选", value: formatNumber(dashboardData.competitorGapSummary.refreshCandidates) },
           ]}
         />
       </div>
@@ -915,7 +939,7 @@ export function SeoConsole({
         </Card>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="border-border/70">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
@@ -962,6 +986,36 @@ export function SeoConsole({
             ) : (
               <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-sm text-muted-foreground">
                 当前筛选条件下暂无内链刷新结果。
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>最近一次竞品空缺结论</CardTitle>
+              <Badge variant="outline">weekly operator signal</Badge>
+            </div>
+            <CardDescription>{dashboardData.competitorGapSummary.summary}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {dashboardData.competitorGapSummary.findings.length > 0 ? (
+              dashboardData.competitorGapSummary.findings.slice(0, 5).map((finding) => (
+                <div key={finding.id} className="rounded-2xl border border-border/60 p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="outline">{finding.exchangeSlug}</Badge>
+                    <Badge variant="outline">{finding.locale}</Badge>
+                    <Badge variant="secondary">{finding.suggestedAction}</Badge>
+                    <Badge variant="outline">{finding.confidence}</Badge>
+                  </div>
+                  <p className="mt-3 font-semibold">{finding.topic}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{finding.competitorPattern}</p>
+                  <p className="mt-2 text-sm">{finding.ourGap}</p>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border/70 p-4 text-sm text-muted-foreground">
+                还没有可展示的竞品空缺结论。等 `007-competitor-gap-monitor` 首次产出后，这里会显示最近一次 publish / refresh / 内链建议。
               </div>
             )}
           </CardContent>

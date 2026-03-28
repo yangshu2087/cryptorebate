@@ -210,6 +210,38 @@ export type RoiEntry = {
   observedAt: string;
 };
 
+export type CompetitorGapAction =
+  | "publish"
+  | "refresh"
+  | "internal-link"
+  | "distribution"
+  | "defer";
+
+export type CompetitorGapFinding = {
+  id: string;
+  exchangeSlug: Exchange["slug"] | "cross-exchange";
+  locale: string | "multi-locale";
+  topic: string;
+  competitorType: "official" | "affiliate" | "review" | "help-center" | "mixed";
+  competitorPattern: string;
+  ourGap: string;
+  suggestedAction: CompetitorGapAction;
+  confidence: "high" | "medium" | "low";
+};
+
+export type CompetitorGapSummary = {
+  status: "success" | "warning" | "failed" | "skipped" | "never_run";
+  generatedAt: string;
+  summary: string;
+  serpWinnersLearnedFrom: number;
+  topicsReviewed: number;
+  publishCandidates: number;
+  refreshCandidates: number;
+  internalLinkCandidates: number;
+  distributionCandidates: number;
+  findings: CompetitorGapFinding[];
+};
+
 export type AutomationAlert = {
   id: string;
   level: "info" | "warning" | "critical";
