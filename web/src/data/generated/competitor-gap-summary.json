@@ -1,12 +1,12 @@
 {
   "status": "success",
-  "generatedAt": "2026-03-28T15:24:49.463Z",
+  "generatedAt": "2026-03-28T15:54:46.295Z",
   "summary": "本次 live SERP 研究显示：高意图查询的头部结果仍以官方 help / referral 解释页和强信任型 affiliate 入口页为主，适合继续强化 official-site、referral-code、signup-kyc 与注册受阻排障内容。",
-  "serpWinnersLearnedFrom": 18,
+  "serpWinnersLearnedFrom": 27,
   "topicsReviewed": 5,
   "publishCandidates": 1,
-  "refreshCandidates": 2,
-  "internalLinkCandidates": 0,
+  "refreshCandidates": 3,
+  "internalLinkCandidates": 1,
   "distributionCandidates": 0,
   "findings": [
     {
@@ -15,7 +15,7 @@
       "locale": "en",
       "topic": "binance official site / referral entry trust layer",
       "competitorType": "official",
-      "competitorPattern": "Top live SERP winners: binance.com (Friend  Referral Program | Refer & Earn | Binance Official); blog.binance.us (Your guide to the Binance.US Referral Program | 2025); themoneyninja.com (Binance US Promotion : $10 Sign-up Bonu  - The Money Ninja).",
+      "competitorPattern": "Top live SERP winners: binance.com (Binance Referral Program — Buy and sell on the Spot market with advanced tools · Increase your profits with leverage); binance.com (Friends Referral Program | Refer & Earn | Binance Official — Get a 100 USD cashback voucher when you refer a friend. T&amp;C apply.); bitdegree.org (Binance Referral Code & Link is: 49316610 | February 2026 — The currently working Binance Referral Code is: <strong>49316610</strong>. Use this code to get a Binance bonus of up to $600 &amp; save up to 50% on fees now!).",
       "ourGap": "Our official-site and referral-code pages should state the official domain, phishing warning, and exact fallback registration path more aggressively in the first screen instead of relying mainly on generic comparison framing.",
       "suggestedAction": "refresh",
       "confidence": "high"
@@ -26,7 +26,7 @@
       "locale": "en",
       "topic": "okx signup with referral code and regional restrictions",
       "competitorType": "help-center",
-      "competitorPattern": "Top live SERP winners: okx.com (Referral Program FAQ - OKX); tradewise.community (OKX Referral Code 2025 - Claim Bonu e , Reduced Trading Fee  & A ...); datawallet.com (OKX Referral Code: 15% Off Fee  & Sign Up Bonu  (2026)).",
+      "competitorPattern": "Top live SERP winners: chainplay.gg (OKX Referral Code 2026: Claim $10,000 Bonus (Code: 47447298) — <strong>There is no limit to how many people</strong> ... referral code. The more people they refer, the more they can earn. OKX offers ongoing commissions from the trading fees of referred users, allowing users to generate passive income as their referrals ...); nftplazas.com (OKX Referral Code 2026: 98973395 - Get $10000 SignUp Bonus — The OKX referral program has specific ... mind while using the OKX referral code 98973395: <strong>New users exclusive: Only new users are qualified to use the referral code</strong>. You cannot add a referral code after registration as the code field only appears ...); okx.com (Referral Program FAQ | OKX United States — Only new users who register from ... will be entitled to claim the reward. <strong>Rewards may be restricted from trading or withdrawal for up to 90 days from the date of receipt</strong>....).",
       "ourGap": "CryptoRebate should make manual referral-code fallback and residence-based eligibility much more explicit on OKX signup/KYC pages, not just mention the invite link.",
       "suggestedAction": "refresh",
       "confidence": "high"
@@ -37,9 +37,31 @@
       "locale": "en",
       "topic": "okx referral faq vs dex referral confusion",
       "competitorType": "help-center",
-      "competitorPattern": "Top live SERP winners: okx.com (DEX Referral FAQ - OKX); web3.okx100.com (Web3 Referral Da hboard | OKX Wallet); okx.com (What'  DEX Referral program? - OKX).",
+      "competitorPattern": "Top live SERP winners: okx.com (Referral Program FAQ | OKX United States — To confirm the invitation code, recall the source of the invitation when you registered, or verify directly with the person who invited you. Each reward might include crypto as rewards, and each reward must be claimed within the specified event period stated on your referral page or it will expire.); okx.com (What's DEX Referral program? | OKX United States — After creating the referral code, you can share the invitation link and invite friends to use your referral code to trade on OKX DEX in the following ways: Share invitation link from the Referral dashboard: you can directly copy and share your default referral code that you can find from the top area of the Referral dashboard. ... If you want to share a different referral code, go to Referral dashboard &gt; Codes, then copy the link from the operation menu of the chosen code.); okx.com (DEX Referral FAQ | OKX Europe — Up to 100 referral codes per seed phrase wallet. ... Length: 5-15 characters. Letters and numbers only. Can&#x27;t be modified or deleted. Each code can have an independent invitee discount percentage. ... Use different codes for different channels to track effectiveness.).",
       "ourGap": "We need a clearer page section or dedicated supporting coverage that separates account signup referral, campaign rewards, and DEX referral so users do not misread the path.",
       "suggestedAction": "publish",
+      "confidence": "medium"
+    },
+    {
+      "id": "finding-bybit-signup-kyc-helpstyle",
+      "exchangeSlug": "bybit",
+      "locale": "en",
+      "topic": "bybit signup / kyc help-center style answers",
+      "competitorType": "help-center",
+      "competitorPattern": "Top live SERP winners: reddit.com (r/Bybit on Reddit: KYC and restricted countries — This is something I have asked bybit but their support team was completely useless and could not answer my question. This is what I received from them : As advised this restriction will apply to users who connect using a Canada IP and to users who accounts have undergone KYC verification with Canada documents); bybit.com (FAQ — Individual KYC — Bybit only allows one account per user to process KYC verification. If you would like to transfer your KYC verification to another account, please visit ... No, you can only use the same name with your Standard KYC and Advanced KYC. How do KYC verifications determine country restrictions for users?); datawallet.com (Bybit Supported and Restricted Countries in 2026 — Read about Bybit&#x27;s supported and restricted countries in 2026, including blocked jurisdictions, compliance reasons, licensing status, EU access, and KYC rules.).",
+      "ourGap": "Our Bybit signup-kyc coverage should read more like an answer page with concrete steps, restricted-country warnings, and document expectations before the CTA.",
+      "suggestedAction": "refresh",
+      "confidence": "high"
+    },
+    {
+      "id": "finding-cross-exchange-signup-friction",
+      "exchangeSlug": "cross-exchange",
+      "locale": "multi-locale",
+      "topic": "registration friction and referral-link fallback",
+      "competitorType": "help-center",
+      "competitorPattern": "Top live SERP winners: reddit.com (r/oculus on Reddit: Can't Accept Referral Links? — <strong>It could be that the referral code is indeed not from your region</strong>. I also remember i had to close my browser and reopen a fresh one because i got that error the first time as well. If you’re in the USA you can try my code.); communityforums.atmeta.com (Referrals in Unsupported Countries | Meta Community Forums - 1335561 — I have a friend that lives in the US that plays VRChat with me (i&#x27;m on PC), and he said that if i bought a headset and set it up with his referral link we both would get some credit on the Meta Horizons Store, i bought a headset, and it arrived today, but i couldn&#x27;t follow him because i live in Brazil and his referral link doesn&#x27;t work, i&#x27;ve been searching for this information for about an hour with no satisfying answer so i made this post, i already activated my headset without it because it wasn&#x27;t worth the hassle, but if it can help someone else with the same question then i&#x27;ll be satisfied.); reddit.com (r/interactivebrokers on Reddit: Opened an account using referral link, now can't change country — I guess I&#x27;ll have to specify the country - it&#x27;s Israel which is served by the same IB LLC as the US (but with W-8 BEN on file instead of W9). Technically for Israel they only need to update the address and tax information. I&#x27;ll try to apply for a new account just in case that&#x27;s the only way to resolve this. ... I just ran into this same issue - I opened the account via a referral link while living outside Israel, and now can&#x27;t change the country to Israel.).",
+      "ourGap": "This topic is still under-linked in our hubs; it should be surfaced as a recurring internal-link and distribution candidate across signup-kyc and official-site families.",
+      "suggestedAction": "internal-link",
       "confidence": "medium"
     }
   ]
