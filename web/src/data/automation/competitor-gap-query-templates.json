@@ -1,0 +1,57 @@
+[
+  {
+    "templateId": "finding-binance-official-trust",
+    "query": "binance official site referral code",
+    "exchangeSlug": "binance",
+    "locale": "en",
+    "topic": "binance official site / referral entry trust layer",
+    "suggestedAction": "refresh",
+    "confidence": "high",
+    "defaultCompetitorType": "affiliate",
+    "ourGap": "Our official-site and referral-code pages should state the official domain, phishing warning, and exact fallback registration path more aggressively in the first screen instead of relying mainly on generic comparison framing."
+  },
+  {
+    "templateId": "finding-okx-signup-fallback",
+    "query": "okx signup referral code restrictions",
+    "exchangeSlug": "okx",
+    "locale": "en",
+    "topic": "okx signup with referral code and regional restrictions",
+    "suggestedAction": "refresh",
+    "confidence": "high",
+    "defaultCompetitorType": "official",
+    "ourGap": "CryptoRebate should make manual referral-code fallback and residence-based eligibility much more explicit on OKX signup/KYC pages, not just mention the invite link."
+  },
+  {
+    "templateId": "finding-okx-referral-faq-cluster",
+    "query": "okx referral faq dex referral code difference",
+    "exchangeSlug": "okx",
+    "locale": "en",
+    "topic": "okx referral faq vs dex referral confusion",
+    "suggestedAction": "publish",
+    "confidence": "medium",
+    "defaultCompetitorType": "official",
+    "ourGap": "We need a clearer page section or dedicated supporting coverage that separates account signup referral, campaign rewards, and DEX referral so users do not misread the path."
+  },
+  {
+    "templateId": "finding-bybit-signup-kyc-helpstyle",
+    "query": "bybit signup kyc restricted countries help",
+    "exchangeSlug": "bybit",
+    "locale": "en",
+    "topic": "bybit signup / kyc help-center style answers",
+    "suggestedAction": "refresh",
+    "confidence": "high",
+    "defaultCompetitorType": "official",
+    "ourGap": "Our Bybit signup-kyc coverage should read more like an answer page with concrete steps, restricted-country warnings, and document expectations before the CTA."
+  },
+  {
+    "templateId": "finding-cross-exchange-signup-friction",
+    "query": "referral link not working restricted country exchange signup",
+    "exchangeSlug": "cross-exchange",
+    "locale": "multi-locale",
+    "topic": "registration friction and referral-link fallback",
+    "suggestedAction": "internal-link",
+    "confidence": "medium",
+    "defaultCompetitorType": "help-center",
+    "ourGap": "This topic is still under-linked in our hubs; it should be surfaced as a recurring internal-link and distribution candidate across signup-kyc and official-site families."
+  }
+]

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { CompetitorGapFinding, CompetitorGapSummary } from "@/lib/automation/types";
 
-const COMPETITOR_GAP_SUMMARY_PATH = path.join(
+export const COMPETITOR_GAP_SUMMARY_PATH = path.join(
   process.cwd(),
   "src",
   "data",
@@ -75,4 +75,9 @@ export async function readCompetitorGapSummary(): Promise<CompetitorGapSummary> 
   } catch {
     return getDefaultCompetitorGapSummary();
   }
+}
+
+export async function writeCompetitorGapSummary(summary: CompetitorGapSummary) {
+  await fs.mkdir(path.dirname(COMPETITOR_GAP_SUMMARY_PATH), { recursive: true });
+  await fs.writeFile(COMPETITOR_GAP_SUMMARY_PATH, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
 }

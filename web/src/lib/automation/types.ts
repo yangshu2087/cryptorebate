@@ -242,6 +242,71 @@ export type CompetitorGapSummary = {
   findings: CompetitorGapFinding[];
 };
 
+export type CompetitorGapSerpResearchProvider = "duckduckgo-html" | "serper" | "brave";
+
+export type CompetitorGapSerpResult = {
+  title: string;
+  url: string;
+  snippet: string;
+  domain: string;
+};
+
+export type CompetitorGapSerpProviderReport = {
+  provider: CompetitorGapSerpResearchProvider;
+  status: "success" | "failed" | "skipped";
+  resultCount: number;
+  error?: string;
+};
+
+export type CompetitorGapSerpWinnerRecord = {
+  templateId: string;
+  query: string;
+  exchangeSlug: Exchange["slug"] | "cross-exchange";
+  locale: string | "multi-locale";
+  topic: string;
+  providersUsed: CompetitorGapSerpResearchProvider[];
+  providerReports: CompetitorGapSerpProviderReport[];
+  dominantDomains: string[];
+  topResults: CompetitorGapSerpResult[];
+};
+
+export type CompetitorGapSerpWinnersArtifact = {
+  status: "success" | "warning" | "failed" | "never_run";
+  generatedAt: string;
+  providersRequested: CompetitorGapSerpResearchProvider[];
+  templateCount: number;
+  totalWinnerUrls: number;
+  records: CompetitorGapSerpWinnerRecord[];
+};
+
+export type CompetitorGapPageAction = {
+  id: string;
+  findingId: string;
+  action: Exclude<CompetitorGapAction, "defer">;
+  priority: "p1" | "p2" | "p3";
+  exchangeSlug: Exchange["slug"];
+  locale: string;
+  pageType: string;
+  routePath: string;
+  title: string;
+  topic: string;
+  reason: string;
+  confidence: CompetitorGapFinding["confidence"];
+  sourceCompetitorType: CompetitorGapFinding["competitorType"];
+};
+
+export type CompetitorGapActionPlan = {
+  status: "success" | "warning" | "failed" | "never_run";
+  generatedAt: string;
+  summaryGeneratedAt: string;
+  totalActions: number;
+  publishActions: number;
+  refreshActions: number;
+  internalLinkActions: number;
+  distributionActions: number;
+  actions: CompetitorGapPageAction[];
+};
+
 export type AutomationAlert = {
   id: string;
   level: "info" | "warning" | "critical";
@@ -388,7 +453,8 @@ export type AutomationRun = {
     | "daily_roi_recompute"
     | "monthly_partner_csv_import"
     | "weekly_staleness_audit"
-    | "weekly_underperformance_pruning";
+    | "weekly_underperformance_pruning"
+    | "weekly_competitor_gap_scan";
   status: "success" | "warning" | "failed";
   startedAt: string;
   completedAt: string;

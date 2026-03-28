@@ -5,6 +5,8 @@ import {
   getTopAutomationRoiPages,
 } from "@/lib/automation/catalog";
 import { readCompetitorGapSummary } from "@/lib/automation/competitor-gap";
+import { readCompetitorGapActionPlan } from "@/lib/automation/competitor-gap-actions";
+import { readCompetitorGapSerpWinnersArtifact } from "@/lib/automation/competitor-gap-research";
 import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import { buildSeoStatsFromDb } from "@/lib/automation/db-store";
 import {
@@ -14,6 +16,8 @@ import {
 import type {
   AutomationAlert,
   AutomationState,
+  CompetitorGapActionPlan,
+  CompetitorGapSerpWinnersArtifact,
   CompetitorGapSummary,
   DistributionJob,
 } from "@/lib/automation/types";
@@ -95,6 +99,42 @@ function buildDistributionSummary(distributionJobs: DistributionJob[]) {
   return summary;
 }
 
+function buildCompetitorGapProviderHits(artifact: CompetitorGapSerpWinnersArtifact) {
+  const summary = {
+    "duckduckgo-html": 0,
+    serper: 0,
+    brave: 0,
+  };
+
+  for (const record of artifact.records) {
+    const hitProviders = new Set(
+      record.providerReports
+        .filter((report) => report.status === "success" && report.resultCount > 0)
+        .map((report) => report.provider)
+    );
+
+    for (const provider of hitProviders) {
+      summary[provider] += 1;
+    }
+  }
+
+  return summary;
+}
+
+function buildCompetitorGapDominantDomains(artifact: CompetitorGapSerpWinnersArtifact) {
+  return Object.entries(
+    artifact.records.reduce<Record<string, number>>((acc, record) => {
+      for (const domain of record.dominantDomains) {
+        acc[domain] = (acc[domain] ?? 0) + 1;
+      }
+      return acc;
+    }, {})
+  )
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([domain, count]) => ({ domain, count }));
+}
+
 export type SeoDashboardData = {
   state: AutomationState;
   metrics: Record<string, unknown>;
@@ -107,6 +147,8 @@ export type SeoDashboardData = {
   distributionJobs: DistributionJob[];
   distributionSummary: ReturnType<typeof buildDistributionSummary>;
   competitorGapSummary: CompetitorGapSummary;
+  competitorGapActionPlan: CompetitorGapActionPlan;
+  competitorGapSerpWinners: CompetitorGapSerpWinnersArtifact;
   alerts: AutomationAlert[];
   operatorSummary: {
     statusCards: {
@@ -152,6 +194,13 @@ export type SeoDashboardData = {
         publishCandidates: number;
         refreshCandidates: number;
         internalLinkCandidates: number;
+        concreteActions: number;
+        providerHits: {
+          duckduckgoHtml: number;
+          serper: number;
+          brave: number;
+        };
+        totalWinnerUrls: number;
       };
       distribution: {
         status: string;
@@ -194,8 +243,11 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const ctaLiveAuditStatus = await getCtaLiveAuditStatus();
   const ctaLiveAuditAlert = deriveCtaLiveAuditAlert(ctaLiveAuditStatus);
   const competitorGapSummary = await readCompetitorGapSummary();
+  const competitorGapActionPlan = await readCompetitorGapActionPlan();
+  const competitorGapSerpWinners = await readCompetitorGapSerpWinnersArtifact();
   const distributionJobs = dbStats?.distributionJobs ?? [];
   const distributionSummary = buildDistributionSummary(distributionJobs);
+  const competitorGapProviderHits = buildCompetitorGapProviderHits(competitorGapSerpWinners);
   const alerts = [
     ...(ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []),
     ...(dbStats?.state.alerts ?? getAutomationAlerts(locale ?? undefined, 10)),
@@ -234,6 +286,8 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     distributionJobs,
     distributionSummary,
     competitorGapSummary,
+    competitorGapActionPlan,
+    competitorGapSerpWinners,
     alerts,
     operatorSummary: {
       statusCards: {
@@ -297,6 +351,13 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           publishCandidates: competitorGapSummary.publishCandidates,
           refreshCandidates: competitorGapSummary.refreshCandidates,
           internalLinkCandidates: competitorGapSummary.internalLinkCandidates,
+          concreteActions: competitorGapActionPlan.totalActions,
+          providerHits: {
+            duckduckgoHtml: competitorGapProviderHits["duckduckgo-html"],
+            serper: competitorGapProviderHits.serper,
+            brave: competitorGapProviderHits.brave,
+          },
+          totalWinnerUrls: competitorGapSerpWinners.totalWinnerUrls,
         },
         distribution: {
           status:
@@ -356,3 +417,5 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     },
   };
 }
+
+export { buildCompetitorGapDominantDomains, buildCompetitorGapProviderHits };

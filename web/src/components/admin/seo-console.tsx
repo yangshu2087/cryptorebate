@@ -336,6 +336,61 @@ export function SeoConsole({
     return exchangePass && localePass && pageTypePass;
   });
 
+  const filteredCompetitorGapActions = dashboardData.competitorGapActionPlan.actions.filter((item) => {
+    const exchangePass =
+      selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange;
+    const localePass =
+      selectedDataLocale === "all" ? true : item.locale === selectedDataLocale;
+    const pageTypePass =
+      !pageType || pageType === "all" ? true : item.pageType === pageType;
+    return exchangePass && localePass && pageTypePass;
+  });
+  const filteredSerpWinnerRecords = dashboardData.competitorGapSerpWinners.records.filter((item) => {
+    const exchangePass =
+      selectedExchange === "all"
+        ? true
+        : item.exchangeSlug === selectedExchange || item.exchangeSlug === "cross-exchange";
+    const localePass =
+      selectedDataLocale === "all"
+        ? true
+        : item.locale === selectedDataLocale || item.locale === "multi-locale";
+    return exchangePass && localePass;
+  });
+  const filteredProviderHits = filteredSerpWinnerRecords.reduce(
+    (acc, record) => {
+      const hitProviders = new Set(
+        record.providerReports
+          .filter((report) => report.status === "success" && report.resultCount > 0)
+          .map((report) => report.provider)
+      );
+      for (const provider of hitProviders) {
+        acc[provider] = (acc[provider] ?? 0) + 1;
+      }
+      return acc;
+    },
+    { "duckduckgo-html": 0, serper: 0, brave: 0 } as Record<string, number>
+  );
+  const filteredDominantDomains = Object.entries(
+    filteredSerpWinnerRecords.reduce<Record<string, number>>((acc, record) => {
+      for (const domain of record.dominantDomains) {
+        acc[domain] = (acc[domain] ?? 0) + 1;
+      }
+      return acc;
+    }, {})
+  )
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  const topSerpWinners = filteredSerpWinnerRecords
+    .flatMap((record) =>
+      record.topResults.slice(0, 3).map((result) => ({
+        ...result,
+        templateId: record.templateId,
+        topic: record.topic,
+        query: record.query,
+      }))
+    )
+    .slice(0, 8);
+
   const exchangeSummaries = exchanges
     .map((item) => {
       const opps = state.opportunities.filter((opp) => opp.exchangeSlug === item.slug);
@@ -556,7 +611,7 @@ export function SeoConsole({
             statusCards.competitorGap.publishCandidates
           )} · refresh ${formatNumber(statusCards.competitorGap.refreshCandidates)} · 内链 ${formatNumber(
             statusCards.competitorGap.internalLinkCandidates
-          )}`}
+          )} · 具体动作 ${formatNumber(statusCards.competitorGap.concreteActions)}`}
         />
         <StatusCard
           title="自有渠道分发队列"
@@ -666,6 +721,17 @@ export function SeoConsole({
             { label: "主题数", value: formatNumber(dashboardData.competitorGapSummary.topicsReviewed) },
             { label: "Publish 候选", value: formatNumber(dashboardData.competitorGapSummary.publishCandidates) },
             { label: "Refresh 候选", value: formatNumber(dashboardData.competitorGapSummary.refreshCandidates) },
+            { label: "具体页面动作", value: formatNumber(dashboardData.competitorGapActionPlan.totalActions) },
+          ]}
+        />
+        <SummaryList
+          title="SERP winners 摘要"
+          description="显示 live competitor-gap research 最近一次命中的 provider 和赢家规模。"
+          items={[
+            { label: "winner URL", value: formatNumber(statusCards.competitorGap.totalWinnerUrls) },
+            { label: "DuckDuckGo 命中", value: formatNumber(statusCards.competitorGap.providerHits.duckduckgoHtml) },
+            { label: "Serper 命中", value: formatNumber(statusCards.competitorGap.providerHits.serper) },
+            { label: "Brave 命中", value: formatNumber(statusCards.competitorGap.providerHits.brave) },
           ]}
         />
       </div>
@@ -999,6 +1065,65 @@ export function SeoConsole({
             <CardDescription>{dashboardData.competitorGapSummary.summary}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            <div className="rounded-2xl border border-border/60 p-4">
+              <p className="text-sm font-semibold text-foreground">provider 命中情况</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  { label: "DuckDuckGo", value: filteredProviderHits["duckduckgo-html"] },
+                  { label: "Serper", value: filteredProviderHits.serper },
+                  { label: "Brave", value: filteredProviderHits.brave },
+                ].map((item) => (
+                  <Badge key={item.label} variant="outline">
+                    {item.label} · {formatNumber(item.value)}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border/60 p-4">
+              <p className="text-sm font-semibold text-foreground">dominant domains</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {filteredDominantDomains.length > 0 ? (
+                  filteredDominantDomains.map(([domain, count]) => (
+                    <Badge key={domain} variant="secondary">
+                      {domain} · {formatNumber(count)}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-sm text-muted-foreground">暂无 live SERP 命中域名。</span>
+                )}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border/60 p-4">
+              <p className="text-sm font-semibold text-foreground">top SERP winners</p>
+              <div className="mt-3 space-y-3">
+                {topSerpWinners.length > 0 ? (
+                  topSerpWinners.map((winner) => (
+                    <div key={`${winner.templateId}:${winner.url}`} className="rounded-xl border border-border/60 p-3">
+                      <p className="font-medium">{winner.title}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {winner.domain} · {winner.query}
+                      </p>
+                      {winner.snippet ? (
+                        <p className="mt-2 text-sm text-muted-foreground">{winner.snippet}</p>
+                      ) : null}
+                      <a
+                        href={winner.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline"
+                      >
+                        打开赢家页面
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border/70 p-3 text-sm text-muted-foreground">
+                    当前筛选条件下暂无 top SERP winners。通常是 live research 尚未命中，或该筛选范围暂无可展示结果。
+                  </div>
+                )}
+              </div>
+            </div>
             {dashboardData.competitorGapSummary.findings.length > 0 ? (
               dashboardData.competitorGapSummary.findings.slice(0, 5).map((finding) => (
                 <div key={finding.id} className="rounded-2xl border border-border/60 p-4">
@@ -1018,6 +1143,36 @@ export function SeoConsole({
                 还没有可展示的竞品空缺结论。等 `007-competitor-gap-monitor` 首次产出后，这里会显示最近一次 publish / refresh / 内链建议。
               </div>
             )}
+            <Separator />
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">反推后的具体页面动作</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  基于最近一次 competitor gap 摘要，把建议落到具体 route、页型和执行动作，便于直接进入 publish / refresh / internal-link 队列。
+                </p>
+              </div>
+              {filteredCompetitorGapActions.length > 0 ? (
+                filteredCompetitorGapActions.slice(0, 8).map((action) => (
+                  <div key={action.id} className="rounded-2xl border border-border/60 p-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline">{action.exchangeSlug}</Badge>
+                      <Badge variant="outline">{action.locale}</Badge>
+                      <Badge variant="outline">{getUnifiedSeoPageLabels(labelsLocale, action.pageType).short}</Badge>
+                      <Badge variant="secondary">{action.action}</Badge>
+                      <Badge variant="outline">{action.priority.toUpperCase()}</Badge>
+                    </div>
+                    <p className="mt-3 font-semibold">{action.title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{action.topic}</p>
+                    <p className="mt-2 text-sm">{action.reason}</p>
+                    <div className="mt-3 text-xs text-muted-foreground">{action.routePath}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border/70 p-4 text-sm text-muted-foreground">
+                  当前筛选条件下暂无具体页面动作。运行 `npm run automation:competitor-gap` 后，这里会展示最新反推结果。
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

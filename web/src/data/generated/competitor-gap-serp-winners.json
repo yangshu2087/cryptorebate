@@ -1,0 +1,272 @@
+{
+  "status": "success",
+  "generatedAt": "2026-03-28T15:24:49.463Z",
+  "providersRequested": [
+    "duckduckgo-html"
+  ],
+  "templateCount": 5,
+  "totalWinnerUrls": 24,
+  "records": [
+    {
+      "templateId": "finding-binance-official-trust",
+      "query": "binance official site referral code",
+      "exchangeSlug": "binance",
+      "locale": "en",
+      "topic": "binance official site / referral entry trust layer",
+      "providersUsed": [
+        "duckduckgo-html"
+      ],
+      "providerReports": [
+        {
+          "provider": "duckduckgo-html",
+          "status": "success",
+          "resultCount": 10
+        }
+      ],
+      "dominantDomains": [
+        "binance.com",
+        "blog.binance.us",
+        "themoneyninja.com",
+        "financialcontent.com",
+        "bitdegree.org",
+        "thecoinomist.com",
+        "tradewise.community",
+        "coinwire.com"
+      ],
+      "topResults": [
+        {
+          "title": "Friend  Referral Program | Refer & Earn | Binance Official",
+          "url": "https://www.binance.com/en/activity/referral/offers",
+          "snippet": "",
+          "domain": "binance.com"
+        },
+        {
+          "title": "Your guide to the Binance.US Referral Program | 2025",
+          "url": "https://blog.binance.us/referral-program/",
+          "snippet": "",
+          "domain": "blog.binance.us"
+        },
+        {
+          "title": "Binance US Promotion : $10 Sign-up Bonu  - The Money Ninja",
+          "url": "https://themoneyninja.com/binance-us-promotions/",
+          "snippet": "",
+          "domain": "themoneyninja.com"
+        },
+        {
+          "title": "Binance Referral Code: Complete Guide to Earning Trading Fee Di count",
+          "url": "https://www.financialcontent.com/article/globeprwire-2025-12-15-binance-referral-code-complete-guide-to-earning-trading-fee-discounts",
+          "snippet": "",
+          "domain": "financialcontent.com"
+        },
+        {
+          "title": "Binance US Referral Code : Hotte t Deal  | March 2026",
+          "url": "https://www.bitdegree.org/crypto/deals/binance-us-referral-code",
+          "snippet": "",
+          "domain": "bitdegree.org"
+        },
+        {
+          "title": "Be t Referral Code For Binance: U e JO19WNBM to Get Extra Fee Di count",
+          "url": "https://thecoinomist.com/spot-trading/binance-referral-code/",
+          "snippet": "",
+          "domain": "thecoinomist.com"
+        },
+        {
+          "title": "Binance Referral Code [2025]: U e GS9JDR3C to Unlock a $100 Bonu  and ...",
+          "url": "https://tradewise.community/binance-referral-code/",
+          "snippet": "",
+          "domain": "tradewise.community"
+        },
+        {
+          "title": "Binance Referral Code (2026): NQ2WIF73- Earn $100 Sign-Up Bonu  - CoinWire",
+          "url": "https://coinwire.com/binance-referral-code/",
+          "snippet": "",
+          "domain": "coinwire.com"
+        }
+      ]
+    },
+    {
+      "templateId": "finding-okx-signup-fallback",
+      "query": "okx signup referral code restrictions",
+      "exchangeSlug": "okx",
+      "locale": "en",
+      "topic": "okx signup with referral code and regional restrictions",
+      "providersUsed": [
+        "duckduckgo-html"
+      ],
+      "providerReports": [
+        {
+          "provider": "duckduckgo-html",
+          "status": "success",
+          "resultCount": 10
+        }
+      ],
+      "dominantDomains": [
+        "okx.com",
+        "tradewise.community",
+        "datawallet.com",
+        "ventureburn.com",
+        "bitdegree.org",
+        "dabbdoge.com",
+        "cryptoninjas.net",
+        "researchgate.net"
+      ],
+      "topResults": [
+        {
+          "title": "Referral Program FAQ - OKX",
+          "url": "https://www.okx.com/help/what-is-okx-referral-program",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "OKX Referral Code 2025 - Claim Bonu e , Reduced Trading Fee  & A ...",
+          "url": "https://tradewise.community/okx-referral-code/",
+          "snippet": "",
+          "domain": "tradewise.community"
+        },
+        {
+          "title": "OKX Referral Code: 15% Off Fee  & Sign Up Bonu  (2026)",
+          "url": "https://www.datawallet.com/crypto/okx-referral-code",
+          "snippet": "",
+          "domain": "datawallet.com"
+        },
+        {
+          "title": "OKX Referral Code March 2026: 87043256 ($10,000 Bonu ) - Ventureburn",
+          "url": "https://ventureburn.com/okx-referral-code/",
+          "snippet": "",
+          "domain": "ventureburn.com"
+        },
+        {
+          "title": "Late t OKX Referral Code  & Bonu e  for 2026 | March 2026",
+          "url": "https://www.bitdegree.org/crypto/deals/okx-referral-code",
+          "snippet": "",
+          "domain": "bitdegree.org"
+        },
+        {
+          "title": "OKX Referral Code: How to Claim the Be t Free Sign-Up Bonu  - Ultimate ...",
+          "url": "https://dabbdoge.com/okx-referral-code-claim-your-best-bonus/",
+          "snippet": "",
+          "domain": "dabbdoge.com"
+        },
+        {
+          "title": "OKX Referral Code: Step  to Sign Up and Earn Bonu  in 2026",
+          "url": "https://www.cryptoninjas.net/referral-code/okx/",
+          "snippet": "",
+          "domain": "cryptoninjas.net"
+        },
+        {
+          "title": "Where to Enter the OKX Referral Code During Sign Up - Re earchGate",
+          "url": "https://www.researchgate.net/publication/393455268_Where_to_Enter_the_OKX_Referral_Code_During_Sign_Up_-_Mobile_Desktop_Guide",
+          "snippet": "",
+          "domain": "researchgate.net"
+        }
+      ]
+    },
+    {
+      "templateId": "finding-okx-referral-faq-cluster",
+      "query": "okx referral faq dex referral code difference",
+      "exchangeSlug": "okx",
+      "locale": "en",
+      "topic": "okx referral faq vs dex referral confusion",
+      "providersUsed": [
+        "duckduckgo-html"
+      ],
+      "providerReports": [
+        {
+          "provider": "duckduckgo-html",
+          "status": "success",
+          "resultCount": 10
+        }
+      ],
+      "dominantDomains": [
+        "okx.com",
+        "web3.okx100.com",
+        "web3.okx.com",
+        "tradewise.community"
+      ],
+      "topResults": [
+        {
+          "title": "DEX Referral FAQ - OKX",
+          "url": "https://www.okx.com/help/dex-referral-faq",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "Web3 Referral Da hboard | OKX Wallet",
+          "url": "https://web3.okx100.com/referral",
+          "snippet": "",
+          "domain": "web3.okx100.com"
+        },
+        {
+          "title": "What'  DEX Referral program? - OKX",
+          "url": "https://www.okx.com/help/whats-dex-referral-program",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "What'  DEX Referral program? | OKX United State",
+          "url": "https://www.okx.com/en-us/help/whats-dex-referral-program",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "Referral Program FAQ - OKX",
+          "url": "https://www.okx.com/help/what-is-okx-referral-program",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "Referral  | FAQ | Help Center | OKX",
+          "url": "https://www.okx.com/help/section/faq-referrals",
+          "snippet": "",
+          "domain": "okx.com"
+        },
+        {
+          "title": "Announcement: Official Launch and Upgrade of OKX DEX Referral Program",
+          "url": "https://web3.okx.com/help/announcement-official-launch-and-upgrade-of-okx-dex-referral-program",
+          "snippet": "",
+          "domain": "web3.okx.com"
+        },
+        {
+          "title": "Web3 Referral Da hboard",
+          "url": "https://web3.okx.com/referral",
+          "snippet": "",
+          "domain": "web3.okx.com"
+        }
+      ]
+    },
+    {
+      "templateId": "finding-bybit-signup-kyc-helpstyle",
+      "query": "bybit signup kyc restricted countries help",
+      "exchangeSlug": "bybit",
+      "locale": "en",
+      "topic": "bybit signup / kyc help-center style answers",
+      "providersUsed": [],
+      "providerReports": [
+        {
+          "provider": "duckduckgo-html",
+          "status": "success",
+          "resultCount": 0
+        }
+      ],
+      "dominantDomains": [],
+      "topResults": []
+    },
+    {
+      "templateId": "finding-cross-exchange-signup-friction",
+      "query": "referral link not working restricted country exchange signup",
+      "exchangeSlug": "cross-exchange",
+      "locale": "multi-locale",
+      "topic": "registration friction and referral-link fallback",
+      "providersUsed": [],
+      "providerReports": [
+        {
+          "provider": "duckduckgo-html",
+          "status": "success",
+          "resultCount": 0
+        }
+      ],
+      "dominantDomains": [],
+      "topResults": []
+    }
+  ]
+}
