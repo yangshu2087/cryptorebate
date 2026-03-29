@@ -1,6 +1,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  fetchSearchConsolePageObservations,
   fetchSearchConsoleSignals,
   mapSearchConsoleRowsToSignals,
   normaliseSearchConsoleSitemapUrl,
@@ -137,5 +138,67 @@ describe("external-search-console", () => {
     expect(result.report.rowsFetched).toBe(2);
     expect(result.report.signalsWritten).toBe(0);
     expect(result.report.note).toContain("page-only");
+  });
+
+  it("fetches exact page observations for monitored focus URLs", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            rows: [
+              {
+                keys: ["https://cryptorebate.app/en/exchanges/binance/referral-code"],
+                clicks: 1,
+                impressions: 7,
+                ctr: 0.142857,
+                position: 6.4,
+              },
+            ],
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ rows: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+
+    global.fetch = fetchMock as typeof fetch;
+
+    const observations = await fetchSearchConsolePageObservations(
+      {
+        enabled: true,
+        property: "https://cryptorebate.app/",
+        authMode: "service-account",
+        submitSitemaps: true,
+        startDaysAgo: 28,
+        rowLimit: 1000,
+        serviceAccountJson: JSON.stringify({
+          client_email: "test@example.com",
+          private_key: "test-private-key",
+        }),
+      },
+      [
+        "https://cryptorebate.app/en/exchanges/binance/referral-code",
+        "https://cryptorebate.app/en/exchanges/okx/official-site",
+      ]
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(observations).toEqual([
+      {
+        url: "https://cryptorebate.app/en/exchanges/binance/referral-code",
+        clicks: 1,
+        impressions: 7,
+        ctr: 0.1429,
+        position: 6.4,
+      },
+    ]);
   });
 });

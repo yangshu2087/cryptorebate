@@ -1281,6 +1281,32 @@ function buildAlerts(
     });
   }
 
+  alerts.push(
+    ...(externalSources.gsc.focusPageRows ?? [])
+      .filter((entry) => entry.firstSeenAt)
+      .sort(
+        (a, b) =>
+          new Date(b.firstSeenAt ?? b.lastCheckedAt).getTime() -
+          new Date(a.firstSeenAt ?? a.lastCheckedAt).getTime()
+      )
+      .slice(0, 12)
+      .map((entry) => ({
+        id: `alert-${entry.key}`,
+        level: "info" as const,
+        type: "gsc_page_row_first_seen" as const,
+        message: `GSC 首次记录到 ${entry.exchangeSlug}/${entry.locale}/${entry.pageType} 页面曝光 · impressions ${entry.latestImpressions ?? 0} · clicks ${entry.latestClicks ?? 0}`,
+        scope: {
+          locale: entry.locale,
+          exchangeSlug: entry.exchangeSlug,
+          pageType: entry.pageType,
+        },
+        triggeredAt: entry.firstSeenAt ?? entry.lastCheckedAt,
+        href: entry.url,
+        source: "external" as const,
+        sourceLabel: "GSC Page-row Monitor",
+      }))
+  );
+
   for (const partner of externalSources.partners) {
     if (partner.configured && partner.status === "failed") {
       alerts.push({

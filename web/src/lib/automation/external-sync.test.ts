@@ -7,6 +7,7 @@ const writeGeneratedPartnerConversionsToDisk = vi.fn();
 const writeGeneratedPartnerCommissionsToDisk = vi.fn();
 const regenerateAutomationState = vi.fn();
 const fetchSearchConsoleSignals = vi.fn();
+const fetchSearchConsolePageObservations = vi.fn();
 const submitSearchConsoleSitemaps = vi.fn();
 const getSearchConsoleConfig = vi.fn();
 const getPartnerSyncConfigs = vi.fn();
@@ -24,6 +25,7 @@ vi.mock('./persistence', () => ({
 
 vi.mock('./external-search-console', () => ({
   fetchSearchConsoleSignals,
+  fetchSearchConsolePageObservations,
   submitSearchConsoleSitemaps,
 }));
 
@@ -95,6 +97,7 @@ describe('runExternalSync', () => {
       ],
       lastSubmittedAt: '2026-03-29T12:27:52.046Z',
     });
+    fetchSearchConsolePageObservations.mockResolvedValue([]);
     getDiscoveryAssetUrls.mockReturnValue([
       'https://cryptorebate.app/sitemap.xml',
       'https://cryptorebate.app/brand-sitemap.xml',
@@ -116,6 +119,37 @@ describe('runExternalSync', () => {
           sitemapSubmitError: undefined,
         }),
       })
+    );
+  });
+
+  it('tracks first-seen focus page rows in external state and sync result', async () => {
+    fetchSearchConsolePageObservations.mockResolvedValue([
+      {
+        url: 'https://cryptorebate.app/en/exchanges/binance/referral-code',
+        impressions: 5,
+        clicks: 0,
+        ctr: 0,
+        position: 7.2,
+      },
+    ]);
+
+    const { runExternalSync } = await import('./external-sync');
+    const result = await runExternalSync('gsc');
+
+    expect(result.gscFocusPageRowFirstSeen).toHaveLength(1);
+    expect(result.gscFocusPageRowFirstSeen?.[0]).toMatchObject({
+      exchangeSlug: 'binance',
+      pageType: 'referral-code',
+      locale: 'en',
+    });
+    expect(result.externalState.gsc.focusPageRows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'focus-page-row:en:binance:referral-code',
+          seenInPageRows: true,
+          latestImpressions: 5,
+        }),
+      ])
     );
   });
 });

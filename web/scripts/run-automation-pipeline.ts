@@ -4,6 +4,7 @@ import {
   enqueueDistributionJobsFromDb,
   insertSyncRun,
   publishQueuedDistributionJobsFromDb,
+  recordGscFocusPageRowFirstSeenEventsFromDb,
 } from "../src/lib/automation/db-store";
 import { regenerateAutomationState } from "../src/lib/automation/persistence";
 import { runExternalSync } from "../src/lib/automation/external-sync";
@@ -68,6 +69,23 @@ async function main() {
         syncResult.externalState.gsc
       );
       await insertSyncRun(gscRun.run, gscRun.meta);
+
+      if (syncResult.gscFocusPageRowFirstSeen?.length) {
+        const firstSeenEntries = syncResult.gscFocusPageRowFirstSeen;
+        const reminderResult =
+          await recordGscFocusPageRowFirstSeenEventsFromDb(firstSeenEntries);
+        const reminderRun = createRun(
+          "daily_alert_eval",
+          "success",
+          `GSC focus page-row first-seen entries=${firstSeenEntries.length} telegram_jobs=${reminderResult?.jobs ?? 0}`,
+          startedAt,
+          {
+            entries: firstSeenEntries,
+            reminderResult,
+          }
+        );
+        await insertSyncRun(reminderRun.run, reminderRun.meta);
+      }
     }
 
     if (syncResult?.externalState?.partners?.length) {

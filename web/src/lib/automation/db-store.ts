@@ -14,6 +14,10 @@ import {
   isFocusLocale,
   isFocusPageType,
 } from "./focus";
+import {
+  buildGscFocusPageRowFirstSeenAlert,
+  buildGscFocusPageRowTelegramReminder,
+} from "./gsc-focus-page-monitor";
 import { getInternalLinkDistributionCandidates } from "./internal-links";
 import type {
   AffiliateClick,
@@ -25,6 +29,7 @@ import type {
   ConversionEvent,
   DistributionJob,
   DistributionJobPayload,
+  GscFocusPageRowMonitorEntry,
   QueryOpportunity,
   RoiEntry,
 } from "./types";
@@ -831,6 +836,175 @@ export async function listDistributionJobsFromDb(limit = 20) {
   return (result?.rows ?? []).map(toDistributionJob);
 }
 
+async function upsertDistributionJobRecord(
+  client: PoolClient,
+  job: {
+    channel: DistributionJob["channel"];
+    locale: string;
+    exchangeSlug: string | null;
+    pageType: string | null;
+    topic: string | null;
+    routePath: string;
+    payload: DistributionJobPayload;
+  }
+) {
+  const defaultStatus = getQueuedStatusForChannel(job.channel);
+  return client.query<DistributionJobRow>(
+    `INSERT INTO distribution_jobs (
+      id, channel, locale, exchange_slug, page_type, topic, route_path, status, payload, updated_at
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW())
+    ON CONFLICT (channel, locale, route_path) DO UPDATE SET
+      payload = EXCLUDED.payload,
+      exchange_slug = EXCLUDED.exchange_slug,
+      page_type = EXCLUDED.page_type,
+      topic = EXCLUDED.topic,
+      status = CASE
+        WHEN distribution_jobs.status = 'published' THEN distribution_jobs.status
+        WHEN distribution_jobs.status = 'in_progress' THEN distribution_jobs.status
+        ELSE EXCLUDED.status
+      END,
+      next_attempt_at = CASE
+        WHEN distribution_jobs.status = 'published' THEN distribution_jobs.next_attempt_at
+        WHEN distribution_jobs.status = 'in_progress' THEN distribution_jobs.next_attempt_at
+        ELSE NULL
+      END,
+      updated_at = NOW()
+    RETURNING *`,
+    [
+      createStableId("dist", `${job.channel}:${job.locale}:${job.routePath}`),
+      job.channel,
+      job.locale,
+      job.exchangeSlug,
+      job.pageType,
+      job.topic,
+      job.routePath,
+      defaultStatus,
+      JSON.stringify(job.payload),
+    ]
+  );
+}
+
+const MAX_DISTRIBUTION_RETRY_ATTEMPTS = 5;
+
+async function processDistributionJobs(
+  client: PoolClient,
+  jobs: DistributionJob[]
+) {
+  for (const job of jobs) {
+    await client.query(
+      `UPDATE distribution_jobs
+       SET status = 'in_progress', updated_at = NOW(), last_attempt_at = NOW(), error = NULL
+       WHERE id = $1`,
+      [job.id]
+    );
+
+    try {
+      const result = await publishDistributionJob(job);
+      if (result.ok) {
+        await client.query(
+          `UPDATE distribution_jobs
+           SET status = 'published', published_at = NOW(), updated_at = NOW(), error = NULL,
+               next_attempt_at = NULL
+           WHERE id = $1`,
+          [job.id]
+        );
+      } else {
+        const retryCount =
+          result.status === "pending" ? job.retryCount : job.retryCount + 1;
+        const shouldRetry =
+          result.status !== "pending" && retryCount < MAX_DISTRIBUTION_RETRY_ATTEMPTS;
+        const nextAttemptAt = shouldRetry
+          ? new Date(
+              Date.now() +
+                Math.min(
+                  24 * 60 * 60 * 1000,
+                  15 * 60 * 1000 * 2 ** (retryCount - 1)
+                )
+            )
+          : null;
+        await client.query(
+          `UPDATE distribution_jobs
+           SET status = $2,
+               error = $3,
+               retry_count = $4,
+               next_attempt_at = $5,
+               updated_at = NOW()
+           WHERE id = $1`,
+          [
+            job.id,
+            shouldRetry ? "queued" : result.status,
+            result.error,
+            retryCount,
+            nextAttemptAt?.toISOString() ?? null,
+          ]
+        );
+      }
+    } catch (error) {
+      const retryCount = job.retryCount + 1;
+      const shouldRetry = retryCount < MAX_DISTRIBUTION_RETRY_ATTEMPTS;
+      const nextAttemptAt = shouldRetry
+        ? new Date(
+            Date.now() +
+              Math.min(
+                24 * 60 * 60 * 1000,
+                15 * 60 * 1000 * 2 ** (retryCount - 1)
+              )
+          )
+        : null;
+      await client.query(
+        `UPDATE distribution_jobs
+         SET status = $2,
+             error = $3,
+             retry_count = $4,
+             next_attempt_at = $5,
+             updated_at = NOW()
+         WHERE id = $1`,
+        [
+          job.id,
+          shouldRetry ? "queued" : "failed",
+          error instanceof Error ? error.message.slice(0, 400) : "未知分发错误",
+          retryCount,
+          nextAttemptAt?.toISOString() ?? null,
+        ]
+      );
+    }
+  }
+}
+
+async function syncDistributionFailureAlerts(client: PoolClient) {
+  const failureCounts = await client.query<{
+    channel: string;
+    failures: string;
+    queued: string;
+  }>(
+    `SELECT channel,
+            COUNT(*) FILTER (WHERE status = 'failed')::text AS failures,
+            COUNT(*) FILTER (WHERE status = 'queued')::text AS queued
+     FROM distribution_jobs
+     GROUP BY channel`
+  );
+
+  for (const row of failureCounts.rows) {
+    const failures = Number(row.failures ?? 0);
+    const queued = Number(row.queued ?? 0);
+    const alertId = `alert-distribution-${row.channel}`;
+    if (failures > 0) {
+      await upsertOperatorAlert(client, {
+        id: alertId,
+        level: "warning",
+        type: "sync_failure",
+        scope: {},
+        message: `${row.channel.toUpperCase()} 分发失败 ${failures} 条，仍有 ${queued} 条待重试/排队。`,
+        triggeredAt: new Date().toISOString(),
+        source: "internal",
+        sourceLabel: "Distribution Queue",
+      });
+    } else {
+      await client.query(`DELETE FROM operator_alerts WHERE id = $1`, [alertId]);
+    }
+  }
+}
+
 export async function buildSeoStatsFromDb(locale?: string | null) {
   const snapshot = await getLatestAutomationSnapshotFromDb();
   if (!snapshot) return null;
@@ -892,53 +1066,6 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
     .sort((a: AutomationSeoPage, b: AutomationSeoPage) => b.qualityScore - a.qualityScore)
     .slice(0, 20);
 
-  const upsertJob = async (
-    client: PoolClient,
-    job: {
-      channel: DistributionJob["channel"];
-      locale: string;
-      exchangeSlug: string | null;
-      pageType: string | null;
-      topic: string | null;
-      routePath: string;
-      payload: DistributionJobPayload;
-    }
-  ) => {
-    const defaultStatus = getQueuedStatusForChannel(job.channel);
-    await client.query(
-      `INSERT INTO distribution_jobs (
-        id, channel, locale, exchange_slug, page_type, topic, route_path, status, payload, updated_at
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW())
-      ON CONFLICT (channel, locale, route_path) DO UPDATE SET
-        payload = EXCLUDED.payload,
-        exchange_slug = EXCLUDED.exchange_slug,
-        page_type = EXCLUDED.page_type,
-        topic = EXCLUDED.topic,
-        status = CASE
-          WHEN distribution_jobs.status = 'published' THEN distribution_jobs.status
-          WHEN distribution_jobs.status = 'in_progress' THEN distribution_jobs.status
-          ELSE EXCLUDED.status
-        END,
-        next_attempt_at = CASE
-          WHEN distribution_jobs.status = 'published' THEN distribution_jobs.next_attempt_at
-          WHEN distribution_jobs.status = 'in_progress' THEN distribution_jobs.next_attempt_at
-          ELSE NULL
-        END,
-        updated_at = NOW()`,
-      [
-        createStableId("dist", `${job.channel}:${job.locale}:${job.routePath}`),
-        job.channel,
-        job.locale,
-        job.exchangeSlug,
-        job.pageType,
-        job.topic,
-        job.routePath,
-        defaultStatus,
-        JSON.stringify(job.payload),
-      ]
-    );
-  };
-
   return withAutomationDb(async (client) => {
     await client.query("BEGIN");
     try {
@@ -961,7 +1088,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
             page.pageType,
           ],
         };
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "telegram",
           locale: page.locale,
           exchangeSlug: page.exchangeSlug,
@@ -970,7 +1097,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           routePath,
           payload,
         });
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "x",
           locale: page.locale,
           exchangeSlug: page.exchangeSlug,
@@ -994,7 +1121,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           sourceLabel: "内链刷新推荐位",
           tags: candidate.tags,
         };
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "telegram",
           locale: candidate.locale,
           exchangeSlug: candidate.exchangeSlug,
@@ -1003,7 +1130,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           routePath: candidate.routePath,
           payload,
         });
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "x",
           locale: candidate.locale,
           exchangeSlug: candidate.exchangeSlug,
@@ -1025,7 +1152,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           sourceLabel: "品牌页",
           tags: ["brand-page", page.topic],
         };
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "telegram",
           locale: page.locale,
           exchangeSlug: null,
@@ -1034,7 +1161,7 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           routePath: page.routePath,
           payload,
         });
-        await upsertJob(client, {
+        await upsertDistributionJobRecord(client, {
           channel: "x",
           locale: page.locale,
           exchangeSlug: null,
@@ -1055,9 +1182,63 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
   });
 }
 
+export async function recordGscFocusPageRowFirstSeenEventsFromDb(
+  entries: GscFocusPageRowMonitorEntry[]
+) {
+  if (!isAutomationDbEnabled() || entries.length === 0) {
+    return { alertsRecorded: 0, jobs: [] as DistributionJob[] };
+  }
+
+  return withAutomationDb(async (client) => {
+    await client.query("BEGIN");
+    try {
+      const jobIds: string[] = [];
+
+      for (const entry of entries) {
+        await upsertOperatorAlert(client, buildGscFocusPageRowFirstSeenAlert(entry));
+
+        const reminder = buildGscFocusPageRowTelegramReminder(entry);
+        const result = await upsertDistributionJobRecord(client, {
+          channel: "telegram",
+          locale: reminder.locale,
+          exchangeSlug: reminder.exchangeSlug,
+          pageType: reminder.pageType,
+          topic: null,
+          routePath: reminder.routePath,
+          payload: reminder.payload,
+        });
+        const jobId = result.rows[0]?.id;
+        if (jobId) {
+          jobIds.push(jobId);
+        }
+      }
+
+      const jobsResult = jobIds.length
+        ? await client.query<DistributionJobRow>(
+            `SELECT * FROM distribution_jobs
+             WHERE id = ANY($1::text[])
+               AND status = 'queued'
+             ORDER BY created_at ASC`,
+            [jobIds]
+          )
+        : null;
+      const jobs = jobsResult?.rows.map(toDistributionJob) ?? [];
+      await processDistributionJobs(client, jobs);
+      await syncDistributionFailureAlerts(client);
+      await client.query("COMMIT");
+      return {
+        alertsRecorded: entries.length,
+        jobs: jobs.length,
+      };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    }
+  });
+}
+
 export async function publishQueuedDistributionJobsFromDb(limit = 10) {
   if (!isAutomationDbEnabled()) return null;
-  const MAX_RETRY_ATTEMPTS = 5;
 
   return withAutomationDb(async (client) => {
     const jobsResult = await client.query<DistributionJobRow>(
@@ -1070,105 +1251,8 @@ export async function publishQueuedDistributionJobsFromDb(limit = 10) {
     );
 
     const jobs = jobsResult.rows.map(toDistributionJob);
-
-    for (const job of jobs) {
-      await client.query(
-        `UPDATE distribution_jobs
-         SET status = 'in_progress', updated_at = NOW(), last_attempt_at = NOW(), error = NULL
-         WHERE id = $1`,
-        [job.id]
-      );
-
-      try {
-        const result = await publishDistributionJob(job);
-        if (result.ok) {
-          await client.query(
-            `UPDATE distribution_jobs
-             SET status = 'published', published_at = NOW(), updated_at = NOW(), error = NULL,
-                 next_attempt_at = NULL
-             WHERE id = $1`,
-            [job.id]
-          );
-        } else {
-          const retryCount =
-            result.status === "pending" ? job.retryCount : job.retryCount + 1;
-          const shouldRetry = result.status !== "pending" && retryCount < MAX_RETRY_ATTEMPTS;
-          const nextAttemptAt = shouldRetry
-            ? new Date(Date.now() + Math.min(24 * 60 * 60 * 1000, 15 * 60 * 1000 * 2 ** (retryCount - 1)))
-            : null;
-          await client.query(
-            `UPDATE distribution_jobs
-             SET status = $2,
-                 error = $3,
-                 retry_count = $4,
-                 next_attempt_at = $5,
-                 updated_at = NOW()
-             WHERE id = $1`,
-            [
-              job.id,
-              shouldRetry ? "queued" : result.status,
-              result.error,
-              retryCount,
-              nextAttemptAt?.toISOString() ?? null,
-            ]
-          );
-        }
-      } catch (error) {
-        const retryCount = job.retryCount + 1;
-        const shouldRetry = retryCount < MAX_RETRY_ATTEMPTS;
-        const nextAttemptAt = shouldRetry
-          ? new Date(Date.now() + Math.min(24 * 60 * 60 * 1000, 15 * 60 * 1000 * 2 ** (retryCount - 1)))
-          : null;
-        await client.query(
-          `UPDATE distribution_jobs
-           SET status = $2,
-               error = $3,
-               retry_count = $4,
-               next_attempt_at = $5,
-               updated_at = NOW()
-           WHERE id = $1`,
-          [
-            job.id,
-            shouldRetry ? "queued" : "failed",
-            error instanceof Error ? error.message.slice(0, 400) : "未知分发错误",
-            retryCount,
-            nextAttemptAt?.toISOString() ?? null,
-          ]
-        );
-      }
-    }
-
-    const failureCounts = await client.query<{
-      channel: string;
-      failures: string;
-      queued: string;
-    }>(
-      `SELECT channel,
-              COUNT(*) FILTER (WHERE status = 'failed')::text AS failures,
-              COUNT(*) FILTER (WHERE status = 'queued')::text AS queued
-       FROM distribution_jobs
-       GROUP BY channel`
-    );
-
-    for (const row of failureCounts.rows) {
-      const failures = Number(row.failures ?? 0);
-      const queued = Number(row.queued ?? 0);
-      const alertId = `alert-distribution-${row.channel}`;
-      if (failures > 0) {
-        await upsertOperatorAlert(client, {
-          id: alertId,
-          level: "warning",
-          type: "sync_failure",
-          scope: {},
-          message: `${row.channel.toUpperCase()} 分发失败 ${failures} 条，仍有 ${queued} 条待重试/排队。`,
-          triggeredAt: new Date().toISOString(),
-          source: "internal",
-          sourceLabel: "Distribution Queue",
-        });
-      } else {
-        await client.query(`DELETE FROM operator_alerts WHERE id = $1`, [alertId]);
-      }
-    }
+    await processDistributionJobs(client, jobs);
+    await syncDistributionFailureAlerts(client);
 
     return listDistributionJobsFromDb(20);
   });

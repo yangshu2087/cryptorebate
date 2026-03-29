@@ -320,6 +320,7 @@ export type AutomationAlert = {
     | "schema_validation"
     | "ctr_collapse"
     | "index_no_click"
+    | "gsc_page_row_first_seen"
     | "earnings_anomaly"
     | "dead_link";
   message: string;
@@ -334,6 +335,23 @@ export type AutomationAlert = {
   sourceLabel?: string;
 };
 
+export type GscFocusPageRowMonitorEntry = {
+  key: string;
+  locale: string;
+  exchangeSlug: Exchange["slug"];
+  pageType: string;
+  routePath: string;
+  url: string;
+  seenInPageRows: boolean;
+  firstSeenAt?: string;
+  lastSeenAt?: string;
+  lastCheckedAt: string;
+  latestImpressions?: number;
+  latestClicks?: number;
+  latestCtr?: number;
+  latestPosition?: number;
+};
+
 export type ExternalGscSyncState = {
   enabled: boolean;
   configured: boolean;
@@ -345,6 +363,7 @@ export type ExternalGscSyncState = {
   signalsWritten: number;
   searchAnalyticsMode?: "query-page" | "page-only" | "empty";
   note?: string;
+  focusPageRows?: GscFocusPageRowMonitorEntry[];
   sitemapSubmitStatus?: ExternalSyncStatus;
   sitemapsSubmitted?: string[];
   lastSitemapSubmitAt?: string;
@@ -395,7 +414,7 @@ export type DistributionJobPayload = {
   topic?: string | null;
   primaryQuery?: string | null;
   refreshScore?: number | null;
-  source?: "page" | "brand" | "internal-link-refresh";
+  source?: "page" | "brand" | "internal-link-refresh" | "gsc-focus-page-row";
   sourceLabel?: string | null;
   tags?: string[];
 };

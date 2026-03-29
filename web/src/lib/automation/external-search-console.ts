@@ -3,6 +3,7 @@ import { exchanges } from "@/data/exchanges";
 import { LOCALES, SITE_URL } from "@/lib/constants";
 import type { QuerySignal } from "./types";
 import type { SearchConsoleConfig } from "./external-config";
+import type { SearchConsolePageObservation } from "./gsc-focus-page-monitor";
 
 type SearchConsoleRow = {
   keys?: string[];
@@ -15,6 +16,8 @@ type SearchConsoleRow = {
 type SearchConsoleResponse = {
   rows?: SearchConsoleRow[];
 };
+
+type SearchConsoleDimension = "query" | "page";
 
 export type SearchConsoleSyncReport = {
   enabled: boolean;
@@ -200,6 +203,52 @@ function getDateDaysAgo(daysAgo: number) {
 
 function getTodayDate() {
   return new Date().toISOString().slice(0, 10);
+}
+
+async function querySearchAnalyticsRows(
+  config: SearchConsoleConfig,
+  token: string,
+  dimensions: SearchConsoleDimension[],
+  options: {
+    rowLimit?: number;
+    dimensionFilterGroups?: Array<{
+      filters: Array<{
+        dimension: SearchConsoleDimension;
+        operator: "equals";
+        expression: string;
+      }>;
+    }>;
+  } = {}
+) {
+  const endpoint = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(
+    config.property ?? ""
+  )}/searchAnalytics/query`;
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      startDate: getDateDaysAgo(config.startDaysAgo),
+      endDate: getTodayDate(),
+      dimensions,
+      rowLimit: options.rowLimit ?? config.rowLimit,
+      type: "web",
+      ...(options.dimensionFilterGroups
+        ? { dimensionFilterGroups: options.dimensionFilterGroups }
+        : {}),
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`GSC request failed (${response.status}): ${body}`);
+  }
+
+  const payload = (await response.json()) as SearchConsoleResponse;
+  return payload.rows ?? [];
 }
 
 async function getAccessToken(
@@ -398,40 +447,11 @@ export async function fetchSearchConsoleSignals(
 
   try {
     const token = await getAccessToken(config, "readonly");
-    const endpoint = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(
-      config.property
-    )}/searchAnalytics/query`;
-
-    const querySearchAnalytics = async (
-      dimensions: Array<"query" | "page">
-    ): Promise<SearchConsoleRow[]> => {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          startDate: getDateDaysAgo(config.startDaysAgo),
-          endDate: getTodayDate(),
-          dimensions,
-          rowLimit: config.rowLimit,
-          type: "web",
-        }),
-      });
-
-      if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`GSC request failed (${response.status}): ${body}`);
-      }
-
-      const payload = (await response.json()) as SearchConsoleResponse;
-      return payload.rows ?? [];
-    };
-
-    const queryAndPageRows = await querySearchAnalytics(["query", "page"]);
+    const queryAndPageRows = await querySearchAnalyticsRows(config, token, ["query", "page"]);
     const pageOnlyRows =
-      queryAndPageRows.length === 0 ? await querySearchAnalytics(["page"]) : [];
+      queryAndPageRows.length === 0
+        ? await querySearchAnalyticsRows(config, token, ["page"])
+        : [];
     const rows = queryAndPageRows.length > 0 ? queryAndPageRows : pageOnlyRows;
     const signals = mapSearchConsoleRowsToSignals(queryAndPageRows);
     const searchAnalyticsMode =
@@ -477,6 +497,49 @@ export async function fetchSearchConsoleSignals(
       },
     };
   }
+}
+
+export async function fetchSearchConsolePageObservations(
+  config: SearchConsoleConfig,
+  pageUrls: string[]
+): Promise<SearchConsolePageObservation[]> {
+  if (!config.enabled || !config.property || !config.authMode || pageUrls.length === 0) {
+    return [];
+  }
+
+  const token = await getAccessToken(config, "readonly");
+  const uniqueUrls = Array.from(new Set(pageUrls));
+  const rows = await Promise.all(
+    uniqueUrls.map(async (pageUrl) => {
+      const observationRows = await querySearchAnalyticsRows(config, token, ["page"], {
+        rowLimit: 1,
+        dimensionFilterGroups: [
+          {
+            filters: [
+              {
+                dimension: "page",
+                operator: "equals",
+                expression: pageUrl,
+              },
+            ],
+          },
+        ],
+      });
+
+      const row = observationRows[0];
+      if (!row) return null;
+
+      return {
+        url: pageUrl,
+        clicks: Math.max(0, Math.round(row.clicks ?? 0)),
+        impressions: Math.max(0, Math.round(row.impressions ?? 0)),
+        ctr: Number((row.ctr ?? 0).toFixed(4)),
+        position: Number((row.position ?? 0).toFixed(2)),
+      } satisfies SearchConsolePageObservation;
+    })
+  );
+
+  return rows.filter((row): row is SearchConsolePageObservation => Boolean(row));
 }
 
 export async function submitSearchConsoleSitemaps(

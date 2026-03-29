@@ -1,9 +1,14 @@
 import { getPartnerSyncConfigs, getSearchConsoleConfig } from "./external-config";
 import { syncPartnerSource } from "./external-partner-sync";
 import {
+  fetchSearchConsolePageObservations,
   fetchSearchConsoleSignals,
   submitSearchConsoleSitemaps,
 } from "./external-search-console";
+import {
+  getGscFocusPageMonitorTargets,
+  reconcileGscFocusPageRowMonitor,
+} from "./gsc-focus-page-monitor";
 import {
   regenerateAutomationState,
   readExternalSyncStateFromDisk,
@@ -52,6 +57,24 @@ export async function runExternalSync(
     mode === "gsc" || mode === "daily" || mode === "all"
       ? await syncSearchConsoleToDisk()
       : null;
+  const gscFocusPageRows =
+    mode === "gsc" || mode === "daily" || mode === "all"
+      ? await fetchSearchConsolePageObservations(
+          gscConfig,
+          getGscFocusPageMonitorTargets().map((target) => target.url)
+        )
+      : [];
+  const gscFocusPageRowMonitor =
+    gsc && gsc.report.status === "success"
+      ? reconcileGscFocusPageRowMonitor(
+          previous.gsc.focusPageRows,
+          gscFocusPageRows,
+          gsc.report.lastSyncAt ?? new Date().toISOString()
+        )
+      : {
+          entries: previous.gsc.focusPageRows ?? [],
+          newlySeen: [],
+        };
   const gscSitemapSubmission =
     (mode === "gsc" || mode === "daily" || mode === "all") &&
     gsc?.report.status === "success"
@@ -66,6 +89,7 @@ export async function runExternalSync(
     generatedAt: new Date().toISOString(),
     gsc: {
       ...(gsc?.report ?? previous.gsc ?? emptyExternalState.gsc),
+      focusPageRows: gscFocusPageRowMonitor.entries,
       sitemapSubmitStatus:
         gscSitemapSubmission?.status ??
         previous.gsc.sitemapSubmitStatus,
@@ -90,6 +114,7 @@ export async function runExternalSync(
     state,
     externalState,
     gsc,
+    gscFocusPageRowFirstSeen: gscFocusPageRowMonitor.newlySeen,
     partners,
   };
 }
