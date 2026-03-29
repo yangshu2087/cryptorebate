@@ -1,24 +1,147 @@
 {
-  "generatedAt": "2026-03-29T13:21:01.338Z",
+  "generatedAt": "2026-03-29T14:16:56.533Z",
   "gsc": {
     "enabled": true,
     "status": "success",
     "configured": true,
     "property": "https://cryptorebate.app/",
     "authMode": "service-account",
-    "lastSyncAt": "2026-03-29T13:20:59.621Z",
+    "lastSyncAt": "2026-03-29T14:16:53.988Z",
     "rowsFetched": 2,
     "signalsWritten": 0,
     "searchAnalyticsMode": "page-only",
     "note": "Search Console query+page rows were empty; fell back to page-only analytics rows (2).",
+    "focusPageRows": [
+      {
+        "key": "focus-page-row:en:binance:official-site",
+        "locale": "en",
+        "exchangeSlug": "binance",
+        "pageType": "official-site",
+        "routePath": "/exchanges/binance/official-site",
+        "url": "https://cryptorebate.app/en/exchanges/binance/official-site",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:binance:referral-code",
+        "locale": "en",
+        "exchangeSlug": "binance",
+        "pageType": "referral-code",
+        "routePath": "/exchanges/binance/referral-code",
+        "url": "https://cryptorebate.app/en/exchanges/binance/referral-code",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:binance:signup-kyc",
+        "locale": "en",
+        "exchangeSlug": "binance",
+        "pageType": "signup-kyc",
+        "routePath": "/exchanges/binance/signup-kyc",
+        "url": "https://cryptorebate.app/en/exchanges/binance/signup-kyc",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:binance:fees-rebate",
+        "locale": "en",
+        "exchangeSlug": "binance",
+        "pageType": "fees-rebate",
+        "routePath": "/exchanges/binance/fees-rebate",
+        "url": "https://cryptorebate.app/en/exchanges/binance/fees-rebate",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:kucoin:official-site",
+        "locale": "en",
+        "exchangeSlug": "kucoin",
+        "pageType": "official-site",
+        "routePath": "/exchanges/kucoin/official-site",
+        "url": "https://cryptorebate.app/en/exchanges/kucoin/official-site",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:kucoin:referral-code",
+        "locale": "en",
+        "exchangeSlug": "kucoin",
+        "pageType": "referral-code",
+        "routePath": "/exchanges/kucoin/referral-code",
+        "url": "https://cryptorebate.app/en/exchanges/kucoin/referral-code",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:kucoin:signup-kyc",
+        "locale": "en",
+        "exchangeSlug": "kucoin",
+        "pageType": "signup-kyc",
+        "routePath": "/exchanges/kucoin/signup-kyc",
+        "url": "https://cryptorebate.app/en/exchanges/kucoin/signup-kyc",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:kucoin:fees-rebate",
+        "locale": "en",
+        "exchangeSlug": "kucoin",
+        "pageType": "fees-rebate",
+        "routePath": "/exchanges/kucoin/fees-rebate",
+        "url": "https://cryptorebate.app/en/exchanges/kucoin/fees-rebate",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:okx:official-site",
+        "locale": "en",
+        "exchangeSlug": "okx",
+        "pageType": "official-site",
+        "routePath": "/exchanges/okx/official-site",
+        "url": "https://cryptorebate.app/en/exchanges/okx/official-site",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:okx:referral-code",
+        "locale": "en",
+        "exchangeSlug": "okx",
+        "pageType": "referral-code",
+        "routePath": "/exchanges/okx/referral-code",
+        "url": "https://cryptorebate.app/en/exchanges/okx/referral-code",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:okx:signup-kyc",
+        "locale": "en",
+        "exchangeSlug": "okx",
+        "pageType": "signup-kyc",
+        "routePath": "/exchanges/okx/signup-kyc",
+        "url": "https://cryptorebate.app/en/exchanges/okx/signup-kyc",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      },
+      {
+        "key": "focus-page-row:en:okx:fees-rebate",
+        "locale": "en",
+        "exchangeSlug": "okx",
+        "pageType": "fees-rebate",
+        "routePath": "/exchanges/okx/fees-rebate",
+        "url": "https://cryptorebate.app/en/exchanges/okx/fees-rebate",
+        "seenInPageRows": false,
+        "lastCheckedAt": "2026-03-29T14:16:53.988Z"
+      }
+    ],
     "sitemapSubmitStatus": "success",
     "sitemapsSubmitted": [
       "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/focus-sitemap.xml",
       "https://cryptorebate.app/brand-sitemap.xml",
       "https://cryptorebate.app/fresh-7d-sitemap.xml",
       "https://cryptorebate.app/feed.xml"
     ],
-    "lastSitemapSubmitAt": "2026-03-29T13:21:01.338Z"
+    "lastSitemapSubmitAt": "2026-03-29T14:16:56.533Z"
   },
   "partners": [
     {
