@@ -76,9 +76,9 @@ export async function runExternalSync(
       lastSitemapSubmitAt:
         gscSitemapSubmission?.lastSubmittedAt ??
         previous.gsc.lastSitemapSubmitAt,
-      sitemapSubmitError:
-        gscSitemapSubmission?.error ??
-        previous.gsc.sitemapSubmitError,
+      sitemapSubmitError: gscSitemapSubmission
+        ? gscSitemapSubmission.error
+        : previous.gsc.sitemapSubmitError,
     },
     partners: partners?.reports ?? previous.partners ?? emptyExternalState.partners,
   };
