@@ -343,6 +343,8 @@ export type ExternalGscSyncState = {
   lastSyncAt?: string;
   rowsFetched: number;
   signalsWritten: number;
+  searchAnalyticsMode?: "query-page" | "page-only" | "empty";
+  note?: string;
   sitemapSubmitStatus?: ExternalSyncStatus;
   sitemapsSubmitted?: string[];
   lastSitemapSubmitAt?: string;

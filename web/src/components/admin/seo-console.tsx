@@ -114,6 +114,19 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatGscAnalyticsMode(mode: string) {
+  switch (mode) {
+    case "query-page":
+      return "query+page";
+    case "page-only":
+      return "page-only fallback";
+    case "empty":
+      return "empty";
+    default:
+      return mode;
+  }
+}
+
 function buildHref(locale: string, params: Record<string, string | undefined>) {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -684,11 +697,11 @@ export function SeoConsole({
               : "暂无"
           } · rows ${formatNumber(statusCards.gscSync.rowsFetched)} / signals ${formatNumber(
             statusCards.gscSync.signalsWritten
-          )} · sitemap 提交 ${
+          )} · mode ${formatGscAnalyticsMode(statusCards.gscSync.searchAnalyticsMode)} · sitemap 提交 ${
             STATUS_LABELS[statusCards.gscSync.sitemapSubmitStatus] ??
             statusCards.gscSync.sitemapSubmitStatus ??
             "未运行"
-          }`}
+          }${statusCards.gscSync.note ? ` · ${statusCards.gscSync.note}` : ""}`}
         />
         <StatusCard
           title="最近一次 Partner Sync"
@@ -1039,7 +1052,11 @@ export function SeoConsole({
               <p>每家交易所每日刷新上限：<span className="font-medium text-foreground">{state.controlPlane.refreshDailyLimitPerExchange}</span></p>
               <p>隔离语言数：<span className="font-medium text-foreground">{state.controlPlane.quarantinedLocales.length}</span></p>
               <p>GSC 同步状态：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.status] ?? state.externalSources.gsc.status}</span></p>
+              <p>GSC analytics 模式：<span className="font-medium text-foreground">{formatGscAnalyticsMode(state.externalSources.gsc.searchAnalyticsMode ?? "empty")}</span></p>
               <p>GSC sitemap 提交：<span className="font-medium text-foreground">{STATUS_LABELS[state.externalSources.gsc.sitemapSubmitStatus ?? "skipped"] ?? state.externalSources.gsc.sitemapSubmitStatus ?? "未运行"}</span></p>
+              {state.externalSources.gsc.note ? (
+                <p>GSC 说明：<span className="font-medium text-foreground">{state.externalSources.gsc.note}</span></p>
+              ) : null}
               <p>Partner 同步源数：<span className="font-medium text-foreground">{state.externalSources.partners.length}</span></p>
               <p>Partner 已配置源：<span className="font-medium text-foreground">{configuredPartnerCount}</span></p>
               <p>CTA Live Audit：<span className="font-medium text-foreground">{ctaLiveAuditStatus ? `${STATUS_LABELS[ctaLiveAuditStatus.status] ?? ctaLiveAuditStatus.status}${ctaLiveAuditStatus.conclusion ? ` / ${STATUS_LABELS[ctaLiveAuditStatus.conclusion] ?? ctaLiveAuditStatus.conclusion}` : ""}` : "未读取"}</span></p>

@@ -25,6 +25,8 @@ export type SearchConsoleSyncReport = {
   lastSyncAt?: string;
   rowsFetched: number;
   signalsWritten: number;
+  searchAnalyticsMode?: "query-page" | "page-only" | "empty";
+  note?: string;
   error?: string;
 };
 
@@ -400,29 +402,50 @@ export async function fetchSearchConsoleSignals(
       config.property
     )}/searchAnalytics/query`;
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        startDate: getDateDaysAgo(config.startDaysAgo),
-        endDate: getTodayDate(),
-        dimensions: ["query", "page"],
-        rowLimit: config.rowLimit,
-        type: "web",
-      }),
-    });
+    const querySearchAnalytics = async (
+      dimensions: Array<"query" | "page">
+    ): Promise<SearchConsoleRow[]> => {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          startDate: getDateDaysAgo(config.startDaysAgo),
+          endDate: getTodayDate(),
+          dimensions,
+          rowLimit: config.rowLimit,
+          type: "web",
+        }),
+      });
 
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`GSC request failed (${response.status}): ${body}`);
-    }
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`GSC request failed (${response.status}): ${body}`);
+      }
 
-    const payload = (await response.json()) as SearchConsoleResponse;
-    const rows = payload.rows ?? [];
-    const signals = mapSearchConsoleRowsToSignals(rows);
+      const payload = (await response.json()) as SearchConsoleResponse;
+      return payload.rows ?? [];
+    };
+
+    const queryAndPageRows = await querySearchAnalytics(["query", "page"]);
+    const pageOnlyRows =
+      queryAndPageRows.length === 0 ? await querySearchAnalytics(["page"]) : [];
+    const rows = queryAndPageRows.length > 0 ? queryAndPageRows : pageOnlyRows;
+    const signals = mapSearchConsoleRowsToSignals(queryAndPageRows);
+    const searchAnalyticsMode =
+      queryAndPageRows.length > 0
+        ? "query-page"
+        : pageOnlyRows.length > 0
+          ? "page-only"
+          : "empty";
+    const note =
+      searchAnalyticsMode === "page-only"
+        ? `Search Console query+page rows were empty; fell back to page-only analytics rows (${pageOnlyRows.length}).`
+        : searchAnalyticsMode === "empty"
+          ? "Search Console returned no query+page or page-only rows for the current lookback window."
+          : undefined;
 
     return {
       signals,
@@ -435,6 +458,8 @@ export async function fetchSearchConsoleSignals(
         lastSyncAt: new Date().toISOString(),
         rowsFetched: rows.length,
         signalsWritten: signals.length,
+        searchAnalyticsMode,
+        note,
       },
     };
   } catch (error) {

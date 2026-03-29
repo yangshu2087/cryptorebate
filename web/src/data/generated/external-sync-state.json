@@ -1,14 +1,16 @@
 {
-  "generatedAt": "2026-03-29T12:29:10.931Z",
+  "generatedAt": "2026-03-29T13:21:01.338Z",
   "gsc": {
     "enabled": true,
     "status": "success",
     "configured": true,
     "property": "https://cryptorebate.app/",
     "authMode": "service-account",
-    "lastSyncAt": "2026-03-29T12:29:08.295Z",
-    "rowsFetched": 0,
+    "lastSyncAt": "2026-03-29T13:20:59.621Z",
+    "rowsFetched": 2,
     "signalsWritten": 0,
+    "searchAnalyticsMode": "page-only",
+    "note": "Search Console query+page rows were empty; fell back to page-only analytics rows (2).",
     "sitemapSubmitStatus": "success",
     "sitemapsSubmitted": [
       "https://cryptorebate.app/sitemap.xml",
@@ -16,7 +18,7 @@
       "https://cryptorebate.app/fresh-7d-sitemap.xml",
       "https://cryptorebate.app/feed.xml"
     ],
-    "lastSitemapSubmitAt": "2026-03-29T12:29:10.931Z"
+    "lastSitemapSubmitAt": "2026-03-29T13:21:01.338Z"
   },
   "partners": [
     {

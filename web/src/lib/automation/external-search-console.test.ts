@@ -1,10 +1,35 @@
-import { describe, expect, it } from "vitest";
+
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  fetchSearchConsoleSignals,
   mapSearchConsoleRowsToSignals,
   normaliseSearchConsoleSitemapUrl,
 } from "./external-search-console";
 
+vi.mock("google-auth-library", () => {
+  const getAccessToken = vi.fn().mockResolvedValue({ token: "test-token" });
+  class JWT {
+    getAccessToken = getAccessToken;
+    constructor(_: unknown) {}
+  }
+  class OAuth2Client {
+    getAccessToken = getAccessToken;
+    setCredentials() {}
+    constructor(_: unknown, __: unknown) {}
+  }
+  return { JWT, OAuth2Client, __mockedGetAccessToken: getAccessToken };
+});
+
 describe("external-search-console", () => {
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
   it("maps page-based rows to automation signals", () => {
     const signals = mapSearchConsoleRowsToSignals([
       {
@@ -54,5 +79,63 @@ describe("external-search-console", () => {
       "https://cryptorebate.app/feed.xml"
     );
     expect(normaliseSearchConsoleSitemapUrl("   ")).toBeNull();
+  });
+
+  it("falls back to page-only search analytics rows when query rows are empty", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ rows: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            rows: [
+              {
+                keys: ["https://cryptorebate.app/"],
+                clicks: 0,
+                impressions: 5,
+                ctr: 0,
+                position: 1,
+              },
+              {
+                keys: ["https://cryptorebate.app/en"],
+                clicks: 0,
+                impressions: 4,
+                ctr: 0,
+                position: 7,
+              },
+            ],
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+      );
+
+    global.fetch = fetchMock as typeof fetch;
+
+    const result = await fetchSearchConsoleSignals({
+      enabled: true,
+      property: "https://cryptorebate.app/",
+      authMode: "service-account",
+      submitSitemaps: true,
+      startDaysAgo: 28,
+      rowLimit: 1000,
+      serviceAccountJson: JSON.stringify({
+        client_email: "test@example.com",
+        private_key: "test-private-key",
+      }),
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(result.report.status).toBe("success");
+    expect(result.report.rowsFetched).toBe(2);
+    expect(result.report.signalsWritten).toBe(0);
+    expect(result.report.note).toContain("page-only");
   });
 });

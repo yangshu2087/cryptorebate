@@ -268,6 +268,8 @@ export type SeoDashboardData = {
         updatedAt: string;
         rowsFetched: number;
         signalsWritten: number;
+        searchAnalyticsMode: string;
+        note: string;
         sitemapSubmitStatus: string;
         sitemapsSubmitted: string[];
         lastSitemapSubmitAt: string;
@@ -428,6 +430,8 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           updatedAt: state.externalSources.gsc.lastSyncAt ?? latestGscRun?.completedAt ?? "",
           rowsFetched: state.externalSources.gsc.rowsFetched,
           signalsWritten: state.externalSources.gsc.signalsWritten,
+          searchAnalyticsMode: state.externalSources.gsc.searchAnalyticsMode ?? "empty",
+          note: state.externalSources.gsc.note ?? "",
           sitemapSubmitStatus: state.externalSources.gsc.sitemapSubmitStatus ?? "skipped",
           sitemapsSubmitted: state.externalSources.gsc.sitemapsSubmitted ?? [],
           lastSitemapSubmitAt: state.externalSources.gsc.lastSitemapSubmitAt ?? "",
