@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
+import type { CompetitorGapSerpWinnersArtifact } from "./types";
 import {
   buildCompetitorGapDominantDomains,
   buildCompetitorGapProviderHits,
+  buildDiscoveryLaneSummary,
+  buildMonetizationLaneSummary,
 } from "./operator-console";
+import { buildAutomationState } from "./engine";
 
 describe("operator console competitor-gap SERP helpers", () => {
-  const artifact = {
+  const artifact: CompetitorGapSerpWinnersArtifact = {
     status: "success" as const,
     generatedAt: "2026-03-28T00:00:00Z",
-    providersRequested: ["duckduckgo-html", "serper", "brave"] as const,
+    providersRequested: ["duckduckgo-html", "serper", "brave"],
     templateCount: 2,
     totalWinnerUrls: 3,
     records: [
@@ -57,5 +61,17 @@ describe("operator console competitor-gap SERP helpers", () => {
     const domains = buildCompetitorGapDominantDomains(artifact);
     expect(domains[0]).toEqual({ domain: "binance.com", count: 2 });
     expect(domains).toContainEqual({ domain: "okx.com", count: 1 });
+  });
+
+  it("builds separate discovery and monetization lanes", () => {
+    const state = buildAutomationState();
+    const discovery = buildDiscoveryLaneSummary(state);
+    const monetization = buildMonetizationLaneSummary(state);
+
+    expect(discovery.focusPagesPublished).toBeGreaterThan(0);
+    expect(discovery.focusPagesSurfaced).toBeGreaterThan(0);
+    expect(discovery.gscRowsFetched).toBeGreaterThanOrEqual(0);
+    expect(monetization.affiliateClicks).toBe(state.attribution.clicks);
+    expect(monetization.realCoverageRate).toBe(state.attribution.realCoverageRate);
   });
 });

@@ -16,6 +16,7 @@ import {
 } from "@/data/exchange-seo";
 import { exchanges, getExchangeBySlug } from "@/data/exchanges";
 import { LOCALES, SITE_NAME, SITE_URL } from "@/lib/constants";
+import { getDiscoveryPriority, getOpportunityFocusLane } from "./focus";
 import { getAutomationLocaleCopy } from "./locale-copy";
 import { buildInternalLinkManifest } from "./internal-links";
 import type {
@@ -548,6 +549,18 @@ function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): Q
   const realCluster = context.byClusterId.get(cluster.id);
   const realizedCommissionUsd = realCluster?.commissionsUsd ?? 0;
   const realizedConversions = realCluster?.conversions ?? 0;
+  const focusLane = getOpportunityFocusLane({
+    locale: cluster.locale,
+    exchangeSlug: cluster.exchangeSlug,
+    pageType: cluster.pageType,
+    score: cluster.score,
+  });
+  const discoveryPriority = getDiscoveryPriority({
+    locale: cluster.locale,
+    exchangeSlug: cluster.exchangeSlug,
+    pageType: cluster.pageType,
+    score: cluster.score,
+  });
   const projectedEpcUsd =
     realizedCommissionUsd > 0
       ? round(realizedCommissionUsd / Math.max(realizedConversions || realCluster?.clicks || 1, 1), 2)
@@ -576,6 +589,8 @@ function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): Q
     score: cluster.score,
     recommendedAction: getRecommendedAction(cluster.score),
     stage: getStage(cluster.score),
+    focusLane,
+    discoveryPriority,
     qualityScore,
     projectedEpcUsd,
     projectedMonthlyRevenueUsd,

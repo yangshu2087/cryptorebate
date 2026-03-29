@@ -9,6 +9,11 @@ import {
   getQueuedStatusForChannel,
   publishDistributionJob,
 } from "./distribution";
+import {
+  isFocusExchangeSlug,
+  isFocusLocale,
+  isFocusPageType,
+} from "./focus";
 import { getInternalLinkDistributionCandidates } from "./internal-links";
 import type {
   AffiliateClick,
@@ -877,7 +882,13 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
   const brandPages = buildBrandPages(state).slice(0, 12);
   const internalLinkCandidates = getInternalLinkDistributionCandidates(state, 24, 2);
   const candidatePages = state.pages
-    .filter((page: AutomationSeoPage) => page.stage === 'published')
+    .filter(
+      (page: AutomationSeoPage) =>
+        page.stage === "published" &&
+        isFocusLocale(page.locale) &&
+        isFocusExchangeSlug(page.exchangeSlug) &&
+        isFocusPageType(page.pageType)
+    )
     .sort((a: AutomationSeoPage, b: AutomationSeoPage) => b.qualityScore - a.qualityScore)
     .slice(0, 20);
 
@@ -941,8 +952,14 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
           pageType: page.pageType,
           primaryQuery: page.primaryQuery,
           source: "page",
-          sourceLabel: "自动新页",
-          tags: ["page-publish", page.exchangeSlug, page.pageType],
+          sourceLabel: "焦点新页",
+          tags: [
+            "page-publish",
+            "focus-cluster",
+            "search-discovery",
+            page.exchangeSlug,
+            page.pageType,
+          ],
         };
         await upsertJob(client, {
           channel: "telegram",

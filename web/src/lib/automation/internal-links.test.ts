@@ -43,9 +43,38 @@ describe("internal link refresh manifest", () => {
 
     expect(candidates.length).toBeGreaterThan(0);
     expect(candidates.some((item) => item.tags.includes("internal-link-refresh"))).toBe(true);
+    expect(candidates.every((item) => item.tags.includes("focus-cluster"))).toBe(true);
+    expect(candidates.every((item) => item.tags.includes("internal-link-slot"))).toBe(true);
+    expect(candidates.every((item) => item.tags.includes("search-discovery"))).toBe(true);
     expect(
       candidates.every((item) => item.source === "base" || item.source === "dynamic")
     ).toBe(true);
     expect(candidates.every((item) => item.routePath.startsWith("/exchanges/"))).toBe(true);
+  });
+
+  it("builds explicit slot outputs for homepage, hub, exchange detail, and brand support", () => {
+    const state = buildAutomationState();
+
+    expect(state.internalLinks.slots.homepageHeroSecondary.length).toBeGreaterThan(0);
+    expect(state.internalLinks.slots.homepageQuestionClusters.length).toBeGreaterThan(0);
+    expect(state.internalLinks.slots.exchangeHubFocus.length).toBeGreaterThan(0);
+    expect(state.internalLinks.slots.exchangeDetailFocus.length).toBeGreaterThan(0);
+    expect(state.internalLinks.slots.brandSupporting.length).toBeGreaterThan(0);
+
+    const enHomepageSlot = state.internalLinks.slots.homepageHeroSecondary.find(
+      (slot) => slot.locale === "en"
+    );
+    const binanceDetailSlot = state.internalLinks.slots.exchangeDetailFocus.find(
+      (slot) => slot.locale === "en" && slot.exchangeSlug === "binance"
+    );
+
+    expect(enHomepageSlot?.guides.length).toBeGreaterThan(0);
+    expect(
+      binanceDetailSlot?.guides.every((guide) =>
+        ["official-site", "referral-code", "signup-kyc", "fees-rebate"].includes(
+          guide.pageType
+        )
+      )
+    ).toBe(true);
   });
 });

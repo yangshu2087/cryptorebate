@@ -13,6 +13,7 @@ import {
 import { exchanges, getExchangeBySlug } from "@/data/exchanges";
 import { getAutomationLocaleCopy } from "./locale-copy";
 import { buildAutomationState } from "./engine";
+import { getInternalLinkSlots } from "./internal-links";
 import type {
   AutomationDynamicPageType,
   AutomationLifecycleStage,
@@ -154,6 +155,14 @@ function mapTargetsToEntries(
 }
 
 export function getTopOpportunityEntriesForLocale(locale: string, limit = 6) {
+  const slots = getInternalLinkSlots(getState().internalLinks);
+  const homepageSlot = slots.homepageHeroSecondary.find(
+    (slot) => slot.locale === locale
+  );
+  if (homepageSlot?.guides.length) {
+    return mapTargetsToEntries(locale, homepageSlot.guides.slice(0, limit));
+  }
+
   const groups = getInternalLinkGroupsForLocale(locale)
     .map((group) => ({
       exchangeSlug: group.exchangeSlug,
@@ -190,6 +199,20 @@ export function getOpportunityQuestionGroupsForLocale(
   maxPageTypes = 8,
   limitPerType = 6
 ): OpportunityQuestionGroup[] {
+  const slots = getInternalLinkSlots(getState().internalLinks);
+  const slotGroups = slots.homepageQuestionClusters
+    .filter((slot) => slot.locale === locale)
+    .slice(0, maxPageTypes)
+    .map((slot) => ({
+      pageType: slot.pageType,
+      guides: mapTargetsToEntries(locale, slot.guides.slice(0, limitPerType)),
+    }))
+    .filter((slot) => slot.guides.length > 0);
+
+  if (slotGroups.length) {
+    return slotGroups;
+  }
+
   const byPageType = new Map<
     string,
     Array<{ exchangeSlug: string; pageType: string; score: number }>
@@ -233,12 +256,16 @@ export function getExchangeOpportunityGuides(
   featuredLimit = 4,
   supportingLimit = 6
 ) {
+  const slots = getInternalLinkSlots(getState().internalLinks);
+  const slot = slots.exchangeDetailFocus.find(
+    (item) => item.locale === locale && item.exchangeSlug === slug
+  );
   const group = getState().internalLinks.exchangeGroups.find(
     (item) => item.locale === locale && item.exchangeSlug === slug
   );
   const featured = mapTargetsToEntries(
     locale,
-    (group?.guides ?? []).slice(0, featuredLimit).map((guide) => ({
+    (slot?.guides ?? group?.guides ?? []).slice(0, featuredLimit).map((guide) => ({
       exchangeSlug: guide.exchangeSlug,
       pageType: guide.pageType,
     }))

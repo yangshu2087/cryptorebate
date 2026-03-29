@@ -39,6 +39,17 @@ export type SearchConsoleSitemapSubmitReport = {
   error?: string;
 };
 
+export function normaliseSearchConsoleSitemapUrl(sitemapUrl: string) {
+  const trimmed = sitemapUrl.trim();
+  if (!trimmed) return null;
+
+  try {
+    return new URL(trimmed, SITE_URL).toString();
+  } catch {
+    return null;
+  }
+}
+
 const pageTypeKeywords: Record<string, string[]> = {
   "referral-code": [
     "referral",
@@ -447,7 +458,13 @@ export async function submitSearchConsoleSitemaps(
   config: SearchConsoleConfig,
   sitemapUrls: string[]
 ): Promise<SearchConsoleSitemapSubmitReport> {
-  const uniqueUrls = Array.from(new Set(sitemapUrls.filter(Boolean)));
+  const uniqueUrls = Array.from(
+    new Set(
+      sitemapUrls
+        .map((url) => normaliseSearchConsoleSitemapUrl(url))
+        .filter((url): url is string => Boolean(url))
+    )
+  );
 
   if (!config.enabled) {
     return {

@@ -25,6 +25,36 @@ describe("automation engine", () => {
     expect(state.controlPlane.rolloutMode).toBe("full-automatic");
   });
 
+  it("classifies opportunities into focus, background, and hold lanes", () => {
+    const state = getAutomationState();
+
+    const focusOpportunity = state.opportunities.find(
+      (item) =>
+        item.locale === "en" &&
+        item.exchangeSlug === "binance" &&
+        item.pageType === "official-site"
+    );
+    const backgroundOpportunity = state.opportunities.find(
+      (item) =>
+        item.locale === "zh" &&
+        item.exchangeSlug === "binance" &&
+        item.pageType === "official-site"
+    );
+    const holdOpportunity = state.opportunities.find(
+      (item) =>
+        item.locale === "en" &&
+        item.exchangeSlug === "binance" &&
+        item.pageType === "login"
+    );
+
+    expect(focusOpportunity?.focusLane).toBe("focus");
+    expect(backgroundOpportunity?.focusLane).toBe("background");
+    expect(holdOpportunity?.focusLane).toBe("hold");
+    expect(focusOpportunity?.discoveryPriority).toBeGreaterThan(
+      backgroundOpportunity?.discoveryPriority ?? 0
+    );
+  });
+
   it("exposes auto-generated dynamic SEO pages in the unified catalog", () => {
     const state = getAutomationState();
     const dynamicPage = state.pages.find((page) =>

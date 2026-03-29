@@ -41,6 +41,14 @@ function toAbsoluteUrl(pathname: string) {
   return pathname.startsWith("http") ? pathname : `${SITE_URL}${pathname}`;
 }
 
+function resolveDiscoverySiteUrl(siteUrl?: string) {
+  const trimmed = siteUrl?.trim();
+  if (!trimmed || trimmed === "/" || !/^https?:\/\//i.test(trimmed)) {
+    return SITE_URL;
+  }
+  return trimmed.replace(/\/+$/, "");
+}
+
 function normaliseDate(value?: string | null) {
   if (!value) {
     return new Date().toISOString();
@@ -91,7 +99,10 @@ function toBrandDiscoveryPage(page: BrandSeoPage): DiscoveryPageRecord {
 }
 
 export function getDiscoveryAssetUrls(siteUrl = process.env.AUTOMATION_SITE_URL ?? SITE_URL) {
-  return [...DISCOVERY_SITEMAP_PATHS, DISCOVERY_FEED_PATH].map((path) => `${siteUrl}${path}`);
+  const origin = resolveDiscoverySiteUrl(siteUrl);
+  return [...DISCOVERY_SITEMAP_PATHS, DISCOVERY_FEED_PATH].map(
+    (path) => `${origin}${path}`
+  );
 }
 
 export async function getBrandDiscoveryPages() {

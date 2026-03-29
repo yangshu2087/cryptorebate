@@ -10,6 +10,7 @@ import {
   getUnifiedSeoPageHref,
   getUnifiedSeoPageLabels,
 } from "@/lib/automation/catalog";
+import { getInternalLinkSlots } from "@/lib/automation/internal-links";
 import type { DataReality } from "@/lib/automation/data-reality";
 import type { SeoDashboardData } from "@/lib/automation/operator-console";
 import type { AutomationAlert, QueryOpportunity, RoiEntry } from "@/lib/automation/types";
@@ -207,6 +208,21 @@ function AlertBadge({ level }: { level: AutomationAlert["level"] }) {
   return <Badge variant={variant}>{label}</Badge>;
 }
 
+function FocusLaneBadge({ lane }: { lane: QueryOpportunity["focusLane"] }) {
+  const styles: Record<QueryOpportunity["focusLane"], string> = {
+    focus: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    background: "border-amber-200 bg-amber-50 text-amber-700",
+    hold: "border-zinc-200 bg-zinc-50 text-zinc-700",
+  };
+  const labels: Record<QueryOpportunity["focusLane"], string> = {
+    focus: "焦点",
+    background: "背景",
+    hold: "冻结",
+  };
+
+  return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", styles[lane])}>{labels[lane]}</span>;
+}
+
 function StatusCard({
   title,
   status,
@@ -301,7 +317,7 @@ export function SeoConsole({
     .filter((item) => (selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange))
     .filter((item) => (selectedDataLocale === "all" ? true : item.locale === selectedDataLocale))
     .filter((item) => (!pageType || pageType === "all" ? true : item.pageType === pageType))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => (b.discoveryPriority ?? 0) - (a.discoveryPriority ?? 0) || b.score - a.score);
 
   const filteredPageRoi = state.pageRoiDaily
     .filter((item) => (selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange))
@@ -411,28 +427,95 @@ export function SeoConsole({
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
+  const internalLinkSlots = getInternalLinkSlots(state.internalLinks);
+  const flattenedSlotGuides = [
+    ...internalLinkSlots.homepageHeroSecondary.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.homepageQuestionClusters.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.exchangeHubFocus.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.exchangeDetailFocus.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.brandSupporting.flatMap((slot) => slot.guides),
+  ];
   const internalLinkTopPageTypes = Object.entries(
-    state.internalLinks.exchangeGroups.flatMap((group) => group.guides).reduce<Record<string, number>>(
-      (acc, guide) => {
-        acc[guide.pageType] = (acc[guide.pageType] ?? 0) + 1;
-        return acc;
-      },
-      {}
-    )
+    flattenedSlotGuides.reduce<Record<string, number>>((acc, guide) => {
+      acc[guide.pageType] = (acc[guide.pageType] ?? 0) + 1;
+      return acc;
+    }, {})
   )
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4);
-  const selectedInternalLinkGroup =
-    selectedExchange !== "all" && selectedDataLocale !== "all"
-      ? state.internalLinks.exchangeGroups.find(
-          (group) =>
-            group.exchangeSlug === selectedExchange && group.locale === selectedDataLocale
+  const focusSlotSections = [
+    {
+      key: "homepageHeroSecondary",
+      title: "首页 Hero 次推荐",
+      description: "首页 hero 下方二级推荐位，优先推焦点主题簇。",
+      items: internalLinkSlots.homepageHeroSecondary
+        .filter((slot) => selectedDataLocale === "all" || slot.locale === selectedDataLocale)
+        .flatMap((slot) =>
+          slot.guides.slice(0, 3).map((guide) => ({
+            slotLabel: `首页 · ${ZH_LOCALE_LABELS[slot.locale] ?? slot.locale}`,
+            guide,
+          }))
         )
-      : state.internalLinks.exchangeGroups.find(
-          (group) =>
-            (selectedExchange === "all" || group.exchangeSlug === selectedExchange) &&
-            (selectedDataLocale === "all" || group.locale === selectedDataLocale)
-        );
+        .slice(0, 6),
+    },
+    {
+      key: "homepageQuestionClusters",
+      title: "首页高意图问题簇",
+      description: "把高意图问题页集中推到首页问题入口。",
+      items: internalLinkSlots.homepageQuestionClusters
+        .filter((slot) => selectedDataLocale === "all" || slot.locale === selectedDataLocale)
+        .flatMap((slot) =>
+          slot.guides.slice(0, 2).map((guide) => ({
+            slotLabel: `${ZH_LOCALE_LABELS[slot.locale] ?? slot.locale} · ${getUnifiedSeoPageLabels(labelsLocale, slot.pageType).short}`,
+            guide,
+          }))
+        )
+        .slice(0, 8),
+    },
+    {
+      key: "exchangeHubFocus",
+      title: "Exchanges Hub 焦点位",
+      description: "语言级 hub 页面统一推当前焦点交易所主题簇。",
+      items: internalLinkSlots.exchangeHubFocus
+        .filter((slot) => selectedDataLocale === "all" || slot.locale === selectedDataLocale)
+        .flatMap((slot) =>
+          slot.guides.slice(0, 3).map((guide) => ({
+            slotLabel: `Hub · ${ZH_LOCALE_LABELS[slot.locale] ?? slot.locale}`,
+            guide,
+          }))
+        )
+        .slice(0, 8),
+    },
+    {
+      key: "exchangeDetailFocus",
+      title: "交易所详情焦点位",
+      description: "交易所详情页显式推 official-site / referral-code / signup-kyc / fees-rebate。",
+      items: internalLinkSlots.exchangeDetailFocus
+        .filter((slot) => selectedDataLocale === "all" || slot.locale === selectedDataLocale)
+        .filter((slot) => selectedExchange === "all" || slot.exchangeSlug === selectedExchange)
+        .flatMap((slot) =>
+          slot.guides.slice(0, 3).map((guide) => ({
+            slotLabel: `${slot.exchangeSlug} · ${ZH_LOCALE_LABELS[slot.locale] ?? slot.locale}`,
+            guide,
+          }))
+        )
+        .slice(0, 8),
+    },
+    {
+      key: "brandSupporting",
+      title: "品牌页支持位",
+      description: "品牌页只做支持层，用来承接品牌词和内链分发。",
+      items: internalLinkSlots.brandSupporting
+        .filter((slot) => selectedDataLocale === "all" || slot.locale === selectedDataLocale)
+        .flatMap((slot) =>
+          slot.guides.slice(0, 2).map((guide) => ({
+            slotLabel: `${slot.topic} · ${ZH_LOCALE_LABELS[slot.locale] ?? slot.locale}`,
+            guide,
+          }))
+        )
+        .slice(0, 8),
+    },
+  ].filter((section) => section.items.length > 0);
   const exchangeRealityCounts = (["真实", "估算", "模拟", "未接通"] as const).map((reality) => ({
     reality,
     count: dataReality.partnerByExchange.filter((item) => item.reality === reality).length,
@@ -546,6 +629,36 @@ export function SeoConsole({
           helper={`${state.controlPlane.quarantinedPageKeys.length} 个隔离页面键 · 平均质量分 ${displayMetrics.averageQualityScore ?? state.metrics.averageQualityScore}`}
           reality={dataReality.metrics.alerts}
           realityHint="当前为规则型自动化告警，不等同于生产事故监控。"
+        />
+      </div>
+
+      <div className="mt-8 grid gap-4 xl:grid-cols-2">
+        <SummaryList
+          title="Discovery Lane（自然发现线）"
+          description="这一列只看自然搜索发现相关指标，不再和收益模拟盘混在一起。"
+          items={[
+            { label: "GSC rows", value: formatNumber(dashboardData.discovery.gscRowsFetched) },
+            { label: "有曝光页面", value: formatNumber(dashboardData.discovery.pagesWithImpressions) },
+            { label: "Top 20 queries", value: formatNumber(dashboardData.discovery.queriesTop20) },
+            { label: "Top 10 queries", value: formatNumber(dashboardData.discovery.queriesTop10) },
+            { label: "焦点已发布页", value: formatNumber(dashboardData.discovery.focusPagesPublished) },
+            { label: "焦点已浮出页", value: formatNumber(dashboardData.discovery.focusPagesSurfaced) },
+            { label: "真实 CTA 点击（7d）", value: formatNumber(dashboardData.discovery.realCtaClicks7d) },
+          ]}
+        />
+        <SummaryList
+          title="Monetization Lane（收益归因线）"
+          description="这一列只看点击、注册、佣金与真实覆盖率，避免把估算值误当自然发现。"
+          items={[
+            { label: "Affiliate clicks", value: formatNumber(dashboardData.monetization.affiliateClicks) },
+            { label: "真实 clicks", value: formatNumber(dashboardData.monetization.realAffiliateClicks) },
+            { label: "Registrations", value: formatNumber(dashboardData.monetization.registrations) },
+            { label: "真实 registrations", value: formatNumber(dashboardData.monetization.realRegistrations) },
+            { label: "总佣金", value: formatUsd(dashboardData.monetization.commissionsUsd) },
+            { label: "真实佣金", value: formatUsd(dashboardData.monetization.realCommissionUsd) },
+            { label: "模拟/估算佣金", value: formatUsd(dashboardData.monetization.syntheticCommissionUsd) },
+            { label: "真实覆盖率", value: `${(dashboardData.monetization.realCoverageRate * 100).toFixed(1)}%` },
+          ]}
         />
       </div>
 
@@ -1017,41 +1130,45 @@ export function SeoConsole({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {selectedInternalLinkGroup ? (
-              <>
-                <div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
-                  当前展示：
-                  <span className="ml-1 font-medium text-foreground">
-                    {selectedInternalLinkGroup.exchangeSlug} · {ZH_LOCALE_LABELS[selectedInternalLinkGroup.locale] ?? selectedInternalLinkGroup.locale}
-                  </span>
-                </div>
-                {selectedInternalLinkGroup.guides.map((guide) => (
-                  <div key={`${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`} className="rounded-2xl border border-border/60 p-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline">{guide.exchangeSlug}</Badge>
-                          <Badge variant="outline">{ZH_LOCALE_LABELS[guide.locale] ?? guide.locale}</Badge>
-                          <Badge variant="outline">{getUnifiedSeoPageLabels(labelsLocale, guide.pageType).short}</Badge>
-                          <Badge variant={guide.source === "dynamic" ? "secondary" : "outline"}>
-                            {guide.source === "dynamic" ? "动态" : "基础"}
-                          </Badge>
-                        </div>
-                        <p className="mt-3 font-semibold">{guide.title}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">{guide.primaryQuery}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-brand">{guide.score.toFixed(1)}</p>
-                        <p className="text-xs text-muted-foreground">refresh score</p>
-                      </div>
+            {focusSlotSections.length ? (
+              <div className="space-y-4">
+                {focusSlotSections.map((section) => (
+                  <div key={section.key} className="rounded-2xl border border-border/60 p-4">
+                    <div className="mb-3">
+                      <p className="text-sm font-semibold text-foreground">{section.title}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{section.description}</p>
                     </div>
-                    <div className="mt-3 text-xs text-muted-foreground">{guide.href}</div>
+                    <div className="space-y-3">
+                      {section.items.map(({ slotLabel, guide }) => (
+                        <div key={`${section.key}:${slotLabel}:${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`} className="rounded-2xl border border-border/60 p-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="secondary">{slotLabel}</Badge>
+                                <Badge variant="outline">{guide.exchangeSlug}</Badge>
+                                <Badge variant="outline">{getUnifiedSeoPageLabels(labelsLocale, guide.pageType).short}</Badge>
+                                <Badge variant={guide.source === "dynamic" ? "secondary" : "outline"}>
+                                  {guide.source === "dynamic" ? "动态" : "基础"}
+                                </Badge>
+                              </div>
+                              <p className="mt-3 font-semibold">{guide.title}</p>
+                              <p className="mt-1 text-sm text-muted-foreground">{guide.primaryQuery}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-semibold text-brand">{guide.score.toFixed(1)}</p>
+                              <p className="text-xs text-muted-foreground">refresh score</p>
+                            </div>
+                          </div>
+                          <div className="mt-3 text-xs text-muted-foreground">{guide.href}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
-              </>
+              </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-sm text-muted-foreground">
-                当前筛选条件下暂无内链刷新结果。
+                当前筛选条件下暂无内链刷新推荐位。
               </div>
             )}
           </CardContent>
@@ -1459,10 +1576,11 @@ function OpportunityCard({ locale, item }: { locale: string; item: QueryOpportun
               <Badge variant="secondary">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
               <Badge variant="outline">{item.exchangeSlug}</Badge>
               <Badge variant="outline">{getUnifiedSeoPageLabels("zh", item.pageType).short}</Badge>
+              <FocusLaneBadge lane={item.focusLane} />
             </div>
             <p className="mt-3 text-lg font-semibold tracking-tight">{item.primaryQuery}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              动作：{item.recommendedAction} · 阶段：{item.stage}
+              动作：{item.recommendedAction} · 阶段：{item.stage} · discovery priority {formatNumber(item.discoveryPriority)}
             </p>
           </div>
           <div className="text-right">

@@ -165,7 +165,7 @@ describe("external-partner-sync", () => {
         )
       )
       .mockResolvedValueOnce(
-        new Response(workbookBuffer, {
+        new Response(new Uint8Array(workbookBuffer), {
           status: 200,
           headers: {
             "content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

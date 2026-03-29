@@ -18,6 +18,22 @@ describe("discovery outputs", () => {
     ]);
   });
 
+  it("normalizes relative or empty site URLs to absolute discovery assets", () => {
+    expect(getDiscoveryAssetUrls("")).toEqual([
+      "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/brand-sitemap.xml",
+      "https://cryptorebate.app/fresh-7d-sitemap.xml",
+      "https://cryptorebate.app/feed.xml",
+    ]);
+
+    expect(getDiscoveryAssetUrls("/")).toEqual([
+      "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/brand-sitemap.xml",
+      "https://cryptorebate.app/fresh-7d-sitemap.xml",
+      "https://cryptorebate.app/feed.xml",
+    ]);
+  });
+
   it("builds fresh and brand sitemap entries", async () => {
     const brandEntries = await getBrandSitemapEntries();
     const freshEntries = await getFreshSitemapEntries(7);

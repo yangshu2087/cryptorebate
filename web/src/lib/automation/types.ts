@@ -1,4 +1,5 @@
 import type { Exchange } from "@/types/exchange";
+import type { OpportunityFocusLane } from "./focus";
 
 export const AUTOMATION_DYNAMIC_PAGE_TYPES = [
   "login",
@@ -79,6 +80,8 @@ export type QueryOpportunity = {
   score: number;
   recommendedAction: "publish" | "refresh" | "expand" | "prune";
   stage: AutomationLifecycleStage;
+  focusLane: OpportunityFocusLane;
+  discoveryPriority: number;
   qualityScore: number;
   projectedEpcUsd: number;
   projectedMonthlyRevenueUsd: number;
@@ -431,9 +434,39 @@ export type AutomationInternalLinkGroup = {
   guides: AutomationInternalLinkTarget[];
 };
 
+export type AutomationInternalLinkLocaleSlot = {
+  locale: string;
+  guides: AutomationInternalLinkTarget[];
+};
+
+export type AutomationInternalLinkQuestionSlot = {
+  locale: string;
+  pageType: string;
+  guides: AutomationInternalLinkTarget[];
+};
+
+export type AutomationInternalLinkExchangeSlot = {
+  locale: string;
+  exchangeSlug: Exchange["slug"];
+  guides: AutomationInternalLinkTarget[];
+};
+
+export type AutomationInternalLinkBrandSlot = {
+  locale: string;
+  topic: string;
+  guides: AutomationInternalLinkTarget[];
+};
+
 export type AutomationInternalLinkManifest = {
   refreshedAt: string;
   exchangeGroups: AutomationInternalLinkGroup[];
+  slots: {
+    homepageHeroSecondary: AutomationInternalLinkLocaleSlot[];
+    homepageQuestionClusters: AutomationInternalLinkQuestionSlot[];
+    exchangeHubFocus: AutomationInternalLinkLocaleSlot[];
+    exchangeDetailFocus: AutomationInternalLinkExchangeSlot[];
+    brandSupporting: AutomationInternalLinkBrandSlot[];
+  };
 };
 
 export type AutomationRun = {

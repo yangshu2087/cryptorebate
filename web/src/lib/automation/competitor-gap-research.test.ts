@@ -37,7 +37,7 @@ describe("competitor gap live research", () => {
   });
 
   it("chooses multiple providers from env and explicit input", () => {
-    expect(normalizeResearchProviders(undefined, { SERPER_API_KEY: "a", BRAVE_SEARCH_API_KEY: "b" } as NodeJS.ProcessEnv)).toEqual([
+    expect(normalizeResearchProviders(undefined, { SERPER_API_KEY: "a", BRAVE_SEARCH_API_KEY: "b" } as unknown as NodeJS.ProcessEnv)).toEqual([
       "serper",
       "brave",
       "duckduckgo-html",

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { mapSearchConsoleRowsToSignals } from "./external-search-console";
+import {
+  mapSearchConsoleRowsToSignals,
+  normaliseSearchConsoleSitemapUrl,
+} from "./external-search-console";
 
 describe("external-search-console", () => {
   it("maps page-based rows to automation signals", () => {
@@ -41,5 +44,15 @@ describe("external-search-console", () => {
     expect(signals[0]?.exchangeSlug).toBe("binance");
     expect(signals[0]?.pageType).toBe("official-site");
     expect(signals[0]?.locale).toBe("zh");
+  });
+
+  it("normalizes relative sitemap URLs before submission", () => {
+    expect(normaliseSearchConsoleSitemapUrl("/sitemap.xml")).toBe(
+      "https://cryptorebate.app/sitemap.xml"
+    );
+    expect(normaliseSearchConsoleSitemapUrl("https://cryptorebate.app/feed.xml")).toBe(
+      "https://cryptorebate.app/feed.xml"
+    );
+    expect(normaliseSearchConsoleSitemapUrl("   ")).toBeNull();
   });
 });

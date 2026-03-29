@@ -9,6 +9,12 @@ import { readCompetitorGapActionPlan } from "@/lib/automation/competitor-gap-act
 import { readCompetitorGapSerpWinnersArtifact } from "@/lib/automation/competitor-gap-research";
 import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import { buildSeoStatsFromDb } from "@/lib/automation/db-store";
+import { getInternalLinkSlots } from "@/lib/automation/internal-links";
+import {
+  isFocusExchangeSlug,
+  isFocusLocale,
+  isFocusPageType,
+} from "@/lib/automation/focus";
 import {
   deriveCtaLiveAuditAlert,
   getCtaLiveAuditStatus,
@@ -135,12 +141,107 @@ function buildCompetitorGapDominantDomains(artifact: CompetitorGapSerpWinnersArt
     .map(([domain, count]) => ({ domain, count }));
 }
 
+export type DiscoveryLaneSummary = {
+  gscRowsFetched: number;
+  pagesWithImpressions: number;
+  queriesTop20: number;
+  queriesTop10: number;
+  focusPagesPublished: number;
+  focusPagesSurfaced: number;
+  realCtaClicks7d: number;
+};
+
+export type MonetizationLaneSummary = {
+  affiliateClicks: number;
+  realAffiliateClicks: number;
+  registrations: number;
+  realRegistrations: number;
+  commissionsUsd: number;
+  realCommissionUsd: number;
+  syntheticCommissionUsd: number;
+  realCoverageRate: number;
+};
+
+function isWithinDays(timestamp: string | undefined, days: number) {
+  if (!timestamp) return false;
+  const ageMs = Date.now() - new Date(timestamp).getTime();
+  return ageMs <= days * 24 * 60 * 60 * 1000;
+}
+
+export function buildDiscoveryLaneSummary(state: AutomationState): DiscoveryLaneSummary {
+  const slots = getInternalLinkSlots(state.internalLinks);
+  const gscSignals = state.signals.filter((signal) => signal.source === "gsc");
+  const pagesWithImpressions = new Set(
+    gscSignals
+      .filter((signal) => signal.impressions > 0)
+      .map((signal) => `${signal.locale}:${signal.exchangeSlug}:${signal.pageType}`)
+  ).size;
+  const queriesTop20 = gscSignals.filter(
+    (signal) => signal.impressions > 0 && signal.position <= 20
+  ).length;
+  const queriesTop10 = gscSignals.filter(
+    (signal) => signal.impressions > 0 && signal.position <= 10
+  ).length;
+  const focusPagesPublished = state.pages.filter(
+    (page) =>
+      page.stage === "published" &&
+      isFocusLocale(page.locale) &&
+      isFocusExchangeSlug(page.exchangeSlug) &&
+      isFocusPageType(page.pageType)
+  ).length;
+  const focusPagesSurfaced = new Set(
+    slots.homepageHeroSecondary
+      .flatMap((slot) => slot.guides)
+      .concat(
+        slots.homepageQuestionClusters.flatMap((slot) => slot.guides),
+        slots.exchangeHubFocus.flatMap((slot) => slot.guides),
+        slots.exchangeDetailFocus.flatMap((slot) => slot.guides),
+        slots.brandSupporting.flatMap((slot) => slot.guides)
+      )
+      .filter((guide) => isFocusLocale(guide.locale))
+      .filter((guide) => isFocusExchangeSlug(guide.exchangeSlug))
+      .filter((guide) => isFocusPageType(guide.pageType))
+      .map((guide) => `${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`)
+  ).size;
+  const realCtaClicks7d = state.affiliateClicks.filter(
+    (click) => click.dataSource === "real" && isWithinDays(click.clickedAt, 7)
+  ).length;
+
+  return {
+    gscRowsFetched: state.externalSources.gsc.rowsFetched,
+    pagesWithImpressions,
+    queriesTop20,
+    queriesTop10,
+    focusPagesPublished,
+    focusPagesSurfaced,
+    realCtaClicks7d,
+  };
+}
+
+export function buildMonetizationLaneSummary(
+  state: AutomationState
+): MonetizationLaneSummary {
+  return {
+    affiliateClicks: state.attribution.clicks,
+    realAffiliateClicks: state.attribution.realClicks,
+    registrations: state.attribution.conversions,
+    realRegistrations: state.attribution.realConversions,
+    commissionsUsd:
+      state.attribution.realCommissionUsd + state.attribution.syntheticCommissionUsd,
+    realCommissionUsd: state.attribution.realCommissionUsd,
+    syntheticCommissionUsd: state.attribution.syntheticCommissionUsd,
+    realCoverageRate: state.attribution.realCoverageRate,
+  };
+}
+
 export type SeoDashboardData = {
   state: AutomationState;
   metrics: Record<string, unknown>;
   dataReality: ReturnType<typeof getAutomationDataReality>;
   externalSources: AutomationState["externalSources"];
   attribution: AutomationState["attribution"];
+  discovery: DiscoveryLaneSummary;
+  monetization: MonetizationLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
   topRoiPages: ReturnType<typeof getTopAutomationRoiPages>;
@@ -211,6 +312,8 @@ export type SeoDashboardData = {
         published: number;
       };
     };
+    discovery: DiscoveryLaneSummary;
+    monetization: MonetizationLaneSummary;
     sevenDayChanges: {
       clicks: number;
       registrations: number;
@@ -248,6 +351,8 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const distributionJobs = dbStats?.distributionJobs ?? [];
   const distributionSummary = buildDistributionSummary(distributionJobs);
   const competitorGapProviderHits = buildCompetitorGapProviderHits(competitorGapSerpWinners);
+  const discovery = buildDiscoveryLaneSummary(state);
+  const monetization = buildMonetizationLaneSummary(state);
   const alerts = [
     ...(ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []),
     ...(dbStats?.state.alerts ?? getAutomationAlerts(locale ?? undefined, 10)),
@@ -265,12 +370,24 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const partnerFailures = state.externalSources.partners.filter(
     (item) => item.status === "failed"
   ).length;
+  const internalLinkSlots = getInternalLinkSlots(state.internalLinks);
   const internalLinkGroups = state.internalLinks.exchangeGroups;
-  const surfacedGuides = internalLinkGroups.reduce(
-    (sum, group) => sum + group.guides.length,
-    0
-  );
-  const localesCovered = new Set(internalLinkGroups.map((group) => group.locale)).size;
+  const surfacedGuides = [
+    ...internalLinkSlots.homepageHeroSecondary.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.homepageQuestionClusters.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.exchangeHubFocus.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.exchangeDetailFocus.flatMap((slot) => slot.guides),
+    ...internalLinkSlots.brandSupporting.flatMap((slot) => slot.guides),
+  ].length;
+  const localesCovered = new Set(
+    [
+      ...internalLinkSlots.homepageHeroSecondary.map((slot) => slot.locale),
+      ...internalLinkSlots.homepageQuestionClusters.map((slot) => slot.locale),
+      ...internalLinkSlots.exchangeHubFocus.map((slot) => slot.locale),
+      ...internalLinkSlots.exchangeDetailFocus.map((slot) => slot.locale),
+      ...internalLinkSlots.brandSupporting.map((slot) => slot.locale),
+    ].filter(Boolean)
+  ).size;
 
   return {
     state,
@@ -278,6 +395,8 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     dataReality,
     externalSources: state.externalSources,
     attribution: state.attribution,
+    discovery,
+    monetization,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:
       dbStats?.topOpportunities ?? getTopAutomationOpportunities(locale ?? undefined, 10),
@@ -386,6 +505,8 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           published: distributionSummary.published,
         },
       },
+      discovery,
+      monetization,
       sevenDayChanges: {
         clicks: state.attribution.sevenDayClicks,
         registrations: state.attribution.sevenDayRegistrations,

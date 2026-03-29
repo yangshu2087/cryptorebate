@@ -41,6 +41,8 @@ import {
   mapAutomationPageToUnifiedEntry,
   isSeoContentLocale,
 } from "@/lib/automation/catalog";
+import { isFocusPageType } from "@/lib/automation/focus";
+import { buildSerpBlockModel } from "@/lib/automation/serp-blocks";
 import { getLatestAutomationSnapshotFromDb, getPublishedSeoPageFromDb } from "@/lib/automation/db-store";
 import type { AutomationSeoPage } from "@/lib/automation/types";
 import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
@@ -143,6 +145,11 @@ export default async function ExchangeSeoPage({
   const siblingEntries = getUnifiedSeoEntriesForExchange(seoLocale, slug).filter(
     (item) => item.pageType !== entry.pageType
   );
+  const serpBlocks = buildSerpBlockModel(entry);
+  const isFocusEntry = isFocusPageType(entry.pageType);
+  const howToSteps = isFocusEntry
+    ? serpBlocks.signupSteps
+    : (entry.howToSteps ?? []);
   const pageUrl = getLocalizedUrl(locale, getUnifiedSeoPageHref(slug, entry.pageType));
   const hubUrl = getLocalizedUrl(locale, `/exchanges/${slug}`);
 
@@ -265,6 +272,67 @@ export default async function ExchangeSeoPage({
         </div>
       </section>
 
+      <section className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <Card className="border-border/70">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-brand" />
+              <h2 className="text-lg font-semibold">Official domain / entry check</h2>
+            </div>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              Verify the destination before signup. For trust-sensitive queries, Google usually rewards pages that make the official route and fake-site risk explicit.
+            </p>
+            <dl className="mt-4 space-y-3 text-sm">
+              <div className="flex items-start justify-between gap-4 rounded-2xl border border-border/60 px-4 py-3">
+                <dt className="text-muted-foreground">Official domain</dt>
+                <dd className="text-right font-medium">{serpBlocks.domainCheck.officialDomain}</dd>
+              </div>
+              <div className="flex items-start justify-between gap-4 rounded-2xl border border-border/60 px-4 py-3">
+                <dt className="text-muted-foreground">Referral landing domain</dt>
+                <dd className="text-right font-medium">{serpBlocks.domainCheck.referralDomain}</dd>
+              </div>
+            </dl>
+            <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {serpBlocks.domainCheck.warning}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-brand" />
+              <h2 className="text-lg font-semibold">Rebate / fee / alternative comparison</h2>
+            </div>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              This section keeps the page comparison-first instead of sounding like a one-sided affiliate landing page.
+            </p>
+            <div className="mt-4 overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/60 text-left text-muted-foreground">
+                    <th className="py-2 pr-4 font-medium">Exchange</th>
+                    <th className="py-2 pr-4 font-medium">Spot rebate</th>
+                    <th className="py-2 pr-4 font-medium">Spot fees</th>
+                    <th className="py-2 font-medium">KYC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {serpBlocks.comparisonRows.map((row) => (
+                    <tr key={row.exchangeSlug} className="border-b border-border/50 last:border-0">
+                      <td className="py-3 pr-4 font-medium">{row.exchangeName}</td>
+                      <td className="py-3 pr-4">{row.spotRebate}</td>
+                      <td className="py-3 pr-4">{row.spotFees}</td>
+                      <td className="py-3">{row.kyc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
       <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <div className="space-y-6">
           {entry.sections.map((section) => (
@@ -290,6 +358,48 @@ export default async function ExchangeSeoPage({
         </div>
 
         <div className="space-y-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-brand" />
+                <h2 className="text-lg font-semibold">Signup → KYC → rebate activation</h2>
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Give searchers a concrete next-step checklist instead of a generic CTA wall.
+              </p>
+              <ol className="mt-4 space-y-3">
+                {howToSteps.map((step, index) => (
+                  <li key={step} className="flex items-start gap-3 rounded-2xl border border-border/60 px-4 py-3 text-sm">
+                    <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xs font-semibold text-brand">
+                      {index + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="h-4 w-4 text-brand" />
+                <h2 className="text-lg font-semibold">Region restrictions / prerequisites</h2>
+              </div>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                {serpBlocks.regionSummary}
+              </p>
+              <ul className="mt-4 space-y-2">
+                {serpBlocks.regionRestrictions.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm">
+                    <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-2">
@@ -407,14 +517,13 @@ export default async function ExchangeSeoPage({
           { name: pageLabels.nav, url: pageUrl },
         ]}
       />
-      {(entry.pageType === "signup-kyc" || entry.pageType === "app-download") &&
-      entry.howToSteps?.length ? (
+      {howToSteps.length ? (
         <HowToJsonLd
           locale={locale}
           name={entry.heroTitle}
           description={entry.heroDescription}
           url={pageUrl}
-          steps={entry.howToSteps.map((step) => ({ name: step }))}
+          steps={howToSteps.map((step) => ({ name: step }))}
         />
       ) : null}
     </div>
