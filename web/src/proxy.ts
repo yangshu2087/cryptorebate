@@ -1,6 +1,8 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { DEFAULT_LOCALE } from "./lib/constants";
+import { rewriteXDefaultAlternateLinkHeader } from "./lib/alternate-links";
 
 const intlMiddleware = createMiddleware(routing);
 const CANONICAL_HOST = "cryptorebate.app";
@@ -17,7 +19,18 @@ export default function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+  const linkHeader = response.headers.get("link");
+  const rewritten = rewriteXDefaultAlternateLinkHeader(
+    linkHeader,
+    DEFAULT_LOCALE
+  );
+
+  if (rewritten && rewritten !== linkHeader) {
+    response.headers.set("link", rewritten);
+  }
+
+  return response;
 }
 
 export const config = {
