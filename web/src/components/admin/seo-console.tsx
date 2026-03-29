@@ -114,6 +114,11 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatObservationDays(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "0.0 天";
+  return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} 天`;
+}
+
 function formatGscAnalyticsMode(mode: string) {
   switch (mode) {
     case "query-page":
@@ -440,6 +445,7 @@ export function SeoConsole({
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
+  const focusPageRowMonitor = dashboardData.operatorSummary.focusPageRowMonitor;
   const internalLinkSlots = getInternalLinkSlots(state.internalLinks);
   const flattenedSlotGuides = [
     ...internalLinkSlots.homepageHeroSecondary.flatMap((slot) => slot.guides),
@@ -539,6 +545,15 @@ export function SeoConsole({
     partnerFailed: dashboardData.operatorSummary.failureTrend.partnerFailures,
     distributionFailed: dashboardData.operatorSummary.failureTrend.distributionFailures,
   };
+  const filteredFocusPageMonitorEntries = focusPageRowMonitor.entries.filter((entry) => {
+    const exchangePass =
+      selectedExchange === "all" ? true : entry.exchangeSlug === selectedExchange;
+    const localePass =
+      selectedDataLocale === "all" ? true : entry.locale === selectedDataLocale;
+    const pageTypePass =
+      !pageType || pageType === "all" ? true : entry.pageType === pageType;
+    return exchangePass && localePass && pageTypePass;
+  });
 
   const statsApiHref = buildApiHref("/api/stats/seo", {
     locale: selectedDataLocale === "all" ? undefined : selectedDataLocale,
@@ -704,6 +719,19 @@ export function SeoConsole({
           }${statusCards.gscSync.note ? ` · ${statusCards.gscSync.note}` : ""}`}
         />
         <StatusCard
+          title="GSC 焦点页首个命中观察"
+          status={statusCards.focusPageRowMonitor.label}
+          description="持续观察 12 个 en 焦点页何时第一次进入 Search Console page rows，一旦命中会自动写入 admin alert 并触发 Telegram 提醒。"
+          href={statusCards.focusPageRowMonitor.firstSeenUrl}
+          meta={`${formatNumber(statusCards.focusPageRowMonitor.trackedCount)} tracked · ${formatNumber(
+            statusCards.focusPageRowMonitor.seenCount
+          )} seen · ${formatNumber(statusCards.focusPageRowMonitor.pendingCount)} 待命中 · 最近检查 ${
+            statusCards.focusPageRowMonitor.lastCheckedAt
+              ? formatDate(statusCards.focusPageRowMonitor.lastCheckedAt)
+              : "暂无"
+          } · 观察 ${formatObservationDays(statusCards.focusPageRowMonitor.observationDays)}`}
+        />
+        <StatusCard
           title="最近一次 Partner Sync"
           status={statusCards.partnerSync.label}
           description="用于确认真实 registration / commission 是否开始从 partner source 回流。"
@@ -752,6 +780,40 @@ export function SeoConsole({
       </div>
 
       <div className="mt-8 grid gap-4 xl:grid-cols-4">
+        <SummaryList
+          title="首个命中观察卡"
+          description="不用每天查 API，直接看这 12 个焦点页目前的观察状态。"
+          items={[
+            {
+              label: "Tracked pages",
+              value: formatNumber(focusPageRowMonitor.trackedCount),
+            },
+            {
+              label: "已命中",
+              value: formatNumber(focusPageRowMonitor.seenCount),
+            },
+            {
+              label: "待命中",
+              value: formatNumber(focusPageRowMonitor.pendingCount),
+            },
+            {
+              label: "最近检查",
+              value: focusPageRowMonitor.lastCheckedAt
+                ? formatDate(focusPageRowMonitor.lastCheckedAt)
+                : "暂无",
+            },
+            {
+              label: "观察时长",
+              value: formatObservationDays(focusPageRowMonitor.observationDays),
+            },
+            {
+              label: "首个命中",
+              value: focusPageRowMonitor.firstSeenAt
+                ? formatDate(focusPageRowMonitor.firstSeenAt)
+                : "尚未命中",
+            },
+          ]}
+        />
         <SummaryList
           title="7 家交易所真实度分布"
           description="按 partner source 的当前接入情况看各交易所处于真实、估算、模拟还是未接通。"
@@ -860,6 +922,107 @@ export function SeoConsole({
             { label: "Brave 命中", value: formatNumber(statusCards.competitorGap.providerHits.brave) },
           ]}
         />
+      </div>
+
+      <div className="mt-8 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>12 个焦点页监控状态</CardTitle>
+              <Badge variant="outline">
+                {formatNumber(focusPageRowMonitor.trackedCount)} tracked / {formatNumber(focusPageRowMonitor.seenCount)} seen
+              </Badge>
+            </div>
+            <CardDescription>
+              这里直接挂出被 GSC page-row monitor 追踪的焦点页状态。默认监控 en × 3 家交易所 × 4 个高意图页型。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {filteredFocusPageMonitorEntries.length > 0 ? (
+              filteredFocusPageMonitorEntries.map((entry) => (
+                <a
+                  key={entry.key}
+                  href={entry.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-2xl border border-border/60 p-4 transition-colors hover:border-brand/30 hover:bg-muted/20"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="secondary">{entry.exchangeSlug}</Badge>
+                        <Badge variant="outline">{getUnifiedSeoPageLabels(labelsLocale, entry.pageType).short}</Badge>
+                        <Badge variant={entry.seenInPageRows ? "default" : "outline"}>
+                          {entry.seenInPageRows ? "已命中" : "观察中"}
+                        </Badge>
+                      </div>
+                      <p className="mt-3 text-sm font-semibold">{entry.url.replace(SITE_URL, "")}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        最近检查：{entry.lastCheckedAt ? formatDate(entry.lastCheckedAt) : "暂无"} · first seen：{entry.firstSeenAt ? formatDate(entry.firstSeenAt) : "尚未命中"}
+                      </p>
+                    </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      <p>impressions {formatNumber(entry.latestImpressions ?? 0)}</p>
+                      <p>clicks {formatNumber(entry.latestClicks ?? 0)}</p>
+                      <p>
+                        position {typeof entry.latestPosition === "number" ? entry.latestPosition.toFixed(2) : "n/a"}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-sm text-muted-foreground">
+                当前筛选条件下暂无焦点页监控记录。
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Discovery Signal 强化说明</CardTitle>
+              <Badge variant="outline">focus-first</Badge>
+            </div>
+            <CardDescription>
+              这一轮把首页、Exchanges hub、交易所详情页、feed 和 focus/fresh sitemap 全部更明确地偏向这 12 个焦点页。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {[
+              {
+                label: "首页 Hero 次推荐",
+                value: "优先推 official-site / referral-code，集中把 3 家交易所的高意图入口放到首页。",
+              },
+              {
+                label: "首页高意图问题簇",
+                value: "按 4 个高意图页型拆槽，每个槽优先展示 3 家焦点交易所对应页。",
+              },
+              {
+                label: "Exchanges Hub",
+                value: "英语 Hub 推荐位现在优先覆盖全部 12 个 tracked pages，而不是只放 9 个。",
+              },
+              {
+                label: "交易所详情页",
+                value: "每个焦点交易所详情页的 featured guides 明确锁定 4 个高意图页型。",
+              },
+              {
+                label: "focus / fresh sitemap",
+                value: "这 12 页现在会被稳定保留在 focus-sitemap 和 fresh-7d-sitemap 里，避免被 brand-only 信号稀释。",
+              },
+              {
+                label: "feed.xml",
+                value: "feed 前排优先输出这 12 个 tracked pages，持续向 Google 提供新鲜发现信号。",
+              },
+            ].map((item) => (
+              <div key={item.label} className="rounded-2xl border border-border/60 p-4">
+                <p className="text-sm font-semibold">{item.label}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{item.value}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="mt-8 grid gap-4 xl:grid-cols-[1.2fr_1fr]">

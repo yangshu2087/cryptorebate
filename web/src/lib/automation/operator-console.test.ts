@@ -4,6 +4,7 @@ import {
   buildCompetitorGapDominantDomains,
   buildCompetitorGapProviderHits,
   buildDiscoveryLaneSummary,
+  buildGscFocusPageRowMonitorSummary,
   buildMonetizationLaneSummary,
 } from "./operator-console";
 import { buildAutomationState } from "./engine";
@@ -67,11 +68,15 @@ describe("operator console competitor-gap SERP helpers", () => {
     const state = buildAutomationState();
     const discovery = buildDiscoveryLaneSummary(state);
     const monetization = buildMonetizationLaneSummary(state);
+    const focusMonitor = buildGscFocusPageRowMonitorSummary(state);
 
     expect(discovery.focusPagesPublished).toBeGreaterThan(0);
     expect(discovery.focusPagesSurfaced).toBeGreaterThan(0);
     expect(discovery.gscRowsFetched).toBeGreaterThanOrEqual(0);
     expect(monetization.affiliateClicks).toBe(state.attribution.clicks);
     expect(monetization.realCoverageRate).toBe(state.attribution.realCoverageRate);
+    expect(focusMonitor.trackedCount).toBe(12);
+    expect(focusMonitor.pendingCount).toBeGreaterThanOrEqual(0);
+    expect(focusMonitor.entries).toHaveLength(12);
   });
 });

@@ -15,6 +15,7 @@ import {
   isFocusLocale,
   isFocusPageType,
 } from "@/lib/automation/focus";
+import { getGscFocusPageMonitorTargets } from "@/lib/automation/gsc-focus-page-monitor";
 import {
   deriveCtaLiveAuditAlert,
   getCtaLiveAuditStatus,
@@ -26,6 +27,7 @@ import type {
   CompetitorGapSerpWinnersArtifact,
   CompetitorGapSummary,
   DistributionJob,
+  GscFocusPageRowMonitorEntry,
 } from "@/lib/automation/types";
 
 function toStatusLabel(status?: string | null) {
@@ -162,6 +164,20 @@ export type MonetizationLaneSummary = {
   realCoverageRate: number;
 };
 
+export type GscFocusPageRowMonitorSummary = {
+  status: "tracking" | "hit" | "idle";
+  label: string;
+  trackedCount: number;
+  seenCount: number;
+  pendingCount: number;
+  lastCheckedAt: string;
+  monitoringStartedAt: string;
+  observationDays: number;
+  firstSeenAt: string | null;
+  firstSeenUrl: string | null;
+  entries: GscFocusPageRowMonitorEntry[];
+};
+
 function isWithinDays(timestamp: string | undefined, days: number) {
   if (!timestamp) return false;
   const ageMs = Date.now() - new Date(timestamp).getTime();
@@ -234,6 +250,78 @@ export function buildMonetizationLaneSummary(
   };
 }
 
+export function buildGscFocusPageRowMonitorSummary(
+  state: AutomationState
+): GscFocusPageRowMonitorSummary {
+  const fallbackEntries = getGscFocusPageMonitorTargets().map(
+    (target): GscFocusPageRowMonitorEntry => ({
+      key: target.key,
+      locale: target.locale,
+      exchangeSlug: target.exchangeSlug,
+      pageType: target.pageType,
+      routePath: target.routePath,
+      url: target.url,
+      seenInPageRows: false,
+      lastCheckedAt: "",
+    })
+  );
+  const previousEntries = state.externalSources.gsc.focusPageRows ?? [];
+  const previousByKey = new Map(
+    previousEntries.map((entry) => [entry.key, entry] as const)
+  );
+  const entries = fallbackEntries.map((fallback) => previousByKey.get(fallback.key) ?? fallback);
+  const seenEntries = entries.filter((entry) => entry.seenInPageRows);
+  const trackedCount = entries.length;
+  const seenCount = seenEntries.length;
+  const pendingCount = Math.max(0, trackedCount - seenCount);
+  const lastCheckedAt =
+    entries
+      .map((entry) => entry.lastCheckedAt)
+      .filter(Boolean)
+      .sort()
+      .at(-1) ?? "";
+  const firstSeenEntry =
+    [...seenEntries]
+      .filter((entry) => entry.firstSeenAt)
+      .sort((a, b) =>
+        new Date(a.firstSeenAt ?? a.lastCheckedAt).getTime() -
+        new Date(b.firstSeenAt ?? b.lastCheckedAt).getTime()
+      )
+      .at(0) ?? null;
+  const monitoringStartedAt =
+    entries
+      .map((entry) => entry.firstSeenAt ?? entry.lastCheckedAt)
+      .filter(Boolean)
+      .sort()
+      .at(0) ?? "";
+  const observationDays = monitoringStartedAt
+    ? Math.max(
+        0,
+        (Date.now() - new Date(monitoringStartedAt).getTime()) /
+          (24 * 60 * 60 * 1000)
+      )
+    : 0;
+
+  return {
+    status: seenCount > 0 ? "hit" : trackedCount > 0 ? "tracking" : "idle",
+    label:
+      seenCount > 0
+        ? `已命中 ${seenCount}/${trackedCount}`
+        : trackedCount > 0
+          ? "待首个命中"
+          : "未开始监控",
+    trackedCount,
+    seenCount,
+    pendingCount,
+    lastCheckedAt,
+    monitoringStartedAt,
+    observationDays,
+    firstSeenAt: firstSeenEntry?.firstSeenAt ?? null,
+    firstSeenUrl: firstSeenEntry?.url ?? null,
+    entries,
+  };
+}
+
 export type SeoDashboardData = {
   state: AutomationState;
   metrics: Record<string, unknown>;
@@ -273,6 +361,18 @@ export type SeoDashboardData = {
         sitemapSubmitStatus: string;
         sitemapsSubmitted: string[];
         lastSitemapSubmitAt: string;
+      };
+      focusPageRowMonitor: {
+        status: string;
+        label: string;
+        trackedCount: number;
+        seenCount: number;
+        pendingCount: number;
+        lastCheckedAt: string;
+        monitoringStartedAt: string;
+        observationDays: number;
+        firstSeenAt: string | null;
+        firstSeenUrl: string | null;
       };
       partnerSync: {
         status: string;
@@ -316,6 +416,7 @@ export type SeoDashboardData = {
     };
     discovery: DiscoveryLaneSummary;
     monetization: MonetizationLaneSummary;
+    focusPageRowMonitor: GscFocusPageRowMonitorSummary;
     sevenDayChanges: {
       clicks: number;
       registrations: number;
@@ -355,6 +456,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const competitorGapProviderHits = buildCompetitorGapProviderHits(competitorGapSerpWinners);
   const discovery = buildDiscoveryLaneSummary(state);
   const monetization = buildMonetizationLaneSummary(state);
+  const focusPageRowMonitor = buildGscFocusPageRowMonitorSummary(state);
   const alerts = [
     ...(ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []),
     ...(dbStats?.state.alerts ?? getAutomationAlerts(locale ?? undefined, 10)),
@@ -436,6 +538,18 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           sitemapsSubmitted: state.externalSources.gsc.sitemapsSubmitted ?? [],
           lastSitemapSubmitAt: state.externalSources.gsc.lastSitemapSubmitAt ?? "",
         },
+        focusPageRowMonitor: {
+          status: focusPageRowMonitor.status,
+          label: focusPageRowMonitor.label,
+          trackedCount: focusPageRowMonitor.trackedCount,
+          seenCount: focusPageRowMonitor.seenCount,
+          pendingCount: focusPageRowMonitor.pendingCount,
+          lastCheckedAt: focusPageRowMonitor.lastCheckedAt,
+          monitoringStartedAt: focusPageRowMonitor.monitoringStartedAt,
+          observationDays: focusPageRowMonitor.observationDays,
+          firstSeenAt: focusPageRowMonitor.firstSeenAt,
+          firstSeenUrl: focusPageRowMonitor.firstSeenUrl,
+        },
         partnerSync: {
           status:
             partnerFailures > 0
@@ -511,6 +625,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       },
       discovery,
       monetization,
+      focusPageRowMonitor,
       sevenDayChanges: {
         clicks: state.attribution.sevenDayClicks,
         registrations: state.attribution.sevenDayRegistrations,

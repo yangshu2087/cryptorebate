@@ -31,6 +31,10 @@ describe("internal link refresh manifest", () => {
     const exchangeGuides = getExchangeOpportunityGuides("en", "binance", 4, 4);
 
     expect(topEntries.length).toBeGreaterThan(0);
+    expect(topEntries).toHaveLength(6);
+    expect(topEntries.every((entry) => ["official-site", "referral-code"].includes(entry.pageType))).toBe(
+      true
+    );
     expect(new Set(topEntries.map((entry) => entry.exchange.slug)).size).toBeGreaterThan(1);
     expect(questionGroups.length).toBeGreaterThan(0);
     expect(questionGroups[0]?.guides.length).toBeGreaterThan(0);
@@ -64,11 +68,23 @@ describe("internal link refresh manifest", () => {
     const enHomepageSlot = state.internalLinks.slots.homepageHeroSecondary.find(
       (slot) => slot.locale === "en"
     );
+    const enExchangeHubSlot = state.internalLinks.slots.exchangeHubFocus.find(
+      (slot) => slot.locale === "en"
+    );
     const binanceDetailSlot = state.internalLinks.slots.exchangeDetailFocus.find(
       (slot) => slot.locale === "en" && slot.exchangeSlug === "binance"
     );
 
     expect(enHomepageSlot?.guides.length).toBeGreaterThan(0);
+    expect(enHomepageSlot?.guides.every((guide) =>
+      ["official-site", "referral-code"].includes(guide.pageType)
+    )).toBe(true);
+    expect(enExchangeHubSlot?.guides).toHaveLength(12);
+    expect(
+      enExchangeHubSlot?.guides.some(
+        (guide) => guide.exchangeSlug === "okx" && guide.pageType === "fees-rebate"
+      )
+    ).toBe(true);
     expect(
       binanceDetailSlot?.guides.every((guide) =>
         ["official-site", "referral-code", "signup-kyc", "fees-rebate"].includes(

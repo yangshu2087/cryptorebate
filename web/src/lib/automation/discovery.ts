@@ -4,6 +4,7 @@ import { buildBrandPages, type BrandSeoPage } from "@/lib/automation/brand-pages
 import { getExchangeSeoEntry, isExchangeSeoPageType } from "@/data/exchange-seo";
 import { SITE_DESCRIPTION_EN, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { getInternalLinkSlots } from "@/lib/automation/internal-links";
+import { getGscFocusPageMonitorTargets } from "@/lib/automation/gsc-focus-page-monitor";
 import type {
   AutomationInternalLinkTarget,
   AutomationSeoPage,
@@ -162,6 +163,68 @@ function sortDiscoveryPages(a: DiscoveryPageRecord, b: DiscoveryPageRecord) {
   return a.url.localeCompare(b.url);
 }
 
+const TRACKED_DISCOVERY_RANK = new Map<string, number>(
+  getGscFocusPageMonitorTargets().map((target, index) => [
+    `${target.locale}:${target.exchangeSlug}:${target.pageType}`,
+    index,
+  ] as const)
+);
+
+function getTrackedDiscoveryRank(page: DiscoveryPageRecord) {
+  if (!page.exchangeSlug || !page.pageType) return undefined;
+  return TRACKED_DISCOVERY_RANK.get(
+    `${page.locale}:${page.exchangeSlug}:${page.pageType}` as string
+  );
+}
+
+function sortFocusDiscoveryPages(a: DiscoveryPageRecord, b: DiscoveryPageRecord) {
+  const aRank = getTrackedDiscoveryRank(a);
+  const bRank = getTrackedDiscoveryRank(b);
+  if (aRank != null || bRank != null) {
+    if (aRank == null) return 1;
+    if (bRank == null) return -1;
+    if (aRank !== bRank) return aRank - bRank;
+  }
+
+  return sortDiscoveryPages(a, b);
+}
+
+function buildTrackedFocusDiscoveryPages(
+  state: AutomationState,
+  refreshedAt: string
+) {
+  const dynamicPages = new Map(
+    state.pages
+      .filter((page) => page.stage === "published")
+      .map((page) => [`${page.locale}:${page.exchangeSlug}:${page.pageType}`, page] as const)
+  );
+
+  return getGscFocusPageMonitorTargets()
+    .map((target) => {
+      const dynamicPage = dynamicPages.get(
+        `${target.locale}:${target.exchangeSlug}:${target.pageType}`
+      );
+      if (dynamicPage) {
+        return toExchangeDiscoveryPageWithOverride(dynamicPage, refreshedAt);
+      }
+
+      return toBaseExchangeDiscoveryPage(
+        {
+          locale: target.locale,
+          exchangeSlug: target.exchangeSlug,
+          pageType: target.pageType,
+          href: target.routePath,
+          title: target.key,
+          primaryQuery: `${target.exchangeSlug} ${target.pageType}`.replace(/-/g, " "),
+          source: "base",
+          score: 0,
+        },
+        refreshedAt
+      );
+    })
+    .filter((page): page is DiscoveryPageRecord => Boolean(page));
+}
+
 export async function getFocusDiscoveryPages(limit = 36) {
   const state = await getDiscoveryState();
   const slots = getInternalLinkSlots(state.internalLinks);
@@ -184,7 +247,7 @@ export async function getFocusDiscoveryPages(limit = 36) {
       .map((page) => [`${page.locale}:${page.exchangeSlug}:${page.pageType}`, page] as const)
   );
 
-  return [...uniqueTargets.values()]
+  const slotPages = [...uniqueTargets.values()]
     .map((target) => {
       const dynamicPage = dynamicPages.get(
         `${target.locale}:${target.exchangeSlug}:${target.pageType}`
@@ -195,9 +258,17 @@ export async function getFocusDiscoveryPages(limit = 36) {
 
       return toBaseExchangeDiscoveryPage(target, refreshedAt);
     })
-    .filter((page): page is DiscoveryPageRecord => Boolean(page))
-    .sort(sortDiscoveryPages)
-    .slice(0, limit);
+    .filter((page): page is DiscoveryPageRecord => Boolean(page));
+
+  const uniquePages = new Map<string, DiscoveryPageRecord>();
+  for (const page of [
+    ...buildTrackedFocusDiscoveryPages(state, refreshedAt),
+    ...slotPages,
+  ]) {
+    uniquePages.set(page.url, page);
+  }
+
+  return [...uniquePages.values()].sort(sortFocusDiscoveryPages).slice(0, limit);
 }
 
 export async function getFreshDiscoveryPages(days = 7) {

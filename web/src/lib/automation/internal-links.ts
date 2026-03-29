@@ -14,6 +14,7 @@ import {
   isFocusPageType,
   type OpportunityFocusLane,
 } from "./focus";
+import { getGscFocusPageMonitorTargets } from "./gsc-focus-page-monitor";
 import type {
   AutomationInternalLinkGroup,
   AutomationInternalLinkManifest,
@@ -51,8 +52,41 @@ type Candidate = {
   focusLane: OpportunityFocusLane;
 };
 
+const GSC_FOCUS_TARGET_RANK = new Map<string, number>(
+  getGscFocusPageMonitorTargets().map((target, index) => [
+    `${target.locale}:${target.exchangeSlug}:${target.pageType}`,
+    index,
+  ] as const)
+);
+
 function getPageTypePriority(pageType: string) {
   return PAGE_TYPE_PRIORITY[pageType] ?? 70;
+}
+
+function getTrackedTargetRank(
+  locale: string,
+  exchangeSlug: string,
+  pageType: string
+) {
+  return GSC_FOCUS_TARGET_RANK.get(
+    `${locale}:${exchangeSlug}:${pageType}` as string
+  );
+}
+
+function compareTrackedPriority(
+  a: { locale: string; exchangeSlug: string; pageType: string; score: number },
+  b: { locale: string; exchangeSlug: string; pageType: string; score: number }
+) {
+  const aRank = getTrackedTargetRank(a.locale, a.exchangeSlug, a.pageType);
+  const bRank = getTrackedTargetRank(b.locale, b.exchangeSlug, b.pageType);
+
+  if (aRank != null || bRank != null) {
+    if (aRank == null) return 1;
+    if (bRank == null) return -1;
+    if (aRank !== bRank) return aRank - bRank;
+  }
+
+  return b.score - a.score;
 }
 
 function getRoiMap(pageRoiDaily: RoiEntry[]) {
@@ -221,7 +255,7 @@ function buildExchangeGroup(
     });
 
   const guides = uniqueByPageType([...baseCandidates, ...dynamicCandidates])
-    .sort((a, b) => b.score - a.score)
+    .sort(compareTrackedPriority)
     .slice(0, 8)
     .map(toTarget);
 
@@ -328,7 +362,7 @@ export function buildInternalLinkManifest(
         .filter((group) => group.locale === locale)
         .flatMap((group) => group.guides)
         .filter((guide) => guide.pageType === pageType)
-        .sort((a, b) => b.score - a.score)
+        .sort(compareTrackedPriority)
         .slice(0, 3),
     }))
   ).filter((slot) => slot.guides.length > 0);
@@ -337,8 +371,8 @@ export function buildInternalLinkManifest(
     locale,
     guides: pickGuidesRoundRobin(
       focusGroups.filter((group) => group.locale === locale),
-      9,
-      3
+      locale === "en" ? 12 : 9,
+      locale === "en" ? 4 : 3
     ),
   })).filter((slot) => slot.guides.length > 0);
 
