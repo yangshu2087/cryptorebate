@@ -21,6 +21,7 @@ function isAuthorized(secret?: string | null) {
 function buildPaths(body: RevalidateBody) {
   const paths = new Set<string>([
     "/sitemap.xml",
+    "/focus-sitemap.xml",
     "/brand-sitemap.xml",
     "/fresh-7d-sitemap.xml",
     "/feed.xml",

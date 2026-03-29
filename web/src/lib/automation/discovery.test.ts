@@ -12,6 +12,7 @@ describe("discovery outputs", () => {
   it("returns the discovery asset URLs for sitemap submission", () => {
     expect(getDiscoveryAssetUrls("https://cryptorebate.app")).toEqual([
       "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/focus-sitemap.xml",
       "https://cryptorebate.app/brand-sitemap.xml",
       "https://cryptorebate.app/fresh-7d-sitemap.xml",
       "https://cryptorebate.app/feed.xml",
@@ -21,6 +22,7 @@ describe("discovery outputs", () => {
   it("normalizes relative or empty site URLs to absolute discovery assets", () => {
     expect(getDiscoveryAssetUrls("")).toEqual([
       "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/focus-sitemap.xml",
       "https://cryptorebate.app/brand-sitemap.xml",
       "https://cryptorebate.app/fresh-7d-sitemap.xml",
       "https://cryptorebate.app/feed.xml",
@@ -28,6 +30,7 @@ describe("discovery outputs", () => {
 
     expect(getDiscoveryAssetUrls("/")).toEqual([
       "https://cryptorebate.app/sitemap.xml",
+      "https://cryptorebate.app/focus-sitemap.xml",
       "https://cryptorebate.app/brand-sitemap.xml",
       "https://cryptorebate.app/fresh-7d-sitemap.xml",
       "https://cryptorebate.app/feed.xml",
@@ -42,6 +45,11 @@ describe("discovery outputs", () => {
     expect(freshEntries.length).toBeGreaterThan(0);
     expect(brandEntries[0]?.url).toContain("/brand/");
     expect(freshEntries[0]?.url).toContain("cryptorebate.app/");
+    expect(
+      freshEntries.some((entry) =>
+        entry.url.includes("/en/exchanges/binance/referral-code")
+      )
+    ).toBe(true);
   });
 
   it("builds valid XML documents for sitemap and RSS feed", async () => {
@@ -58,5 +66,6 @@ describe("discovery outputs", () => {
     const rssXml = buildRssXml(items);
     expect(rssXml).toContain("<rss");
     expect(rssXml).toContain("<channel>");
+    expect(items.some((item) => item.url.includes("/exchanges/"))).toBe(true);
   });
 });

@@ -1,8 +1,14 @@
 import { getLatestAutomationSnapshotFromDb } from "@/lib/automation/db-store";
 import { getAutomationState } from "@/lib/automation/catalog";
 import { buildBrandPages, type BrandSeoPage } from "@/lib/automation/brand-pages";
+import { getExchangeSeoEntry, isExchangeSeoPageType } from "@/data/exchange-seo";
 import { SITE_DESCRIPTION_EN, SITE_NAME, SITE_URL } from "@/lib/constants";
-import type { AutomationSeoPage, AutomationState } from "@/lib/automation/types";
+import { getInternalLinkSlots } from "@/lib/automation/internal-links";
+import type {
+  AutomationInternalLinkTarget,
+  AutomationSeoPage,
+  AutomationState,
+} from "@/lib/automation/types";
 
 export type DiscoveryUrlEntry = {
   url: string;
@@ -31,6 +37,7 @@ type DiscoveryPageRecord = {
 
 export const DISCOVERY_SITEMAP_PATHS = [
   "/sitemap.xml",
+  "/focus-sitemap.xml",
   "/brand-sitemap.xml",
   "/fresh-7d-sitemap.xml",
 ] as const;
@@ -86,6 +93,41 @@ function toExchangeDiscoveryPage(page: AutomationSeoPage): DiscoveryPageRecord {
   };
 }
 
+function toExchangeDiscoveryPageWithOverride(
+  page: AutomationSeoPage,
+  lastModified?: string
+): DiscoveryPageRecord {
+  return {
+    ...toExchangeDiscoveryPage(page),
+    lastModified: normaliseDate(lastModified ?? page.publishedAt ?? page.lastReviewed),
+  };
+}
+
+function toBaseExchangeDiscoveryPage(
+  target: AutomationInternalLinkTarget,
+  lastModified?: string
+): DiscoveryPageRecord | null {
+  if (!isExchangeSeoPageType(target.pageType)) {
+    return null;
+  }
+
+  const entry = getExchangeSeoEntry(target.locale, target.exchangeSlug, target.pageType);
+  if (!entry) {
+    return null;
+  }
+
+  return {
+    kind: "exchange",
+    title: entry.metadata.title,
+    description: entry.metadata.description,
+    url: toAbsoluteUrl(`/${target.locale}/exchanges/${target.exchangeSlug}/${target.pageType}`),
+    locale: target.locale,
+    exchangeSlug: target.exchangeSlug,
+    pageType: target.pageType,
+    lastModified: normaliseDate(lastModified ?? entry.lastReviewed),
+  };
+}
+
 function toBrandDiscoveryPage(page: BrandSeoPage): DiscoveryPageRecord {
   return {
     kind: "brand",
@@ -110,6 +152,54 @@ export async function getBrandDiscoveryPages() {
   return buildBrandPages(state).map(toBrandDiscoveryPage);
 }
 
+function sortDiscoveryPages(a: DiscoveryPageRecord, b: DiscoveryPageRecord) {
+  if (a.kind !== b.kind) {
+    return a.kind === "exchange" ? -1 : 1;
+  }
+  const lastModifiedDelta =
+    new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
+  if (lastModifiedDelta !== 0) return lastModifiedDelta;
+  return a.url.localeCompare(b.url);
+}
+
+export async function getFocusDiscoveryPages(limit = 36) {
+  const state = await getDiscoveryState();
+  const slots = getInternalLinkSlots(state.internalLinks);
+  const refreshedAt = normaliseDate(state.internalLinks.refreshedAt ?? state.generatedAt);
+  const targets = [
+    ...slots.homepageHeroSecondary.flatMap((slot) => slot.guides),
+    ...slots.homepageQuestionClusters.flatMap((slot) => slot.guides),
+    ...slots.exchangeHubFocus.flatMap((slot) => slot.guides),
+    ...slots.exchangeDetailFocus.flatMap((slot) => slot.guides),
+  ];
+
+  const uniqueTargets = new Map<string, AutomationInternalLinkTarget>();
+  for (const target of targets) {
+    uniqueTargets.set(`${target.locale}:${target.exchangeSlug}:${target.pageType}`, target);
+  }
+
+  const dynamicPages = new Map(
+    state.pages
+      .filter((page) => page.stage === "published")
+      .map((page) => [`${page.locale}:${page.exchangeSlug}:${page.pageType}`, page] as const)
+  );
+
+  return [...uniqueTargets.values()]
+    .map((target) => {
+      const dynamicPage = dynamicPages.get(
+        `${target.locale}:${target.exchangeSlug}:${target.pageType}`
+      );
+      if (dynamicPage) {
+        return toExchangeDiscoveryPageWithOverride(dynamicPage, refreshedAt);
+      }
+
+      return toBaseExchangeDiscoveryPage(target, refreshedAt);
+    })
+    .filter((page): page is DiscoveryPageRecord => Boolean(page))
+    .sort(sortDiscoveryPages)
+    .slice(0, limit);
+}
+
 export async function getFreshDiscoveryPages(days = 7) {
   const state = await getDiscoveryState();
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
@@ -120,20 +210,34 @@ export async function getFreshDiscoveryPages(days = 7) {
   const brandPages = buildBrandPages(state)
     .map(toBrandDiscoveryPage)
     .filter((page) => new Date(page.lastModified).getTime() >= cutoff);
+  const focusPages = (await getFocusDiscoveryPages()).filter(
+    (page) => new Date(page.lastModified).getTime() >= cutoff
+  );
 
   const unique = new Map<string, DiscoveryPageRecord>();
-  for (const page of [...pages, ...brandPages]) {
+  for (const page of [...focusPages, ...pages, ...brandPages]) {
     unique.set(page.url, page);
   }
 
-  return [...unique.values()].sort(
-    (a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()
-  );
+  return [...unique.values()].sort(sortDiscoveryPages);
 }
 
 export async function getFeedItems(limit = 40): Promise<FeedItem[]> {
-  const freshPages = await getFreshDiscoveryPages(7);
-  return freshPages.slice(0, limit).map((page) => ({
+  const [focusPages, freshPages] = await Promise.all([
+    getFocusDiscoveryPages(limit),
+    getFreshDiscoveryPages(7),
+  ]);
+  const orderedPages: DiscoveryPageRecord[] = [];
+  const seen = new Set<string>();
+
+  for (const page of [...focusPages, ...freshPages]) {
+    if (seen.has(page.url)) continue;
+    seen.add(page.url);
+    orderedPages.push(page);
+    if (orderedPages.length >= limit) break;
+  }
+
+  return orderedPages.map((page) => ({
     title: page.title,
     description: page.description,
     url: page.url,
@@ -174,6 +278,14 @@ export function buildRssXml(items: FeedItem[]) {
 
 export async function getBrandSitemapEntries(): Promise<DiscoveryUrlEntry[]> {
   const pages = await getBrandDiscoveryPages();
+  return pages.map((page) => ({
+    url: page.url,
+    lastModified: page.lastModified,
+  }));
+}
+
+export async function getFocusSitemapEntries(): Promise<DiscoveryUrlEntry[]> {
+  const pages = await getFocusDiscoveryPages();
   return pages.map((page) => ({
     url: page.url,
     lastModified: page.lastModified,
