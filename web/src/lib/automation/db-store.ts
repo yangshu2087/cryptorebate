@@ -16,7 +16,9 @@ import {
 } from "./focus";
 import {
   buildGscFocusPageRowFirstSeenAlert,
+  buildGscFocusPageRowDailyTelegramSummary,
   buildGscFocusPageRowTelegramReminder,
+  summarizeGscFocusPageRowMonitor,
 } from "./gsc-focus-page-monitor";
 import { getInternalLinkDistributionCandidates } from "./internal-links";
 import type {
@@ -1230,6 +1232,40 @@ export async function recordGscFocusPageRowFirstSeenEventsFromDb(
         alertsRecorded: entries.length,
         jobs: jobs.length,
       };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    }
+  });
+}
+
+export async function enqueueGscFocusPageRowDailySummaryFromDb(
+  entries: GscFocusPageRowMonitorEntry[],
+  reportDate: string
+) {
+  if (!isAutomationDbEnabled()) {
+    return { enqueued: 0 };
+  }
+
+  return withAutomationDb(async (client) => {
+    await client.query("BEGIN");
+    try {
+      const summary = summarizeGscFocusPageRowMonitor(entries);
+      const dailyReport = buildGscFocusPageRowDailyTelegramSummary(
+        summary,
+        reportDate
+      );
+      await upsertDistributionJobRecord(client, {
+        channel: "telegram",
+        locale: dailyReport.locale,
+        exchangeSlug: null,
+        pageType: null,
+        topic: null,
+        routePath: dailyReport.routePath,
+        payload: dailyReport.payload,
+      });
+      await client.query("COMMIT");
+      return { enqueued: 1 };
     } catch (error) {
       await client.query("ROLLBACK");
       throw error;

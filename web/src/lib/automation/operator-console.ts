@@ -16,10 +16,8 @@ import {
   isFocusPageType,
 } from "@/lib/automation/focus";
 import { getGscFocusPageMonitorTargets } from "@/lib/automation/gsc-focus-page-monitor";
-import {
-  deriveCtaLiveAuditAlert,
-  getCtaLiveAuditStatus,
-} from "@/lib/automation/github-actions";
+import { summarizeGscFocusPageRowMonitor } from "@/lib/automation/gsc-focus-page-monitor";
+import { deriveCtaLiveAuditAlert, getCtaLiveAuditStatus } from "@/lib/automation/github-actions";
 import type {
   AutomationAlert,
   AutomationState,
@@ -164,19 +162,9 @@ export type MonetizationLaneSummary = {
   realCoverageRate: number;
 };
 
-export type GscFocusPageRowMonitorSummary = {
-  status: "tracking" | "hit" | "idle";
-  label: string;
-  trackedCount: number;
-  seenCount: number;
-  pendingCount: number;
-  lastCheckedAt: string;
-  monitoringStartedAt: string;
-  observationDays: number;
-  firstSeenAt: string | null;
-  firstSeenUrl: string | null;
-  entries: GscFocusPageRowMonitorEntry[];
-};
+export type GscFocusPageRowMonitorSummary = ReturnType<
+  typeof buildGscFocusPageRowMonitorSummary
+>;
 
 function isWithinDays(timestamp: string | undefined, days: number) {
   if (!timestamp) return false;
@@ -252,73 +240,35 @@ export function buildMonetizationLaneSummary(
 
 export function buildGscFocusPageRowMonitorSummary(
   state: AutomationState
-): GscFocusPageRowMonitorSummary {
-  const fallbackEntries = getGscFocusPageMonitorTargets().map(
-    (target): GscFocusPageRowMonitorEntry => ({
-      key: target.key,
-      locale: target.locale,
-      exchangeSlug: target.exchangeSlug,
-      pageType: target.pageType,
-      routePath: target.routePath,
-      url: target.url,
-      seenInPageRows: false,
-      lastCheckedAt: "",
-    })
-  );
-  const previousEntries = state.externalSources.gsc.focusPageRows ?? [];
-  const previousByKey = new Map(
-    previousEntries.map((entry) => [entry.key, entry] as const)
-  );
-  const entries = fallbackEntries.map((fallback) => previousByKey.get(fallback.key) ?? fallback);
-  const seenEntries = entries.filter((entry) => entry.seenInPageRows);
-  const trackedCount = entries.length;
-  const seenCount = seenEntries.length;
-  const pendingCount = Math.max(0, trackedCount - seenCount);
-  const lastCheckedAt =
-    entries
-      .map((entry) => entry.lastCheckedAt)
-      .filter(Boolean)
-      .sort()
-      .at(-1) ?? "";
-  const firstSeenEntry =
-    [...seenEntries]
-      .filter((entry) => entry.firstSeenAt)
-      .sort((a, b) =>
-        new Date(a.firstSeenAt ?? a.lastCheckedAt).getTime() -
-        new Date(b.firstSeenAt ?? b.lastCheckedAt).getTime()
-      )
-      .at(0) ?? null;
-  const monitoringStartedAt =
-    entries
-      .map((entry) => entry.firstSeenAt ?? entry.lastCheckedAt)
-      .filter(Boolean)
-      .sort()
-      .at(0) ?? "";
-  const observationDays = monitoringStartedAt
-    ? Math.max(
-        0,
-        (Date.now() - new Date(monitoringStartedAt).getTime()) /
-          (24 * 60 * 60 * 1000)
-      )
-    : 0;
+): {
+  status: "tracking" | "hit" | "idle";
+  label: string;
+  trackedCount: number;
+  seenCount: number;
+  pendingCount: number;
+  lastCheckedAt: string;
+  monitoringStartedAt: string;
+  observationDays: number;
+  firstSeenAt: string | null;
+  firstSeenUrl: string | null;
+  entries: GscFocusPageRowMonitorEntry[];
+} {
+  const summary = summarizeGscFocusPageRowMonitor(state.externalSources.gsc.focusPageRows);
 
   return {
-    status: seenCount > 0 ? "hit" : trackedCount > 0 ? "tracking" : "idle",
+    status:
+      summary.seenCount > 0
+        ? "hit"
+        : summary.trackedCount > 0
+          ? "tracking"
+          : "idle",
     label:
-      seenCount > 0
-        ? `已命中 ${seenCount}/${trackedCount}`
-        : trackedCount > 0
+      summary.seenCount > 0
+        ? `已命中 ${summary.seenCount}/${summary.trackedCount}`
+        : summary.trackedCount > 0
           ? "待首个命中"
           : "未开始监控",
-    trackedCount,
-    seenCount,
-    pendingCount,
-    lastCheckedAt,
-    monitoringStartedAt,
-    observationDays,
-    firstSeenAt: firstSeenEntry?.firstSeenAt ?? null,
-    firstSeenUrl: firstSeenEntry?.url ?? null,
-    entries,
+    ...summary,
   };
 }
 

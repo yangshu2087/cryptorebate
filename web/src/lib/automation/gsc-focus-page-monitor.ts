@@ -26,6 +26,18 @@ export type GscFocusPageMonitorTarget = {
   url: string;
 };
 
+export type GscFocusPageRowMonitorSummary = {
+  trackedCount: number;
+  seenCount: number;
+  pendingCount: number;
+  lastCheckedAt: string;
+  monitoringStartedAt: string;
+  observationDays: number;
+  firstSeenAt: string | null;
+  firstSeenUrl: string | null;
+  entries: GscFocusPageRowMonitorEntry[];
+};
+
 function normaliseUrl(url: string) {
   return new URL(url, SITE_URL).toString().replace(/\/+$/, "");
 }
@@ -104,6 +116,72 @@ export function reconcileGscFocusPageRowMonitor(
   return { entries, newlySeen };
 }
 
+export function summarizeGscFocusPageRowMonitor(
+  entries: GscFocusPageRowMonitorEntry[] | undefined
+): GscFocusPageRowMonitorSummary {
+  const fallbackEntries = getGscFocusPageMonitorTargets().map(
+    (target): GscFocusPageRowMonitorEntry => ({
+      key: target.key,
+      locale: target.locale,
+      exchangeSlug: target.exchangeSlug,
+      pageType: target.pageType,
+      routePath: target.routePath,
+      url: target.url,
+      seenInPageRows: false,
+      lastCheckedAt: "",
+    })
+  );
+  const previousByKey = new Map(
+    (entries ?? []).map((entry) => [entry.key, entry] as const)
+  );
+  const resolvedEntries = fallbackEntries.map(
+    (fallback) => previousByKey.get(fallback.key) ?? fallback
+  );
+  const seenEntries = resolvedEntries.filter((entry) => entry.seenInPageRows);
+  const trackedCount = resolvedEntries.length;
+  const seenCount = seenEntries.length;
+  const pendingCount = Math.max(0, trackedCount - seenCount);
+  const lastCheckedAt =
+    resolvedEntries
+      .map((entry) => entry.lastCheckedAt)
+      .filter(Boolean)
+      .sort()
+      .at(-1) ?? "";
+  const firstSeenEntry =
+    [...seenEntries]
+      .filter((entry) => entry.firstSeenAt)
+      .sort((a, b) =>
+        new Date(a.firstSeenAt ?? a.lastCheckedAt).getTime() -
+        new Date(b.firstSeenAt ?? b.lastCheckedAt).getTime()
+      )
+      .at(0) ?? null;
+  const monitoringStartedAt =
+    resolvedEntries
+      .map((entry) => entry.firstSeenAt ?? entry.lastCheckedAt)
+      .filter(Boolean)
+      .sort()
+      .at(0) ?? "";
+  const observationDays = monitoringStartedAt
+    ? Math.max(
+        0,
+        (Date.now() - new Date(monitoringStartedAt).getTime()) /
+          (24 * 60 * 60 * 1000)
+      )
+    : 0;
+
+  return {
+    trackedCount,
+    seenCount,
+    pendingCount,
+    lastCheckedAt,
+    monitoringStartedAt,
+    observationDays,
+    firstSeenAt: firstSeenEntry?.firstSeenAt ?? null,
+    firstSeenUrl: firstSeenEntry?.url ?? null,
+    entries: resolvedEntries,
+  };
+}
+
 export function buildGscFocusPageRowFirstSeenAlert(
   entry: GscFocusPageRowMonitorEntry
 ): AutomationAlert {
@@ -159,6 +237,39 @@ export function buildGscFocusPageRowTelegramReminder(entry: GscFocusPageRowMonit
     exchangeSlug: entry.exchangeSlug,
     pageType: entry.pageType,
     routePath: `${entry.routePath}#gsc-page-row-first-seen`,
+    payload,
+  };
+}
+
+export function buildGscFocusPageRowDailyTelegramSummary(
+  summary: GscFocusPageRowMonitorSummary,
+  reportDate: string,
+  siteUrl = SITE_URL
+) {
+  const adminUrl = `${siteUrl.replace(/\/+$/, "")}/en/admin/seo#gsc-focus-page-monitor`;
+  const payload: DistributionJobPayload = {
+    title: `GSC 焦点页监控日报 · ${summary.trackedCount} tracked / ${summary.seenCount} seen`,
+    summary: [
+      `${summary.pendingCount} 待命中`,
+      `last checked ${summary.lastCheckedAt || "n/a"}`,
+      summary.firstSeenAt ? `first seen ${summary.firstSeenAt}` : "尚未出现首个命中",
+    ].join(" · "),
+    url: adminUrl,
+    primaryQuery: "gsc focus page-row daily summary",
+    source: "gsc-focus-page-row",
+    sourceLabel: "GSC 焦点页日报",
+    tags: [
+      "gsc-focus-page-monitor",
+      "daily-summary",
+      "search-discovery",
+      `tracked-${summary.trackedCount}`,
+      `seen-${summary.seenCount}`,
+    ],
+  };
+
+  return {
+    locale: "en" as const,
+    routePath: `/admin/seo#gsc-focus-page-monitor-daily-${reportDate}`,
     payload,
   };
 }

@@ -545,6 +545,9 @@ export function SeoConsole({
     partnerFailed: dashboardData.operatorSummary.failureTrend.partnerFailures,
     distributionFailed: dashboardData.operatorSummary.failureTrend.distributionFailures,
   };
+  const firstSeenAlerts = filteredAlerts.filter(
+    (item) => item.type === "gsc_page_row_first_seen"
+  );
   const filteredFocusPageMonitorEntries = focusPageRowMonitor.entries.filter((entry) => {
     const exchangePass =
       selectedExchange === "all" ? true : entry.exchangeSlug === selectedExchange;
@@ -1230,6 +1233,43 @@ export function SeoConsole({
       </div>
 
       <div className="mt-8 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        {firstSeenAlerts.length ? (
+          <Card className="border-destructive/50 bg-destructive/5 xl:col-span-2">
+            <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="mt-1 flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-destructive">
+                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-destructive shadow-[0_0_0_6px_rgba(239,68,68,0.18)]" />
+                  <span className="text-xs font-semibold uppercase tracking-wide">
+                    首个命中提醒
+                  </span>
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-foreground">
+                    已有焦点页首次进入 GSC page rows
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    一旦首个命中出现，这张卡会置顶提醒。当前命中 {formatNumber(firstSeenAlerts.length)} 条，建议立即复核页面抓取、内链与后续 query 曝光变化。
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {firstSeenAlerts.slice(0, 3).map((alert) => (
+                  <a
+                    key={alert.id}
+                    href={alert.href ?? `/${locale}/admin/seo?view=alerts`}
+                    target={alert.href ? "_blank" : undefined}
+                    rel={alert.href ? "noreferrer" : undefined}
+                    className="inline-flex items-center gap-2 rounded-full border border-destructive/30 bg-background px-3 py-2 text-sm font-medium text-destructive transition-colors hover:border-destructive hover:bg-destructive/5"
+                  >
+                    <span className="inline-flex h-2 w-2 rounded-full bg-destructive" />
+                    {alert.scope.exchangeSlug} · {alert.scope.pageType ? getUnifiedSeoPageLabels(labelsLocale, alert.scope.pageType).short : alert.type}
+                  </a>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
         <Card className="border-border/70">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
@@ -1642,18 +1682,41 @@ export function SeoConsole({
             {filteredAlerts.length ? (
               <div className="grid gap-4 lg:grid-cols-2">
                 {filteredAlerts.map((item) => (
-                  <Card key={item.id} className="border-border/70">
+                  <Card
+                    key={item.id}
+                    className={cn(
+                      "border-border/70",
+                      item.type === "gsc_page_row_first_seen" &&
+                        "border-destructive/40 bg-destructive/5 shadow-[0_0_0_1px_rgba(239,68,68,0.12)]"
+                    )}
+                  >
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3">
                           <div className={cn(
                             "mt-0.5 rounded-xl p-2",
-                            item.level === "critical" ? "bg-destructive/10 text-destructive" : item.level === "warning" ? "bg-amber-100 text-amber-700" : "bg-muted text-foreground"
+                            item.type === "gsc_page_row_first_seen"
+                              ? "bg-destructive/10 text-destructive"
+                              : item.level === "critical"
+                                ? "bg-destructive/10 text-destructive"
+                                : item.level === "warning"
+                                  ? "bg-amber-100 text-amber-700"
+                                  : "bg-muted text-foreground"
                           )}>
-                            <AlertTriangle className="h-4 w-4" />
+                            {item.type === "gsc_page_row_first_seen" ? (
+                              <span className="inline-flex h-4 w-4 items-center justify-center">
+                                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-destructive shadow-[0_0_0_4px_rgba(239,68,68,0.16)]" />
+                              </span>
+                            ) : (
+                              <AlertTriangle className="h-4 w-4" />
+                            )}
                           </div>
                           <div>
-                            <p className="font-semibold">{item.type}</p>
+                            <p className="font-semibold">
+                              {item.type === "gsc_page_row_first_seen"
+                                ? "GSC 首次 page-row 命中"
+                                : item.type}
+                            </p>
                             <p className="mt-1 text-sm text-muted-foreground">{item.message}</p>
                           </div>
                         </div>

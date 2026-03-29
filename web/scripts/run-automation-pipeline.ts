@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 
 import {
+  enqueueGscFocusPageRowDailySummaryFromDb,
   enqueueDistributionJobsFromDb,
   insertSyncRun,
   publishQueuedDistributionJobsFromDb,
@@ -85,6 +86,31 @@ async function main() {
           }
         );
         await insertSyncRun(reminderRun.run, reminderRun.meta);
+      }
+
+      if (mode === "daily" || mode === "all") {
+        const dailySummaryResult =
+          await enqueueGscFocusPageRowDailySummaryFromDb(
+            syncResult.externalState.gsc.focusPageRows ?? [],
+            startedAt.slice(0, 10)
+          );
+        if (dailySummaryResult?.enqueued) {
+          const summaryRun = createRun(
+            "daily_alert_eval",
+            "success",
+            `GSC focus monitor daily summary enqueued=${dailySummaryResult.enqueued}`,
+            startedAt,
+            {
+              tracked:
+                syncResult.externalState.gsc.focusPageRows?.length ?? 0,
+              seen:
+                syncResult.externalState.gsc.focusPageRows?.filter(
+                  (entry) => entry.seenInPageRows
+                ).length ?? 0,
+            }
+          );
+          await insertSyncRun(summaryRun.run, summaryRun.meta);
+        }
       }
     }
 

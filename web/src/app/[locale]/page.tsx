@@ -189,9 +189,9 @@ export default function HomePage() {
                               hub_page_type: "home",
                               cta_target_type: guide.pageType,
                             }}
-                            className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                            className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
                           >
-                            {labels.short}
+                            {guide.primaryQuery}
                             <ArrowRight className="h-3 w-3" />
                           </TrackedInternalLink>
                         );
@@ -225,11 +225,6 @@ export default function HomePage() {
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         {guides.map((guide) => {
-                          const guideExchange = exchanges.find(
-                            (exchange) => exchange.slug === guide.exchange.slug
-                          );
-                          if (!guideExchange) return null;
-
                           return (
                             <TrackedInternalLink
                               key={`${guide.exchange.slug}-${pageType}`}
@@ -243,9 +238,9 @@ export default function HomePage() {
                                 hub_page_type: "home_question_hub",
                                 cta_target_type: pageType,
                               }}
-                              className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                              className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
                             >
-                              {guideExchange.name}
+                              {guide.primaryQuery}
                               <ArrowRight className="h-3 w-3" />
                             </TrackedInternalLink>
                           );
@@ -289,14 +284,16 @@ export default function HomePage() {
                         hub_page_type: "home_autonomous_opportunity",
                         cta_target_type: item.pageType,
                       }}
-                      className="block rounded-2xl border border-border/70 p-4 transition-colors hover:border-brand/30 hover:bg-muted/20"
+                        className="block rounded-2xl border border-border/70 p-4 transition-colors hover:border-brand/30 hover:bg-muted/20"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-semibold">
+                            {item.primaryQuery}
+                          </p>
+                          <p className="mt-1 text-sm text-muted-foreground">
                             {item.exchange.name} · {getUnifiedSeoPageLabels(seoLocale, item.pageType).nav}
                           </p>
-                          <p className="mt-1 text-sm text-muted-foreground">{item.primaryQuery}</p>
                         </div>
                         <div className="text-right text-sm">
                           <p className="font-semibold text-brand">

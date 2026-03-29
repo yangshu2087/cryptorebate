@@ -261,14 +261,14 @@ function ExchangeDetailView({
                   className="block rounded-2xl border border-border/70 bg-background p-5 transition-colors hover:border-brand/30 hover:bg-muted/20"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold">{labels.nav}</p>
+                    <p className="text-sm font-semibold">{guide.primaryQuery}</p>
                     <Badge variant="outline">每日刷新推荐</Badge>
                   </div>
                   <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                    {guide.answerBox.body}
+                    {labels.nav} · {guide.answerBox.body}
                   </p>
                   <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand">
-                    {labels.short}
+                    {labels.short} · {exchange.name}
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </TrackedInternalLink>
@@ -299,9 +299,9 @@ function ExchangeDetailView({
                         hub_page_type: "exchange_detail_supporting",
                         cta_target_type: guide.pageType,
                       }}
-                      className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                      className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
                     >
-                      {labels.short}
+                      {guide.primaryQuery}
                       <ArrowRight className="h-3 w-3" />
                     </TrackedInternalLink>
                   );

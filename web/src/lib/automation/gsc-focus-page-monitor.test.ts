@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildGscFocusPageRowDailyTelegramSummary,
   buildGscFocusPageRowFirstSeenAlert,
   buildGscFocusPageRowTelegramReminder,
   getGscFocusPageMonitorTargets,
   reconcileGscFocusPageRowMonitor,
+  summarizeGscFocusPageRowMonitor,
 } from "./gsc-focus-page-monitor";
 
 describe("gsc-focus-page-monitor", () => {
@@ -111,5 +113,18 @@ describe("gsc-focus-page-monitor", () => {
     expect(targets).toHaveLength(12);
     expect(targets[0]?.url).toContain("/en/exchanges/");
     expect(new Set(targets.map((target) => target.locale))).toEqual(new Set(["en"]));
+  });
+
+  it("builds a daily telegram summary even before the first hit", () => {
+    const summary = summarizeGscFocusPageRowMonitor(
+      reconcileGscFocusPageRowMonitor([], [], "2026-03-29T14:00:00.000Z").entries
+    );
+    const report = buildGscFocusPageRowDailyTelegramSummary(summary, "2026-03-29");
+
+    expect(report.routePath).toBe("/admin/seo#gsc-focus-page-monitor-daily-2026-03-29");
+    expect(report.payload.title).toContain("12 tracked / 0 seen");
+    expect(report.payload.summary).toContain("尚未出现首个命中");
+    expect(report.payload.url).toContain("/en/admin/seo#gsc-focus-page-monitor");
+    expect(report.payload.tags).toContain("daily-summary");
   });
 });
