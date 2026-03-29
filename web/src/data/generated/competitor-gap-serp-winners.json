@@ -1,8 +1,8 @@
 {
   "status": "success",
-  "generatedAt": "2026-03-28T15:54:46.297Z",
+  "generatedAt": "2026-03-29T09:06:56.918Z",
   "providersRequested": [
-    "brave"
+    "serper"
   ],
   "templateCount": 5,
   "totalWinnerUrls": 40,
@@ -14,73 +14,72 @@
       "locale": "en",
       "topic": "binance official site / referral entry trust layer",
       "providersUsed": [
-        "brave"
+        "serper"
       ],
       "providerReports": [
         {
-          "provider": "brave",
+          "provider": "serper",
           "status": "success",
-          "resultCount": 10
+          "resultCount": 9
         }
       ],
       "dominantDomains": [
         "binance.com",
-        "bitdegree.org",
-        "dr-binance.com",
-        "ventureburn.com",
+        "youtube.com",
+        "flux.ai",
         "nftplazas.com",
+        "reddit.com",
         "cryptoninjas.net",
-        "nftevening.com",
-        "simplifyingtheory.com"
+        "bitdegree.org"
       ],
       "topResults": [
         {
           "title": "Binance Referral Program",
           "url": "https://www.binance.com/en/activity/referral",
-          "snippet": "Buy and sell on the Spot market with advanced tools · Increase your profits with leverage",
+          "snippet": "Referral. Invite friends to earn either a commission rebate or a one-time reward · Binance Junior. A parent-supervised crypto account for kids and teens.",
           "domain": "binance.com"
         },
         {
           "title": "Friends Referral Program | Refer & Earn | Binance Official",
           "url": "https://www.binance.com/en/activity/referral/offers",
-          "snippet": "Get a 100 USD cashback voucher when you refer a friend. T&amp;C apply.",
+          "snippet": "Start Earning Now · 3. Earn up to $1,000 in trading fee rebate voucher as the referrer, while your friend can earn up to $1,100 · 1. Share your unique Lite ...",
           "domain": "binance.com"
         },
         {
-          "title": "Binance Referral Code & Link is: 49316610 | February 2026",
-          "url": "https://www.bitdegree.org/crypto/deals/binance-referral-code",
-          "snippet": "The currently working Binance Referral Code is: <strong>49316610</strong>. Use this code to get a Binance bonus of up to $600 &amp; save up to 50% on fees now!",
-          "domain": "bitdegree.org"
+          "title": "What is the Binance referral code? (Referral ID)",
+          "url": "https://www.binance.com/en/square/post/29917594049762",
+          "snippet": "The official and most profitable Binance referral code in 2025 is BESTCODE. What bonuses does the Binance referral code provide? The code gives ...",
+          "domain": "binance.com"
         },
         {
-          "title": "Where to Enter a Binance Referral Code — CoinStart",
-          "url": "https://dr-binance.com/en/blog/binance-referral-code-where.html",
-          "snippet": "If the code doesn&#x27;t appear automatically, click the text link below the registration form that says something like &quot;Have a Referral ID?&quot; to expand the input field. <strong>After downloading the Binance App and opening the registration page, you&#x27;ll find a referral code field below the password field</strong>.",
-          "domain": "dr-binance.com"
+          "title": "BEST Binance Referral Code 2026 (UPDATED!) - YouTube",
+          "url": "https://www.youtube.com/watch?v=UXPsMZy3VfU",
+          "snippet": "In this video I show you step by step how to find and activate the best binance referral code / referral ID / binance promo code!",
+          "domain": "youtube.com"
         },
         {
-          "title": "Binance Referral Code March 2026: VB2025 ($100 Signup Bonus + Trading Discounts)",
-          "url": "https://ventureburn.com/binance-referral-code/",
-          "snippet": "Join Binance using the Binance referral code <strong>VB2025</strong> and claim up to $100 signup bonus. Learn how to register and start trading with benefits.",
-          "domain": "ventureburn.com"
+          "title": "Use Binance referral code (DCYV6TK5) for up to $100-$600 in ...",
+          "url": "https://www.flux.ai/binance-referral",
+          "snippet": "Use referral code (DCYV6TK5) during Binance registration to secure a 20% lifetime spot trading fee discount. Using these codes also provides bonuses, ...",
+          "domain": "flux.ai"
         },
         {
-          "title": "Binance Referral Code 2026: BINANCENFTP (Referral ID)",
+          "title": "Binance Referral Code 2026: “BINANCENFTP” (1000 USDT Bonus)",
           "url": "https://nftplazas.com/referral-code/binance/",
-          "snippet": "The best Binance referral code, or Referral ID, is &quot;<strong>BINANCENFTP</strong>&quot;. Enter it during registration to get up to $1000 USDT bonus and 20% trading fee discounts.",
+          "snippet": "The best Binance referral code, or Referral ID, is \"BINANCENFTP\". Enter it during registration to get up to $1000 USDT bonus and 20% trading ...",
           "domain": "nftplazas.com"
         },
         {
-          "title": "Binance Referral Code P8DEY0JB: Free 100 USDT Sign-up Bonus in [currentyear]",
-          "url": "https://www.cryptoninjas.net/referral-code/binance/",
-          "snippet": "So, what’re you wondering? Click the button below and start the trading journey with us now ... Binance futures referral code is <strong>a unique identifier that you can use when setting up your futures trading account to qualify for additional trading fee discounts</strong>.",
-          "domain": "cryptoninjas.net"
+          "title": "Binance US referral codes? - Reddit",
+          "url": "https://www.reddit.com/r/binance/comments/l7frk8/binance_us_referral_codes/",
+          "snippet": "Get up to a $100 bonus when you sign up for Binance US using the link https://www.binance.us/register?ref=35320362 or promo code 35320362. The ...",
+          "domain": "reddit.com"
         },
         {
-          "title": "Binance Referral Code March 2026: QH6V74V5 (Referral ID) - $100 Bonus",
-          "url": "https://nftevening.com/binance-referral-code/",
-          "snippet": "Learn how to use the Binance referral code/ID &quot;<strong>QH6V74V5</strong>&quot; to get $100 USDT signup bonuses &amp; save 20% on spot trading fees, plus 10% off futures fees.",
-          "domain": "nftevening.com"
+          "title": "Binance Referral Code P8DEY0JB: Free 100 USDT Sign-up Bonus ...",
+          "url": "https://www.cryptoninjas.net/referral-code/binance/",
+          "snippet": "The best Binance referral code is P8DEY0JB, which will give you a 20% discount on spot trading fees for life and qualify you to receive other extra rewards.",
+          "domain": "cryptoninjas.net"
         }
       ]
     },
@@ -91,73 +90,71 @@
       "locale": "en",
       "topic": "okx signup with referral code and regional restrictions",
       "providersUsed": [
-        "brave"
+        "serper"
       ],
       "providerReports": [
         {
-          "provider": "brave",
+          "provider": "serper",
           "status": "success",
-          "resultCount": 10
+          "resultCount": 9
         }
       ],
       "dominantDomains": [
-        "chainplay.gg",
-        "nftplazas.com",
         "okx.com",
-        "ventureburn.com",
-        "cryptoninjas.net",
         "reddit.com",
-        "milkroad.com",
-        "amazon.com"
+        "intercom.help",
+        "mexc.co",
+        "ddlv.miraheze.org",
+        "researchgate.net"
       ],
       "topResults": [
         {
-          "title": "OKX Referral Code 2026: Claim $10,000 Bonus (Code: 47447298)",
-          "url": "https://chainplay.gg/blog/okx-referral-code/",
-          "snippet": "<strong>There is no limit to how many people</strong> ... referral code. The more people they refer, the more they can earn. OKX offers ongoing commissions from the trading fees of referred users, allowing users to generate passive income as their referrals ...",
-          "domain": "chainplay.gg"
-        },
-        {
-          "title": "OKX Referral Code 2026: 98973395 - Get $10000 SignUp Bonus",
-          "url": "https://nftplazas.com/referral-code/okx/",
-          "snippet": "The OKX referral program has specific ... mind while using the OKX referral code 98973395: <strong>New users exclusive: Only new users are qualified to use the referral code</strong>. You cannot add a referral code after registration as the code field only appears ...",
-          "domain": "nftplazas.com"
-        },
-        {
-          "title": "Referral Program FAQ | OKX United States",
-          "url": "https://www.okx.com/en-us/help/what-is-okx-referral-program",
-          "snippet": "Only new users who register from ... will be entitled to claim the reward. <strong>Rewards may be restricted from trading or withdrawal for up to 90 days from the date of receipt</strong>....",
+          "title": "Referral Program - Terms and Conditions | OKX United States",
+          "url": "https://www.okx.com/en-us/help/uae-referral-program-terms-and-conditions",
+          "snippet": "Note: each referrer can receive referral rewards from a maximum of 5 invitees per campaign period; once this limit is reached, no more rewards ...",
           "domain": "okx.com"
         },
         {
-          "title": "OKX Referral Code Mar 2026: 87043256 ($10,000 Sign Up Bonus + Trading Discounts)",
-          "url": "https://ventureburn.com/okx-referral-code/",
-          "snippet": "Like any promotion, the OKX referral program has rules you should know. After you register with the best OKX referral code 87043256, <strong>you must complete KYC verification</strong>. Only fully verified accounts qualify for the OKX signup bonus.",
-          "domain": "ventureburn.com"
+          "title": "US Referral Bonus Terms and Conditions | OKX United States",
+          "url": "https://www.okx.com/en-us/help/us-referral-bonus-terms-and-conditions",
+          "snippet": "Customers are able to receive multiple Referral Bonus offers, however OKX may limit the number of Referral Bonuses a customer may receive. The ...",
+          "domain": "okx.com"
         },
         {
-          "title": "OKX Referral Code: Steps to Sign Up and Earn Bonus in [currentyear]",
-          "url": "https://www.cryptoninjas.net/referral-code/okx/",
-          "snippet": "Learn how to use the OKX referral code CNJREFCODE to get up to $10,000 in sign-up bonuses and a 30% discount on trading fees.",
-          "domain": "cryptoninjas.net"
-        },
-        {
-          "title": "r/passive_income on Reddit: OKX Referral Bonus $200 and a lot more",
+          "title": "OKX Referral Bonus $200 and a lot more : r/passive_income - Reddit",
           "url": "https://www.reddit.com/r/passive_income/comments/1qg5gkb/okx_referral_bonus_200_and_a_lot_more/",
-          "snippet": "USA only. All you have to do create an account, deposit and trade $200: https://app.okx.com/en-us/join/57131189 · My referral code is 57131189.",
+          "snippet": "USA only. All you have to do create an account, deposit and trade $200: https://app.okx.com/en-us/join/57131189 My referral code is 57131189 ...",
           "domain": "reddit.com"
         },
         {
-          "title": "Referral Program - Terms and Conditions | OKX United States",
-          "url": "https://www.okx.com/en-us/help/uae-referral-program-terms-and-conditions",
-          "snippet": "Both referrers and referees have ... days after conditions are met and verified. <strong>Rewards may be restricted from trading or withdrawal for up to 90 days from the date of receipt</strong>....",
+          "title": "What Is the OKX Referral Code 76588094 and How to Use It in 2026",
+          "url": "https://intercom.help/partnercodes/en/articles/13900588-what-is-the-okx-referral-code-76588094-and-how-to-use-it-in-2026",
+          "snippet": "The OKX referral code 76588094 gives you the most cost-efficient entry point into all of it: a permanent 20% trading fee discount applied from your first trade, ...",
+          "domain": "intercom.help"
+        },
+        {
+          "title": "OKX Referral Code: Steps to Sign Up and Earn Bonus in 2026",
+          "url": "https://www.mexc.co/news/181492",
+          "snippet": "The best OKX referral code is CNJREFCODE, which grants new users up to 10,000 USDT, but how much you get depends on your first deposit. Besides ...",
+          "domain": "mexc.co"
+        },
+        {
+          "title": "Latest OKX Referral Code for Global Users – USA, EU & Asia",
+          "url": "https://ddlv.miraheze.org/wiki/Latest_OKX_Referral_Code_for_Global_Users_%E2%80%93_USA,_EU_%26_Asia",
+          "snippet": "With the referral code 69809443, new users can participate in reward missions and promotional campaigns that unlock trading bonuses and additional incentives.",
+          "domain": "ddlv.miraheze.org"
+        },
+        {
+          "title": "DEX Referral FAQ | OKX United States",
+          "url": "https://www.okx.com/en-us/help/dex-referral-faq",
+          "snippet": "Referral codes can't be modified or deleted once created. Only OKX seed phrase wallets support creating referral codes. After creating a ...",
           "domain": "okx.com"
         },
         {
-          "title": "OKX Referral Code August 2026: MILKROAD for 20% Off Fees",
-          "url": "https://milkroad.com/reviews/okx/",
-          "snippet": "But it’s a big world out there, and most of the planet can use OKX without restriction. Centralized exchanges like OKX have a management team working behind the scenes. Decentralized exchanges (like Uniswap or GMX) are governed by community votes and computer code.",
-          "domain": "milkroad.com"
+          "title": "(PDF) OKX Referral Code - ResearchGate",
+          "url": "https://www.researchgate.net/publication/400711007_OKX_Referral_Code",
+          "snippet": "OKX referral code is 69809443, and this code allows new users to unlock a bonus of up to. $10,000 USDT when signing up and completing ...",
+          "domain": "researchgate.net"
         }
       ]
     },
@@ -168,11 +165,11 @@
       "locale": "en",
       "topic": "okx referral faq vs dex referral confusion",
       "providersUsed": [
-        "brave"
+        "serper"
       ],
       "providerReports": [
         {
-          "provider": "brave",
+          "provider": "serper",
           "status": "success",
           "resultCount": 10
         }
@@ -180,59 +177,60 @@
       "dominantDomains": [
         "okx.com",
         "web3.okx.com",
-        "ventureburn.com",
+        "mexc.co",
         "nftplazas.com",
-        "chainplay.gg",
-        "okxcer.com"
+        "reddit.com",
+        "castlecrypto.gg",
+        "youtube.com"
       ],
       "topResults": [
         {
-          "title": "Referral Program FAQ | OKX United States",
-          "url": "https://www.okx.com/en-us/help/what-is-okx-referral-program",
-          "snippet": "To confirm the invitation code, recall the source of the invitation when you registered, or verify directly with the person who invited you. Each reward might include crypto as rewards, and each reward must be claimed within the specified event period stated on your referral page or it will expire.",
+          "title": "DEX Referral FAQ | OKX United States",
+          "url": "https://www.okx.com/en-us/help/dex-referral-faq",
+          "snippet": "Example: OKXDEX, okxdex, and OkXdEx all refer to the same referral code. Can I delete or modify a created referral code? No, you can't. Once ...",
           "domain": "okx.com"
         },
         {
-          "title": "What's DEX Referral program? | OKX United States",
-          "url": "https://www.okx.com/en-us/help/whats-dex-referral-program",
-          "snippet": "After creating the referral code, you can share the invitation link and invite friends to use your referral code to trade on OKX DEX in the following ways: Share invitation link from the Referral dashboard: you can directly copy and share your default referral code that you can find from the top area of the Referral dashboard. ... If you want to share a different referral code, go to Referral dashboard &gt; Codes, then copy the link from the operation menu of the chosen code.",
-          "domain": "okx.com"
-        },
-        {
-          "title": "DEX Referral FAQ | OKX Europe",
-          "url": "https://www.okx.com/en-eu/help/dex-referral-faq",
-          "snippet": "Up to 100 referral codes per seed phrase wallet. ... Length: 5-15 characters. Letters and numbers only. Can&#x27;t be modified or deleted. Each code can have an independent invitee discount percentage. ... Use different codes for different channels to track effectiveness.",
-          "domain": "okx.com"
-        },
-        {
-          "title": "What's DEX Referral program? | OKX Wallet",
+          "title": "What's DEX Referral program? - OKX Wallet",
           "url": "https://web3.okx.com/help/whats-dex-referral-program",
-          "snippet": "After creating the referral code, you can share the invitation link and invite friends to use your referral code to trade on OKX DEX in the following ways: Share invitation link from the Referral dashboard: you can directly copy and share your default referral code that you can find from the top area of the Referral dashboard. ... If you want to share a different referral code, go to Referral dashboard &gt; Codes, then copy the link from the operation menu of the chosen code.",
+          "snippet": "If you want to share a different referral code, go to Referral dashboard > Codes, then copy the link from the operation menu of the chosen code.",
           "domain": "web3.okx.com"
         },
         {
-          "title": "OKX Referral Code Mar 2026: 87043256 ($10,000 Sign Up Bonus + Trading Discounts)",
-          "url": "https://ventureburn.com/okx-referral-code/",
-          "snippet": "Another thing they have in common is that both offers a way to bring new users to the platform and are tied to the use of a valid OKX invite code such as 87043256. However, they are kind of different. <strong>The referral program is more straightforward</strong>. ...",
-          "domain": "ventureburn.com"
+          "title": "Referral Program FAQ | OKX United States",
+          "url": "https://www.okx.com/en-us/help/what-is-okx-referral-program",
+          "snippet": "Log in to your account at okx.com and go to the Referral page. You can find it under More > Referral. Copy your referral code or referral link ...",
+          "domain": "okx.com"
+        },
+        {
+          "title": "Complete Guide to OKX Referral Code 76588094 - MEXC Exchange",
+          "url": "https://www.mexc.co/news/888589",
+          "snippet": "With the 20% discount from referral code 76588094, your effective spot rates become 0.064% maker and 0.080% taker. For derivatives, the standard ...",
+          "domain": "mexc.co"
         },
         {
           "title": "OKX Referral Code 2026: 98973395 - Get $10000 SignUp Bonus",
           "url": "https://nftplazas.com/referral-code/okx/",
-          "snippet": "<strong>An OKX referral code is a unique identifier made up of numbers, letters, or a combination of both</strong>. It is also called the OKX promo code or invite code. You can share it with your social circles and invite them to create an OKX account.",
+          "snippet": "The best OKX referral code in 2026 “98973395” gives users the highest bonus of up to 10,000 USDT and 30% discount on trading fees. The OKX ...",
           "domain": "nftplazas.com"
         },
         {
-          "title": "Referrals | FAQ | Help Center | OKX",
-          "url": "https://www.okx.com/help/section/faq-referrals",
-          "snippet": "FAQ · Programs and promotions · Referrals · What&#x27;s Reward Rally? Published on Nov 6, 2025Updated on Dec 3, 202591 · How do I use Merchant Coupon Code? Published on May 19, 2025Updated on Dec 1, 202517 · OKX Valentine&#x27;s day crypto gift - terms and conditions (SEA region) Published on Feb 13, 2025Updated on Nov 17, 20251 ·",
-          "domain": "okx.com"
+          "title": "OKX Referral Bonus $200 and a lot more : r/passive_income - Reddit",
+          "url": "https://www.reddit.com/r/passive_income/comments/1qg5gkb/okx_referral_bonus_200_and_a_lot_more/",
+          "snippet": "My referral code is 57131189. If you have any questions, please ask! I made over $2000 myself from OKX rewards. In addition to this $200 welcome ...",
+          "domain": "reddit.com"
         },
         {
-          "title": "Web3 Referral Dashboard | OKX Wallet",
-          "url": "https://web3.okx.com/referral",
-          "snippet": "As an inviter: - Use an OKX seed phrase wallet to create a custom referral code. (Private key wallets, hardware wallets, and other wallet types are not supported) - Share your code. When an invitee uses your code and trades fee-charging tokens on OKX DEX, you’ll earn commissions from their trading fees.",
-          "domain": "web3.okx.com"
+          "title": "OKX Referral Code 2026: CCCODE - Castle Crypto",
+          "url": "https://castlecrypto.gg/okx-referral-code/",
+          "snippet": "Use our OKX referral code CCCODE while creating a new account to earn up to $10000 in sign-up bonuses and up to 30% trading fee discount.",
+          "domain": "castlecrypto.gg"
+        },
+        {
+          "title": "Referrals | FAQ | Help Center - OKX",
+          "url": "https://www.okx.com/help/section/faq-referrals",
+          "snippet": "OKX - Looking for insights on Referrals? Browse our FAQ section in the OKX Help Center for the latest updates, guides, and expert support.",
+          "domain": "okx.com"
         }
       ]
     },
@@ -243,72 +241,72 @@
       "locale": "en",
       "topic": "bybit signup / kyc help-center style answers",
       "providersUsed": [
-        "brave"
+        "serper"
       ],
       "providerReports": [
         {
-          "provider": "brave",
+          "provider": "serper",
           "status": "success",
           "resultCount": 10
         }
       ],
       "dominantDomains": [
-        "reddit.com",
         "bybit.com",
-        "datawallet.com",
+        "reddit.com",
+        "bitdegree.org",
+        "coinsutra.com",
+        "bitget.com",
         "whaleportal.com",
-        "rankfi.com",
-        "citizenx.com",
-        "sumsub.com"
+        "cryptowisser.com"
       ],
       "topResults": [
         {
-          "title": "r/Bybit on Reddit: KYC and restricted countries",
+          "title": "Service Restricted Countries - Bybit",
+          "url": "https://www.bybit.com/en/help-center/article/Service-Restricted-Countries",
+          "snippet": "As stated in Section 11.3 of the Service Agreement, Bybit does not offer services or products to Users in a few excluded jurisdictions ...",
+          "domain": "bybit.com"
+        },
+        {
+          "title": "FAQ — Individual KYC - Bybit",
+          "url": "https://www.bybit.com/en/help-center/article/Individual-KYC-FAQ",
+          "snippet": "Your profile violates the Bybit Terms of Service, such as being under the age of 18, or you may be from one of our service restricted countries.",
+          "domain": "bybit.com"
+        },
+        {
+          "title": "KYC and restricted countries : r/Bybit - Reddit",
           "url": "https://www.reddit.com/r/Bybit/comments/16tuia3/kyc_and_restricted_countries/",
-          "snippet": "This is something I have asked bybit but their support team was completely useless and could not answer my question. This is what I received from them : As advised this restriction will apply to users who connect using a Canada IP and to users who accounts have undergone KYC verification with Canada documents",
+          "snippet": "If an exchange like Bybit is requiring KYC but you are a citizen of one of their restricted countries. Will you get your services restricted ...",
           "domain": "reddit.com"
         },
         {
-          "title": "FAQ — Individual KYC",
-          "url": "https://www.bybit.com/en/help-center/article/Individual-KYC-FAQ",
-          "snippet": "Bybit only allows one account per user to process KYC verification. If you would like to transfer your KYC verification to another account, please visit ... No, you can only use the same name with your Standard KYC and Advanced KYC. How do KYC verifications determine country restrictions for users?",
+          "title": "List of Restricted Issuing Countries for Fiat Service - Bybit",
+          "url": "https://www.bybit.com/en/help-center/article/List-of-Restricted-Issuing-Countries-for-Fiat-Service",
+          "snippet": "Albania, Bahamas, Bangladesh, Barbados, Belarus (*Belarus users can only make RUB transaction in Fiat), Bolivia, Bosnia and Herzegovina, ...",
           "domain": "bybit.com"
         },
         {
-          "title": "Bybit Supported and Restricted Countries in 2026",
-          "url": "https://www.datawallet.com/crypto/bybit-restricted-countries",
-          "snippet": "Read about Bybit&#x27;s supported and restricted countries in 2026, including blocked jurisdictions, compliance reasons, licensing status, EU access, and KYC rules.",
-          "domain": "datawallet.com"
+          "title": "Bybit Restricted Countries: Where Is It Allowed? - BitDegree.org",
+          "url": "https://www.bitdegree.org/crypto/tutorials/bybit-restricted-countries",
+          "snippet": "Bybit-restricted countries not only cover regions where cryptocurrency is generally scrutinized like the United Kingdom, but also territories ...",
+          "domain": "bitdegree.org"
         },
         {
-          "title": "FAQ — Business KYC",
-          "url": "https://www.bybit.com/en/help-center/article/Business-KYC-FAQ",
-          "snippet": "If you encounter any issue with the verification link generated via email, please <strong>let us know via email ( compliance@bybit.com) by replying to the ongoing email thread with the screenshot of the error messages</strong>. Do Service Restricted Country prohibitions only apply to the Company&#x27;s registered ...",
-          "domain": "bybit.com"
+          "title": "How To Access Bybit In Disallowed Countries (2026) - CoinSutra",
+          "url": "https://coinsutra.com/bybit-review/bybit-usa-vpn/",
+          "snippet": "This Bybit VPN guide is written for users who are citizen of Bybit allowed countries and travelling to USA for business or pleasure reasons.",
+          "domain": "coinsutra.com"
         },
         {
-          "title": "Bybit KYC Verification 2026: Step-by-Step Guide & Alternatives - Whaleportal",
+          "title": "Bybit KYC Requirements & Withdrawal Limits: Complete Verification ...",
+          "url": "https://www.bitget.com/academy/bybit-kyc-limits",
+          "snippet": "Users must be at least 18 years old and cannot reside in restricted jurisdictions. Bybit's approach prioritizes user experience while ...",
+          "domain": "bitget.com"
+        },
+        {
+          "title": "Bybit KYC Verification 2026: Step-by-Step Guide & Alternatives",
           "url": "https://whaleportal.com/blog/bybit-kyc-verification-guide/",
-          "snippet": "In this article, we’ll go over everything you need to know about the Bybit KYC process and any alternatives if you’re living in a restricted country.",
+          "snippet": "In this article, we'll go over everything you need to know about the Bybit KYC process and any alternatives if you're living in a restricted country.",
           "domain": "whaleportal.com"
-        },
-        {
-          "title": "All Bybit Supported and Restricted Countries - RankFi",
-          "url": "https://rankfi.com/bybit-supported-countries/",
-          "snippet": "Section 11.3 in Bybit&#x27;s Service Restricted Countries lists the countries that are prohibited from using their crypto exchange: ... If your country is not listed above, you can successfully sign up for Bybit. You can use our referral link to secure up to $30,000 USDT in rewards. Otherwise, scroll down to find our best Bybit alternatives. For a while, Bybit was a no KYC exchange, but that is no longer the case.",
-          "domain": "rankfi.com"
-        },
-        {
-          "title": "Guide to KYC on Bybit with a Saint Kitts and Nevis Passport in 2025",
-          "url": "https://citizenx.com/insights/bybit-kyc-st-kitts-nevis-passport",
-          "snippet": "This list includes countries like the <strong>United States, United Kingdom, Canada, and various sanctioned nations</strong>. The good news is that Saint Kitts and Nevis does not appear on this list of restricted jurisdictions.",
-          "domain": "citizenx.com"
-        },
-        {
-          "title": "Common Reasons and Solutions for KYC Verification Failures",
-          "url": "https://www.bybit.com/en/help-center/article/Common-Reasons-and-Solutions-for-KYC-Verification-Failures",
-          "snippet": "— If you did not see our email in your Junk/Spam folder, it is probably because your profile violates Bybit Terms of Service, such as restricted country/region, underage, or risk profile detected. Should you have any other questions, please feel free to contact our LiveChat support or submit a case here. We will get back to you as soon as possible. ... Related ArticlesHow to Transfer Your Identity to Another AccountBenefits of Different Verification (KYC) LevelsFAQ — Business KYCFAQ — Individual KYCHow to Complete Individual Identity Verification (KYC)KYC DisclaimerFAQ — GST and TDS in IndiaHow to Self-Update your Proof of Identity (POI) and Proof of Address (POA)FAQ — Value Added Tax (VAT)",
-          "domain": "bybit.com"
         }
       ]
     },
@@ -319,72 +317,73 @@
       "locale": "multi-locale",
       "topic": "registration friction and referral-link fallback",
       "providersUsed": [
-        "brave"
+        "serper"
       ],
       "providerReports": [
         {
-          "provider": "brave",
+          "provider": "serper",
           "status": "success",
           "resultCount": 10
         }
       ],
       "dominantDomains": [
         "reddit.com",
+        "bitcointalk.org",
+        "help.whatnot.com",
         "communityforums.atmeta.com",
-        "community.coda.io",
-        "support.google.com",
-        "help.crypto.com",
-        "talent.docs.mercor.com",
-        "meta.com"
+        "interactivebrokers.co.uk",
+        "facebook.com",
+        "ofac.treasury.gov",
+        "link.com"
       ],
       "topResults": [
         {
-          "title": "r/oculus on Reddit: Can't Accept Referral Links?",
-          "url": "https://www.reddit.com/r/oculus/comments/18xcgnh/cant_accept_referral_links/",
-          "snippet": "<strong>It could be that the referral code is indeed not from your region</strong>. I also remember i had to close my browser and reopen a fresh one because i got that error the first time as well. If you’re in the USA you can try my code.",
+          "title": "Is meta quest referrals restricted in certain countries? : r/OculusQuest",
+          "url": "https://www.reddit.com/r/OculusQuest/comments/1iqmtrq/is_meta_quest_referrals_restricted_in_certain/",
+          "snippet": "With referrals, you'd only be able to make or receive them while you're in a Meta Quest supported country. Here you can also find the full ...",
           "domain": "reddit.com"
         },
         {
-          "title": "Referrals in Unsupported Countries | Meta Community Forums - 1335561",
+          "title": "Binance Referral Code Not Working in My Region - Bitcoin Forum",
+          "url": "https://bitcointalk.org/index.php?topic=5485613.0",
+          "snippet": "Starting from 2023-08-01, users residing in Japan are ineligible to participate as referred applicants in the Binance Referral Program.",
+          "domain": "bitcointalk.org"
+        },
+        {
+          "title": "Buyer Referral Program Terms - Whatnot Help Center",
+          "url": "https://help.whatnot.com/hc/en-us/articles/4407952429581-Buyer-Referral-Program-Terms",
+          "snippet": "The Whatnot Buyer Referral Program allows you to give your friends or social media following free money to spend towards their first purchase on Whatnot.",
+          "domain": "help.whatnot.com"
+        },
+        {
+          "title": "Referrals in Unsupported Countries - Meta Community Forums",
           "url": "https://communityforums.atmeta.com/discussions/OffTopic/referrals-in-unsupported-countries/1335561",
-          "snippet": "I have a friend that lives in the US that plays VRChat with me (i&#x27;m on PC), and he said that if i bought a headset and set it up with his referral link we both would get some credit on the Meta Horizons Store, i bought a headset, and it arrived today, but i couldn&#x27;t follow him because i live in Brazil and his referral link doesn&#x27;t work, i&#x27;ve been searching for this information for about an hour with no satisfying answer so i made this post, i already activated my headset without it because it wasn&#x27;t worth the hassle, but if it can help someone else with the same question then i&#x27;ll be satisfied.",
+          "snippet": "Am i able to redeem my US friend's referral link if i live in an unsupported country? (Brazil). I have a friend that lives in the US that plays VRChat with ...",
           "domain": "communityforums.atmeta.com"
         },
         {
-          "title": "r/interactivebrokers on Reddit: Opened an account using referral link, now can't change country",
-          "url": "https://www.reddit.com/r/interactivebrokers/comments/1986hr1/opened_an_account_using_referral_link_now_cant/",
-          "snippet": "I guess I&#x27;ll have to specify the country - it&#x27;s Israel which is served by the same IB LLC as the US (but with W-8 BEN on file instead of W9). Technically for Israel they only need to update the address and tax information. I&#x27;ll try to apply for a new account just in case that&#x27;s the only way to resolve this. ... I just ran into this same issue - I opened the account via a referral link while living outside Israel, and now can&#x27;t change the country to Israel.",
-          "domain": "reddit.com"
+          "title": "Referral Member | Interactive Brokers U.K. Limited",
+          "url": "https://www.interactivebrokers.co.uk/en/trading/referral-member-to-member.php",
+          "snippet": "Refer a Friend allows eligible IBKR clients to refer people and earn USD 200 for each referral.",
+          "domain": "interactivebrokers.co.uk"
         },
         {
-          "title": "r/Revolut on Reddit: Referall program work if you refer someone from a differebt country?",
-          "url": "https://www.reddit.com/r/Revolut/comments/wz3lmf/referall_program_work_if_you_refer_someone_from_a/",
-          "snippet": "You can invite a person from another country, as long as their country is a supported one (complete list of all currently supported countries here: https://www.revolut.com/help/profile-plan/verifying-identity/what-countries-are-supported). Please also remember that when it comes to the promotions with inviting your friends to join Revolut, certain requirements must be completed by the invited person in a certain timeframe, to receive a bonus, if one applies. You can always check if any promotion is currently active for you, and, if yes, for how much longer, by going to the app&#x27;s Hub &gt; Referrals section.",
-          "domain": "reddit.com"
+          "title": "How to resolve issues with TikTok referral links and credits?",
+          "url": "https://www.facebook.com/groups/1320873968887302/posts/1474165826891448/",
+          "snippet": "TikTok users commonly experience issues with sign- ups, including errors when new users try to create an account through referral links and ...",
+          "domain": "facebook.com"
         },
         {
-          "title": "10% referral link recognized but not working (no 10% when signup) - Coda Maker Community",
-          "url": "https://community.coda.io/t/10-referral-link-recognized-but-not-working-no-10-when-signup/37295",
-          "snippet": "Hi everybody, I’m trying to set a $10 coda referral program but without any success. I can post only one image in the forum so here it is 🙂 According to what I see in Figure (1) a user who signup through the referral link should add a reward of $10 credit.",
-          "domain": "community.coda.io"
+          "title": "Office of Foreign Assets Control: Home",
+          "url": "https://ofac.treasury.gov/",
+          "snippet": "The Office of Foreign Assets Control (\"OFAC\") of the US Department of the Treasury administers and enforces economic and trade sanctions based on US foreign ...",
+          "domain": "ofac.treasury.gov"
         },
         {
-          "title": "Google AI Pro referral link shows \"Offer not available\" error for an eligible friend. - Google One Community",
-          "url": "https://support.google.com/googleone/thread/375176613/google-ai-pro-referral-link-shows-offer-not-available-error-for-an-eligible-friend?hl=en",
-          "snippet": "Skip to main content · Google One Help · Sign in · Google Help · Help Center · Community · Google One · Terms of Service · Submit feedback · Send feedback on",
-          "domain": "support.google.com"
-        },
-        {
-          "title": "App Referral Programme | Crypto.com Help Center",
-          "url": "https://help.crypto.com/en/articles/3124990-app-referral-programme",
-          "snippet": "Country Tier 3 (Spain, Italy, Denmark, Japan, Thailand, Hungary, Iceland, Greece, New Zealand, Serbia): ... Note: The referral programme is currently not available in the United Kingdom, South Korea, and Singapore. To comply with local regulations, Canada will be disabled from 4th December 2025 until 17 December 2025.",
-          "domain": "help.crypto.com"
-        },
-        {
-          "title": "Solved: Referral not eligible - Meta Community Forums - 964892",
-          "url": "https://communityforums.atmeta.com/t5/Get-Help/Referral-not-eligible/td-p/964892",
-          "snippet": "We cannot provide a description for this page right now",
-          "domain": "communityforums.atmeta.com"
+          "title": "Terms of Service | Link",
+          "url": "https://link.com/terms",
+          "snippet": "If we present an incorrect country for you or you move countries, then you must correct the country in your account or contact support before using the Consumer ...",
+          "domain": "link.com"
         }
       ]
     }

@@ -1,10 +1,10 @@
 {
   "status": "success",
-  "generatedAt": "2026-03-28T15:54:46.304Z",
-  "summaryGeneratedAt": "2026-03-28T15:54:46.295Z",
-  "totalActions": 17,
+  "generatedAt": "2026-03-29T09:06:56.925Z",
+  "summaryGeneratedAt": "2026-03-29T09:06:56.916Z",
+  "totalActions": 15,
   "publishActions": 1,
-  "refreshActions": 12,
+  "refreshActions": 10,
   "internalLinkActions": 4,
   "distributionActions": 0,
   "actions": [
@@ -69,21 +69,6 @@
       "sourceCompetitorType": "help-center"
     },
     {
-      "id": "finding-okx-signup-fallback:okx:en:fees-rebate:2",
-      "findingId": "finding-okx-signup-fallback",
-      "action": "refresh",
-      "priority": "p1",
-      "exchangeSlug": "okx",
-      "locale": "en",
-      "pageType": "fees-rebate",
-      "routePath": "/exchanges/okx/fees-rebate",
-      "title": "刷新 okx fees-rebate",
-      "topic": "okx signup with referral code and regional restrictions",
-      "reason": "okx signup with referral code and regional restrictions → fees-rebate：CryptoRebate should make manual referral-code fallback and residence-based eligibility much more explicit on OKX signup/KYC pages, not just mention the invite link.",
-      "confidence": "high",
-      "sourceCompetitorType": "help-center"
-    },
-    {
       "id": "finding-okx-signup-fallback:okx:en:referral-code:0",
       "findingId": "finding-okx-signup-fallback",
       "action": "refresh",
@@ -129,22 +114,7 @@
       "sourceCompetitorType": "official"
     },
     {
-      "id": "finding-bybit-signup-kyc-helpstyle:bybit:en:country-availability:1",
-      "findingId": "finding-bybit-signup-kyc-helpstyle",
-      "action": "refresh",
-      "priority": "p2",
-      "exchangeSlug": "bybit",
-      "locale": "en",
-      "pageType": "country-availability",
-      "routePath": "/exchanges/bybit/country-availability",
-      "title": "刷新 bybit country-availability",
-      "topic": "bybit signup / kyc help-center style answers",
-      "reason": "bybit signup / kyc help-center style answers → country-availability：Our Bybit signup-kyc coverage should read more like an answer page with concrete steps, restricted-country warnings, and document expectations before the CTA.",
-      "confidence": "high",
-      "sourceCompetitorType": "help-center"
-    },
-    {
-      "id": "finding-bybit-signup-kyc-helpstyle:bybit:en:verification-troubleshooting:2",
+      "id": "finding-bybit-signup-kyc-helpstyle:bybit:en:verification-troubleshooting:1",
       "findingId": "finding-bybit-signup-kyc-helpstyle",
       "action": "refresh",
       "priority": "p2",
@@ -159,7 +129,7 @@
       "sourceCompetitorType": "help-center"
     },
     {
-      "id": "finding-okx-signup-fallback:okx:en:country-availability:3",
+      "id": "finding-okx-signup-fallback:okx:en:country-availability:2",
       "findingId": "finding-okx-signup-fallback",
       "action": "refresh",
       "priority": "p2",
@@ -174,7 +144,7 @@
       "sourceCompetitorType": "help-center"
     },
     {
-      "id": "finding-okx-signup-fallback:okx:en:verification-troubleshooting:4",
+      "id": "finding-okx-signup-fallback:okx:en:verification-troubleshooting:3",
       "findingId": "finding-okx-signup-fallback",
       "action": "refresh",
       "priority": "p2",
