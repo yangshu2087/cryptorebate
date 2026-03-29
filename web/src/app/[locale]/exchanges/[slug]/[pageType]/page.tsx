@@ -45,7 +45,8 @@ import { isFocusPageType } from "@/lib/automation/focus";
 import { buildSerpBlockModel } from "@/lib/automation/serp-blocks";
 import { getLatestAutomationSnapshotFromDb, getPublishedSeoPageFromDb } from "@/lib/automation/db-store";
 import type { AutomationSeoPage } from "@/lib/automation/types";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 
 export const dynamicParams = true;
 export const revalidate = 3600;
@@ -102,7 +103,7 @@ export async function generateMetadata({
     keywords: entry.metadata.keywords,
     alternates: {
       canonical: getLocalizedUrl(locale, pathname),
-      languages: getLocaleAlternates(pathname, SEO_CONTENT_LOCALES),
+      languages: getPageAlternates(pathname, SEO_CONTENT_LOCALES),
     },
     openGraph: {
       title: entry.metadata.title,

@@ -9,7 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BRAND_TOPICS, buildBrandPages, type BrandSeoPage } from "@/lib/automation/brand-pages";
 import { getLatestAutomationSnapshotFromDb, getBrandPageFromDb } from "@/lib/automation/db-store";
 import { getAutomationState } from "@/lib/automation/catalog";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import { SITE_NAME } from "@/lib/constants";
 
 export const dynamicParams = true;
@@ -63,7 +64,7 @@ export async function generateMetadata({
     keywords: page.metadata.keywords,
     alternates: {
       canonical: getLocalizedUrl(locale, page.routePath),
-      languages: getLocaleAlternates(page.routePath),
+      languages: getPageAlternates(page.routePath),
     },
     openGraph: {
       title: page.metadata.title,

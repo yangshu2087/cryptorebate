@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { CalculatorForm } from "@/components/calculator/calculator-form";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -18,7 +19,7 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: getLocalizedUrl(locale, "/calculator"),
-      languages: getLocaleAlternates("/calculator"),
+      languages: getPageAlternates("/calculator"),
     },
     openGraph: {
       title,

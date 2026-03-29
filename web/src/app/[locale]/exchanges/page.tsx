@@ -13,7 +13,8 @@ import {
   getUnifiedSeoPageLabels,
   isSeoContentLocale,
 } from "@/lib/automation/catalog";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -30,7 +31,7 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: getLocalizedUrl(locale, "/exchanges"),
-      languages: getLocaleAlternates("/exchanges"),
+      languages: getPageAlternates("/exchanges"),
     },
     openGraph: {
       title,

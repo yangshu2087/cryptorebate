@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 
 import { ArrowRight, UserPlus, TrendingUp, Wallet, DollarSign, AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
@@ -28,7 +29,7 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: getLocalizedUrl(locale, "/about"),
-      languages: getLocaleAlternates("/about"),
+      languages: getPageAlternates("/about"),
     },
     openGraph: {
       title,

@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/footer";
 import { AnalyticsConsentBanner } from "@/components/analytics/analytics-consent-banner";
 import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 import { getLanguageTag, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getSiteIconsMetadata } from "@/lib/metadata";
 import {
   SITE_NAME,
   SITE_URL,
@@ -38,14 +39,7 @@ const baseMetadata: Metadata = {
     "Bybit rebate",
     "OKX referral code",
   ],
-  icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
-    shortcut: ["/favicon.ico"],
-  },
+  icons: getSiteIconsMetadata(),
   verification: {
     google: "ybX7Q1e18lnsXk9Y8CDG6NGcVw18YU7g878nJtKv1fE",
   },

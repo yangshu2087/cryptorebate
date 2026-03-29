@@ -26,7 +26,8 @@ import {
   isSeoContentLocale,
 } from "@/lib/automation/catalog";
 import { exchanges, getExchangeBySlug, getAllExchangeSlugs } from "@/data/exchanges";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import {
   ArrowLeft,
   ArrowRight,
@@ -66,7 +67,7 @@ export async function generateMetadata({
     }),
     alternates: {
       canonical: getLocalizedUrl(locale, `/exchanges/${slug}`),
-      languages: getLocaleAlternates(`/exchanges/${slug}`),
+      languages: getPageAlternates(`/exchanges/${slug}`),
     },
     openGraph: {
       title: t("exchangeDetailTitle", { name: exchange.name }),

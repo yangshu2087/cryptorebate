@@ -26,7 +26,8 @@ import { ExchangeCard } from "@/components/exchanges/exchange-card";
 import { SavingsEstimator } from "@/components/home/savings-estimator";
 import { FAQJsonLd } from "@/components/seo/json-ld";
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import { SITE_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
 
@@ -42,7 +43,7 @@ export async function generateMetadata({
     description: t("siteDescription"),
     alternates: {
       canonical: getLocalizedUrl(locale),
-      languages: getLocaleAlternates(),
+      languages: getPageAlternates(),
     },
     openGraph: {
       title: t("homeTitle"),

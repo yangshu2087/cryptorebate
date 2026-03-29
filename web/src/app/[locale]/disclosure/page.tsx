@@ -2,7 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
-import { getLocaleAlternates, getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
+import { getPageAlternates } from "@/lib/metadata";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -20,7 +21,7 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: getLocalizedUrl(locale, "/disclosure"),
-      languages: getLocaleAlternates("/disclosure"),
+      languages: getPageAlternates("/disclosure"),
     },
     openGraph: {
       title,
