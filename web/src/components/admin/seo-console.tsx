@@ -140,6 +140,8 @@ function formatAutomationJobLabel(job: string) {
       return "daily_coverage_audit · Coverage Audit";
     case "daily_internal_link_refresh":
       return "daily_internal_link_refresh · 内链刷新";
+    case "daily_seed_discovery_refresh":
+      return "daily_seed_discovery_refresh · Discovery Sprint";
     default:
       return job;
   }
@@ -161,6 +163,38 @@ function formatIndexPolicyActionLabel(action: string) {
       return "观察";
     default:
       return action;
+  }
+}
+
+function formatDiscoverySprintStageLabel(stage: string) {
+  switch (stage) {
+    case "observe":
+      return "observe";
+    case "ctr-refresh":
+      return "CTR refresh";
+    case "template-refresh":
+      return "Template refresh";
+    case "prune-candidate":
+      return "Prune candidate";
+    case "frozen":
+      return "Frozen";
+    default:
+      return stage;
+  }
+}
+
+function getDiscoverySprintStageBadgeClass(stage: string) {
+  switch (stage) {
+    case "ctr-refresh":
+      return "border-amber-200 bg-amber-50 text-amber-700";
+    case "template-refresh":
+      return "border-orange-200 bg-orange-50 text-orange-700";
+    case "prune-candidate":
+      return "border-rose-200 bg-rose-50 text-rose-700";
+    case "frozen":
+      return "border-zinc-200 bg-zinc-50 text-zinc-700";
+    default:
+      return "border-sky-200 bg-sky-50 text-sky-700";
   }
 }
 
@@ -496,6 +530,7 @@ export function SeoConsole({
   const coverageRepair = dashboardData.operatorSummary.coverageRepair;
   const indexGrowthPolicy = dashboardData.indexGrowthPolicy;
   const searchVisibilityActionPlan = dashboardData.searchVisibilityActionPlan;
+  const discoverySprint = dashboardData.discoverySprint;
   const matchesActionPlanFilters = (item: {
     locale: string;
     exchangeSlug: string;
@@ -525,11 +560,22 @@ export function SeoConsole({
       completedAt: statusCards.coverageAudit.updatedAt || coverageRepair.checkedAt || "",
     };
 
+    const syntheticDiscoverySprintRun = {
+      id: "synthetic-daily_seed_discovery_refresh",
+      job: "daily_seed_discovery_refresh",
+      status: discoverySprint.status === "warning" ? "warning" : "success",
+      summary: `Discovery sprint tracked=${discoverySprint.trackedSeedPages} page_rows=${discoverySprint.pageRowsSeen} impressions=${discoverySprint.impressionPagesSeen} clicks=${discoverySprint.clickPagesSeen} surfaced=${discoverySprint.seedPagesSurfaced}` ,
+      completedAt: discoverySprint.updatedAt || state.generatedAt || "",
+    };
+
     const runsWithCoverageAudit = state.runs.some((run) => run.job === "daily_coverage_audit")
       ? state.runs
       : [syntheticCoverageAuditRun, ...state.runs];
+    const runsWithDiscoverySprint = runsWithCoverageAudit.some((run) => run.job === "daily_seed_discovery_refresh")
+      ? runsWithCoverageAudit
+      : [syntheticDiscoverySprintRun, ...runsWithCoverageAudit];
 
-    return runsWithCoverageAudit
+    return runsWithDiscoverySprint
       .filter((run) =>
         ["daily_gsc_ingest", "daily_coverage_audit"].includes(run.job)
           ? true
@@ -954,6 +1000,155 @@ export function SeoConsole({
         <Card className="border-border/70">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Discovery Sprint（12 个英文 seed 页）</CardTitle>
+              <Badge variant="outline">14 天冲刺</Badge>
+              <Badge variant="secondary">只做站内 SEO</Badge>
+            </div>
+            <CardDescription>
+              当前系统已切到“只打 12 个英文 seed 页”的 discovery sprint：先拿 page rows，再拿 impressions，再争取 clicks。所有非 seed / 非英文扩张默认冻结，不再分散主 discovery 权重。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+              {[
+                { label: "Tracked seed pages", value: formatNumber(discoverySprint.trackedSeedPages), helper: "固定监控的 12 个英文主战页" },
+                { label: "Page rows seen", value: formatNumber(discoverySprint.pageRowsSeen), helper: "已进入 GSC page rows 的页面数" },
+                { label: "Impressions seen", value: formatNumber(discoverySprint.impressionPagesSeen), helper: "已开始产生 page-level impressions" },
+                { label: "Clicks seen", value: formatNumber(discoverySprint.clickPagesSeen), helper: "已拿到真实 GSC clicks 的页面" },
+                { label: "Surfaced today", value: formatNumber(discoverySprint.seedPagesSurfaced), helper: "今天被主 discovery surfaces 钉住的 seed 页" },
+                { label: "Refresh due", value: formatNumber(discoverySprint.seedPagesRefreshDue), helper: "已进入 CTR / template refresh / prune 的 seed 页" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border/60 px-4 py-3">
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <p className="mt-2 text-lg font-semibold">{item.value}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">{item.helper}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-2">
+              <SummaryList
+                title="Pinned surfaces"
+                description="这 12 页今天被固定钉住的站内 discovery 面。"
+                items={[
+                  { label: "Homepage", value: formatNumber(discoverySprint.pinnedSurfaces.homepage.count) },
+                  { label: "Exchanges Hub", value: formatNumber(discoverySprint.pinnedSurfaces.exchangeHub.count) },
+                  { label: "Exchange detail", value: formatNumber(discoverySprint.pinnedSurfaces.exchangeDetail.count) },
+                  { label: "Feed", value: formatNumber(discoverySprint.pinnedSurfaces.feed.count) },
+                  { label: "Fresh sitemap", value: formatNumber(discoverySprint.pinnedSurfaces.freshSitemap.count) },
+                  { label: "Focus sitemap", value: formatNumber(discoverySprint.pinnedSurfaces.focusSitemap.count) },
+                ]}
+              />
+              <SummaryList
+                title="今天摘要"
+                description="今天最重要的 seed 目标、应该 refresh 的页，以及明确被冻结的扩张页。"
+                items={[
+                  {
+                    label: "今天最重要的目标页",
+                    value: discoverySprint.summary.topTargetPage
+                      ? `${discoverySprint.summary.topTargetPage.exchangeSlug} · ${getUnifiedSeoPageLabels(labelsLocale, discoverySprint.summary.topTargetPage.pageType).short}`
+                      : "暂无",
+                  },
+                  {
+                    label: "今天最应该 refresh 的页",
+                    value: discoverySprint.summary.topRefreshPage
+                      ? `${discoverySprint.summary.topRefreshPage.exchangeSlug} · ${getUnifiedSeoPageLabels(labelsLocale, discoverySprint.summary.topRefreshPage.pageType).short}`
+                      : "暂无",
+                  },
+                  {
+                    label: "今天绝对不该扩的 locale/pageType",
+                    value: discoverySprint.summary.blockedExpansionExample
+                      ? `${discoverySprint.summary.blockedExpansionExample.locale} · ${discoverySprint.summary.blockedExpansionExample.exchangeSlug} · ${getUnifiedSeoPageLabels(labelsLocale, discoverySprint.summary.blockedExpansionExample.pageType).short}`
+                      : "暂无",
+                  },
+                  { label: "Observe", value: formatNumber(discoverySprint.stageBuckets.observe.length) },
+                  { label: "CTR refresh", value: formatNumber(discoverySprint.stageBuckets.ctrRefresh.length) },
+                  { label: "Template refresh / prune", value: `${formatNumber(discoverySprint.stageBuckets.templateRefresh.length)} / ${formatNumber(discoverySprint.stageBuckets.pruneCandidate.length)}` },
+                ]}
+              />
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-2">
+              <Card className="border-border/70">
+                <CardHeader>
+                  <CardTitle>今天被 pinned 的页面</CardTitle>
+                  <CardDescription>Homepage / Hub / Detail / Feed / Sitemaps 会持续重复强化这些 seed 页。</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { label: "Homepage", items: discoverySprint.pinnedSurfaces.homepage.items },
+                    { label: "Exchanges Hub", items: discoverySprint.pinnedSurfaces.exchangeHub.items },
+                    { label: "Exchange detail", items: discoverySprint.pinnedSurfaces.exchangeDetail.items },
+                    { label: "Feed", items: discoverySprint.pinnedSurfaces.feed.items },
+                    { label: "Fresh sitemap", items: discoverySprint.pinnedSurfaces.freshSitemap.items },
+                    { label: "Focus sitemap", items: discoverySprint.pinnedSurfaces.focusSitemap.items },
+                  ].map(({ label, items }) => (
+                    <div key={label} className="rounded-2xl border border-border/60 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold">{label}</p>
+                        <Badge variant="outline">{formatNumber((items as typeof discoverySprint.pinnedSurfaces.homepage.items).length)}</Badge>
+                      </div>
+                      <div className="mt-3 space-y-2">
+                        {(items as typeof discoverySprint.pinnedSurfaces.homepage.items).slice(0, 4).map((item) => (
+                          <a key={`${label}:${item.id}`} href={item.routePath} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-border/50 px-3 py-2 text-sm hover:bg-muted/40">
+                            <span>{item.exchangeSlug} · {getUnifiedSeoPageLabels(labelsLocale, item.pageType).short}</span>
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </a>
+                        ))}
+                        {(items as typeof discoverySprint.pinnedSurfaces.homepage.items).length === 0 ? (
+                          <p className="text-xs text-muted-foreground">当前没有页面被钉到这个 surface。</p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/70">
+                <CardHeader>
+                  <CardTitle>需要 refresh / prune 的 seed 页</CardTitle>
+                  <CardDescription>这些页因为 7 / 14 / 21 天规则推进，必须优先争取首个展示，而不是继续扩页。</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[...discoverySprint.stageBuckets.ctrRefresh, ...discoverySprint.stageBuckets.templateRefresh, ...discoverySprint.stageBuckets.pruneCandidate].length === 0 ? (
+                    <p className="text-sm text-muted-foreground">当前 12 个 seed 页都还在 observe 阶段，没有进入 refresh / prune。</p>
+                  ) : (
+                    [...discoverySprint.stageBuckets.ctrRefresh, ...discoverySprint.stageBuckets.templateRefresh, ...discoverySprint.stageBuckets.pruneCandidate].map((item) => (
+                      <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", getDiscoverySprintStageBadgeClass(item.stage))}>
+                                {formatDiscoverySprintStageLabel(item.stage)}
+                              </span>
+                              <Badge variant="outline">{item.exchangeSlug}</Badge>
+                            </div>
+                            <p className="mt-3 font-semibold">{getUnifiedSeoPageLabels(labelsLocale, item.pageType).short}</p>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>观察 {formatObservationDays(item.observationDays)}</p>
+                            <p>Score {item.score}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">{item.reason}</p>
+                        <a href={item.routePath} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                          查看页面
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
               <CardTitle>Search Visibility Action Plan</CardTitle>
               <Badge variant="outline">直接落地版</Badge>
             </div>
@@ -1237,6 +1432,22 @@ export function SeoConsole({
           } · redirect 风险 ${formatNumber(statusCards.coverageRepair.redirectIssueCount)} · 404 风险 ${formatNumber(
             statusCards.coverageRepair.notFoundIssueCount
           )} · 发现资产风险 ${formatNumber(statusCards.coverageRepair.discoveryIssueCount)} · x-default ${statusCards.coverageRepair.xDefaultHealthy ? "→ /en" : statusCards.coverageRepair.xDefaultTarget ?? "缺失"}`}
+        />
+        <StatusCard
+          title="最近一次 Discovery Sprint"
+          status={statusCards.discoverySprint.label}
+          description="只围绕 12 个英文 seed 页做 onsite SEO 冲刺，追踪 page rows / impressions / clicks 与 surface 钉住情况。"
+          meta={`最近刷新：${
+            statusCards.discoverySprint.updatedAt
+              ? formatDate(statusCards.discoverySprint.updatedAt)
+              : "暂无"
+          } · tracked ${formatNumber(statusCards.discoverySprint.trackedSeedPages)} · page rows ${formatNumber(
+            statusCards.discoverySprint.pageRowsSeen
+          )} · impressions ${formatNumber(statusCards.discoverySprint.impressionPagesSeen)} · clicks ${formatNumber(
+            statusCards.discoverySprint.clickPagesSeen
+          )} · surfaced ${formatNumber(statusCards.discoverySprint.seedPagesSurfaced)} · refresh due ${formatNumber(
+            statusCards.discoverySprint.seedPagesRefreshDue
+          )}`}
         />
         <StatusCard
           title="GSC 焦点页首个命中观察"

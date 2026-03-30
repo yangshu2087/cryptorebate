@@ -54,6 +54,7 @@ describe("internal link refresh manifest", () => {
       candidates.every((item) => item.source === "base" || item.source === "dynamic")
     ).toBe(true);
     expect(candidates.every((item) => item.routePath.startsWith("/exchanges/"))).toBe(true);
+    expect(candidates.every((item) => item.locale === "en")).toBe(true);
   });
 
   it("builds explicit slot outputs for homepage, hub, exchange detail, and brand support", () => {
@@ -76,6 +77,8 @@ describe("internal link refresh manifest", () => {
     );
 
     expect(enHomepageSlot?.guides.length).toBeGreaterThan(0);
+    expect(state.internalLinks.slots.homepageHeroSecondary.every((slot) => slot.locale === "en")).toBe(true);
+    expect(state.internalLinks.slots.exchangeHubFocus.every((slot) => slot.locale === "en")).toBe(true);
     expect(enHomepageSlot?.guides.every((guide) =>
       ["official-site", "referral-code"].includes(guide.pageType)
     )).toBe(true);

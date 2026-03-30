@@ -5,6 +5,7 @@ import {
   buildCompetitorGapProviderHits,
   buildSeoDashboardData,
   buildDiscoveryLaneSummary,
+  buildDiscoverySprintSummary,
   buildGscFocusPageRowMonitorSummary,
   buildIndexGrowthPolicySummary,
   buildMonetizationLaneSummary,
@@ -73,6 +74,7 @@ describe("operator console competitor-gap SERP helpers", () => {
     const monetization = buildMonetizationLaneSummary(state);
     const indexGrowthPolicy = buildIndexGrowthPolicySummary(state);
     const focusMonitor = buildGscFocusPageRowMonitorSummary(state);
+    const discoverySprint = buildDiscoverySprintSummary(state);
 
     expect(discovery.focusPagesPublished).toBeGreaterThan(0);
     expect(discovery.focusPagesSurfaced).toBeGreaterThan(0);
@@ -86,11 +88,16 @@ describe("operator console competitor-gap SERP helpers", () => {
     expect(focusMonitor.trackedCount).toBe(12);
     expect(focusMonitor.pendingCount).toBeGreaterThanOrEqual(0);
     expect(focusMonitor.entries).toHaveLength(12);
+    expect(discoverySprint.trackedSeedPages).toBe(12);
+    expect(discoverySprint.pinnedSurfaces.exchangeHub.count).toBe(12);
+    expect(Array.isArray(discoverySprint.stageBuckets.observe)).toBe(true);
   });
 
   it("surfaces the latest coverage audit run in status cards", async () => {
     const dashboard = await buildSeoDashboardData("en");
 
+    expect(dashboard.discoverySprint.trackedSeedPages).toBe(12);
+    expect(dashboard.operatorSummary.statusCards.discoverySprint.trackedSeedPages).toBe(12);
     expect(dashboard.operatorSummary.statusCards.coverageAudit).toMatchObject({
       issueCount: dashboard.coverageRepair.issueCount,
       redirectIssueCount: dashboard.coverageRepair.redirectIssueCount,

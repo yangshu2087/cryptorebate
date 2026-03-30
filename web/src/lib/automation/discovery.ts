@@ -237,7 +237,7 @@ function buildTrackedFocusDiscoveryPages(
     .filter((page): page is DiscoveryPageRecord => Boolean(page));
 }
 
-export async function getFocusDiscoveryPages(limit = 36) {
+export async function getFocusDiscoveryPages(limit = getGscFocusPageMonitorTargets().length) {
   const state = await getDiscoveryState();
   const slots = getInternalLinkSlots(state.internalLinks);
   const refreshedAt = normaliseDate(state.internalLinks.refreshedAt ?? state.generatedAt);
@@ -302,7 +302,7 @@ export async function getFreshDiscoveryPages(days = 7) {
     unique.set(page.url, page);
   }
 
-  return [...unique.values()].sort(sortDiscoveryPages);
+  return [...unique.values()].sort(sortFocusDiscoveryPages);
 }
 
 export async function getFeedItems(limit = 40): Promise<FeedItem[]> {

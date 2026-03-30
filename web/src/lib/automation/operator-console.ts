@@ -262,6 +262,62 @@ export type GscFocusPageRowMonitorSummary = ReturnType<
 >;
 export type CoverageRepairLaneSummary = Awaited<ReturnType<typeof auditCoverageRepair>>;
 
+export type DiscoverySprintSummary = {
+  status: "warning" | "active" | "hit";
+  label: string;
+  updatedAt: string;
+  trackedSeedPages: number;
+  pageRowsSeen: number;
+  impressionPagesSeen: number;
+  clickPagesSeen: number;
+  seedPagesSurfaced: number;
+  seedPagesFrozen: number;
+  seedPagesRefreshDue: number;
+  pinnedSurfaces: {
+    homepage: DiscoverySprintSurfaceSummary;
+    exchangeHub: DiscoverySprintSurfaceSummary;
+    exchangeDetail: DiscoverySprintSurfaceSummary;
+    feed: DiscoverySprintSurfaceSummary;
+    freshSitemap: DiscoverySprintSurfaceSummary;
+    focusSitemap: DiscoverySprintSurfaceSummary;
+  };
+  stageBuckets: {
+    observe: DiscoverySprintEntry[];
+    ctrRefresh: DiscoverySprintEntry[];
+    templateRefresh: DiscoverySprintEntry[];
+    pruneCandidate: DiscoverySprintEntry[];
+    frozen: DiscoverySprintEntry[];
+  };
+  summary: {
+    topTargetPage: DiscoverySprintEntry | null;
+    topRefreshPage: DiscoverySprintEntry | null;
+    blockedExpansionExample: {
+      locale: string;
+      exchangeSlug: string;
+      pageType: string;
+      reason: string;
+    } | null;
+  };
+};
+
+type DiscoverySprintEntry = {
+  id: string;
+  locale: string;
+  exchangeSlug: string;
+  pageType: string;
+  primaryQuery: string;
+  routePath: string;
+  score: number;
+  stage: string;
+  reason: string;
+  observationDays: number;
+};
+
+type DiscoverySprintSurfaceSummary = {
+  count: number;
+  items: DiscoverySprintEntry[];
+};
+
 function isWithinDays(timestamp: string | undefined, days: number) {
   if (!timestamp) return false;
   const ageMs = Date.now() - new Date(timestamp).getTime();
@@ -545,6 +601,169 @@ export function buildSearchVisibilityActionPlan(
   };
 }
 
+function toDiscoverySprintEntry(
+  item: AutomationState["opportunities"][number]
+): DiscoverySprintEntry {
+  return {
+    id: item.id,
+    locale: item.locale,
+    exchangeSlug: item.exchangeSlug,
+    pageType: item.pageType,
+    primaryQuery: item.primaryQuery,
+    routePath: `/${item.locale}/exchanges/${item.exchangeSlug}/${item.pageType}`,
+    score: item.score,
+    stage: item.discoverySprintStage,
+    reason: item.indexPolicyReason,
+    observationDays: item.indexPolicyObservationDays,
+  };
+}
+
+function sortDiscoverySprintEntries(a: DiscoverySprintEntry, b: DiscoverySprintEntry) {
+  return b.score - a.score || b.observationDays - a.observationDays || a.id.localeCompare(b.id);
+}
+
+function buildDiscoverySprintSurfaceSummary(
+  opportunitiesByKey: Map<string, AutomationState["opportunities"][number]>,
+  keys: string[]
+): DiscoverySprintSurfaceSummary {
+  const items = Array.from(new Set(keys))
+    .map((key) => opportunitiesByKey.get(key))
+    .filter((item): item is AutomationState["opportunities"][number] => Boolean(item))
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+
+  return {
+    count: items.length,
+    items,
+  };
+}
+
+export function buildDiscoverySprintSummary(
+  state: AutomationState
+): DiscoverySprintSummary {
+  const focusMonitor = summarizeGscFocusPageRowMonitor(state.externalSources.gsc.focusPageRows);
+  const opportunitiesByKey = new Map(
+    state.opportunities.map((item) => [
+      `${item.locale}:${item.exchangeSlug}:${item.pageType}`,
+      item,
+    ] as const)
+  );
+  const trackedSeedOpportunities = getGscFocusPageMonitorTargets()
+    .map((target) =>
+      opportunitiesByKey.get(`${target.locale}:${target.exchangeSlug}:${target.pageType}`)
+    )
+    .filter((item): item is AutomationState["opportunities"][number] => Boolean(item));
+
+  const activeSeedOpportunities = trackedSeedOpportunities.filter(
+    (item) => item.indexPolicyAllowPromotion
+  );
+  const slots = getInternalLinkSlots(state.internalLinks);
+  const homepageKeys = [
+    ...slots.homepageHeroSecondary.flatMap((slot) => slot.guides),
+    ...slots.homepageQuestionClusters.flatMap((slot) => slot.guides),
+  ].map((guide) => `${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`);
+  const exchangeHubKeys = slots.exchangeHubFocus
+    .flatMap((slot) => slot.guides)
+    .map((guide) => `${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`);
+  const exchangeDetailKeys = slots.exchangeDetailFocus
+    .flatMap((slot) => slot.guides)
+    .map((guide) => `${guide.locale}:${guide.exchangeSlug}:${guide.pageType}`);
+  const discoveryAssetKeys = activeSeedOpportunities.map(
+    (item) => `${item.locale}:${item.exchangeSlug}:${item.pageType}`
+  );
+
+  const observe = trackedSeedOpportunities
+    .filter((item) => item.discoverySprintStage === "observe")
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+  const ctrRefresh = trackedSeedOpportunities
+    .filter((item) => item.discoverySprintStage === "ctr-refresh")
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+  const templateRefresh = trackedSeedOpportunities
+    .filter((item) => item.discoverySprintStage === "template-refresh")
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+  const pruneCandidate = trackedSeedOpportunities
+    .filter((item) => item.discoverySprintStage === "prune-candidate")
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+  const frozen = state.opportunities
+    .filter((item) => item.discoverySprintStage === "frozen")
+    .slice(0, 8)
+    .map(toDiscoverySprintEntry)
+    .sort(sortDiscoverySprintEntries);
+
+  const blockedExpansionExample = state.opportunities
+    .filter((item) => item.locale !== "en" && item.indexPolicyAction === "hold")
+    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))[0];
+
+  const seedPagesSurfaced = new Set([
+    ...homepageKeys,
+    ...exchangeHubKeys,
+    ...exchangeDetailKeys,
+    ...discoveryAssetKeys,
+  ]).size;
+
+  return {
+    status:
+      focusMonitor.clickPagesSeen > 0
+        ? "hit"
+        : focusMonitor.pageRowsSeen > 0 || focusMonitor.impressionPagesSeen > 0
+          ? "active"
+          : "warning",
+    label:
+      focusMonitor.clickPagesSeen > 0
+        ? `已拿到点击 ${focusMonitor.clickPagesSeen}/${focusMonitor.trackedCount}`
+        : focusMonitor.pageRowsSeen > 0 || focusMonitor.impressionPagesSeen > 0
+          ? `已开始展示 ${focusMonitor.pageRowsSeen}/${focusMonitor.trackedCount}`
+          : "12 页冲刺中",
+    updatedAt:
+      [state.internalLinks.refreshedAt, focusMonitor.lastCheckedAt, state.generatedAt]
+        .filter(Boolean)
+        .sort()
+        .at(-1) ?? "",
+    trackedSeedPages: focusMonitor.trackedCount,
+    pageRowsSeen: focusMonitor.pageRowsSeen,
+    impressionPagesSeen: focusMonitor.impressionPagesSeen,
+    clickPagesSeen: focusMonitor.clickPagesSeen,
+    seedPagesSurfaced,
+    seedPagesFrozen: trackedSeedOpportunities.filter(
+      (item) => item.discoverySprintStage === "frozen"
+    ).length,
+    seedPagesRefreshDue: trackedSeedOpportunities.filter((item) =>
+      ["ctr-refresh", "template-refresh", "prune-candidate"].includes(item.discoverySprintStage)
+    ).length,
+    pinnedSurfaces: {
+      homepage: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, homepageKeys),
+      exchangeHub: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, exchangeHubKeys),
+      exchangeDetail: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, exchangeDetailKeys),
+      feed: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, discoveryAssetKeys),
+      freshSitemap: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, discoveryAssetKeys),
+      focusSitemap: buildDiscoverySprintSurfaceSummary(opportunitiesByKey, discoveryAssetKeys),
+    },
+    stageBuckets: {
+      observe,
+      ctrRefresh,
+      templateRefresh,
+      pruneCandidate,
+      frozen,
+    },
+    summary: {
+      topTargetPage: observe[0] ?? ctrRefresh[0] ?? templateRefresh[0] ?? null,
+      topRefreshPage: ctrRefresh[0] ?? templateRefresh[0] ?? pruneCandidate[0] ?? null,
+      blockedExpansionExample: blockedExpansionExample
+        ? {
+            locale: blockedExpansionExample.locale,
+            exchangeSlug: blockedExpansionExample.exchangeSlug,
+            pageType: blockedExpansionExample.pageType,
+            reason: blockedExpansionExample.indexPolicyReason,
+          }
+        : null,
+    },
+  };
+}
+
 export function buildGscFocusPageRowMonitorSummary(
   state: AutomationState
 ): {
@@ -589,6 +808,7 @@ export type SeoDashboardData = {
   monetization: MonetizationLaneSummary;
   indexGrowthPolicy: IndexGrowthPolicySummary;
   searchVisibilityActionPlan: SearchVisibilityActionPlan;
+  discoverySprint: DiscoverySprintSummary;
   coverageRepair: CoverageRepairLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
@@ -643,6 +863,17 @@ export type SeoDashboardData = {
         expectedIndexTarget: string;
         xDefaultTarget: string | null;
         xDefaultHealthy: boolean;
+      };
+      discoverySprint: {
+        status: string;
+        label: string;
+        updatedAt: string;
+        trackedSeedPages: number;
+        pageRowsSeen: number;
+        impressionPagesSeen: number;
+        clickPagesSeen: number;
+        seedPagesSurfaced: number;
+        seedPagesRefreshDue: number;
       };
       focusPageRowMonitor: {
         status: string;
@@ -699,6 +930,7 @@ export type SeoDashboardData = {
     discovery: DiscoveryLaneSummary;
     monetization: MonetizationLaneSummary;
     indexGrowthPolicy: IndexGrowthPolicySummary;
+    discoverySprint: DiscoverySprintSummary;
     coverageRepair: CoverageRepairLaneSummary;
     focusPageRowMonitor: GscFocusPageRowMonitorSummary;
     sevenDayChanges: {
@@ -742,6 +974,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const monetization = buildMonetizationLaneSummary(state);
   const indexGrowthPolicy = buildIndexGrowthPolicySummary(state);
   const searchVisibilityActionPlan = buildSearchVisibilityActionPlan(state);
+  const discoverySprint = buildDiscoverySprintSummary(state);
   const storedCoverageRepair = await readCoverageRepairArtifact();
   const coverageRepair =
     storedCoverageRepair.status === "never_run"
@@ -797,6 +1030,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     monetization,
     indexGrowthPolicy,
     searchVisibilityActionPlan,
+    discoverySprint,
     coverageRepair,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:
@@ -871,6 +1105,17 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           expectedIndexTarget: coverageRepair.expectedIndexTarget,
           xDefaultTarget: coverageRepair.xDefaultTarget,
           xDefaultHealthy: coverageRepair.xDefaultHealthy,
+        },
+        discoverySprint: {
+          status: discoverySprint.status,
+          label: discoverySprint.label,
+          updatedAt: discoverySprint.updatedAt,
+          trackedSeedPages: discoverySprint.trackedSeedPages,
+          pageRowsSeen: discoverySprint.pageRowsSeen,
+          impressionPagesSeen: discoverySprint.impressionPagesSeen,
+          clickPagesSeen: discoverySprint.clickPagesSeen,
+          seedPagesSurfaced: discoverySprint.seedPagesSurfaced,
+          seedPagesRefreshDue: discoverySprint.seedPagesRefreshDue,
         },
         focusPageRowMonitor: {
           status: focusPageRowMonitor.status,
@@ -960,6 +1205,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       discovery,
       monetization,
       indexGrowthPolicy,
+      discoverySprint,
       coverageRepair,
       focusPageRowMonitor,
       sevenDayChanges: {

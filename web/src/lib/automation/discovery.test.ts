@@ -47,7 +47,7 @@ describe("discovery outputs", () => {
 
     expect(brandEntries.length).toBeGreaterThan(0);
     expect(freshEntries.length).toBeGreaterThan(0);
-    expect(focusEntries.length).toBeGreaterThanOrEqual(12);
+    expect(focusEntries.length).toBe(12);
     expect(brandEntries[0]?.url).toContain("/brand/");
     expect(freshEntries[0]?.url).toContain("cryptorebate.app/");
     expect(
@@ -58,6 +58,7 @@ describe("discovery outputs", () => {
     expect(trackedUrls.every((url) => focusEntries.some((entry) => entry.url === url))).toBe(
       true
     );
+    expect(freshEntries.slice(0, 12).every((entry) => trackedUrls.includes(entry.url))).toBe(true);
   });
 
   it("builds valid XML documents for sitemap and RSS feed", async () => {

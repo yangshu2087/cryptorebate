@@ -33,7 +33,10 @@ describe("gsc-focus-page-monitor", () => {
       pageType: "referral-code",
       monitoringStartedAt: observedAt,
       firstSeenAt: observedAt,
+      firstImpressionAt: observedAt,
       seenInPageRows: true,
+      seenInImpressions: true,
+      seenInClicks: false,
       latestImpressions: 5,
     });
     expect(
@@ -79,8 +82,14 @@ describe("gsc-focus-page-monitor", () => {
       monitoringStartedAt: firstSeenAt,
       firstSeenAt,
       lastSeenAt: observedAt,
+      firstImpressionAt: firstSeenAt,
+      firstClickAt: observedAt,
+      lastImpressionAt: observedAt,
+      lastClickAt: observedAt,
       latestImpressions: 9,
       latestClicks: 1,
+      seenInImpressions: true,
+      seenInClicks: true,
     });
   });
 
@@ -97,6 +106,36 @@ describe("gsc-focus-page-monitor", () => {
     ).toBe(firstObservedAt);
     expect(summary.monitoringStartedAt).toBe(firstObservedAt);
     expect(summary.observationDays).toBeGreaterThanOrEqual(13);
+  });
+
+  it("summarizes page-row, impression, and click milestones for the tracked seed pages", () => {
+    const observedAt = "2026-03-29T14:00:00.000Z";
+    const entries = reconcileGscFocusPageRowMonitor(
+      [],
+      [
+        {
+          url: "https://cryptorebate.app/en/exchanges/binance/referral-code",
+          impressions: 6,
+          clicks: 0,
+          ctr: 0,
+          position: 7.1,
+        },
+        {
+          url: "https://cryptorebate.app/en/exchanges/okx/official-site",
+          impressions: 4,
+          clicks: 2,
+          ctr: 0.5,
+          position: 6.2,
+        },
+      ],
+      observedAt
+    ).entries;
+
+    const summary = summarizeGscFocusPageRowMonitor(entries);
+    expect(summary.trackedCount).toBe(12);
+    expect(summary.pageRowsSeen).toBe(2);
+    expect(summary.impressionPagesSeen).toBe(2);
+    expect(summary.clickPagesSeen).toBe(1);
   });
 
   it("builds admin alerts and telegram reminder payloads for first-seen events", () => {

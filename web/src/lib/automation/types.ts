@@ -94,6 +94,13 @@ export type QueryOpportunity = {
   indexPolicyAllowPromotion: boolean;
   indexPolicyAllowExpansion: boolean;
   indexPolicyScheduledToday: boolean;
+  discoverySprintStage:
+    | "observe"
+    | "ctr-refresh"
+    | "template-refresh"
+    | "prune-candidate"
+    | "frozen";
+  discoverySprintPinned: boolean;
   qualityScore: number;
   projectedEpcUsd: number;
   projectedMonthlyRevenueUsd: number;
@@ -355,9 +362,15 @@ export type GscFocusPageRowMonitorEntry = {
   routePath: string;
   url: string;
   seenInPageRows: boolean;
+  seenInImpressions?: boolean;
+  seenInClicks?: boolean;
   monitoringStartedAt?: string;
   firstSeenAt?: string;
+  firstImpressionAt?: string;
+  firstClickAt?: string;
   lastSeenAt?: string;
+  lastImpressionAt?: string;
+  lastClickAt?: string;
   lastCheckedAt: string;
   latestImpressions?: number;
   latestClicks?: number;
@@ -513,6 +526,7 @@ export type AutomationRun = {
     | "daily_page_publish"
     | "daily_page_refresh"
     | "daily_internal_link_refresh"
+    | "daily_seed_discovery_refresh"
     | "daily_coverage_audit"
     | "daily_distribution_enqueue"
     | "daily_distribution_publish"

@@ -6,7 +6,6 @@ import {
 } from "@/data/exchange-seo";
 import { exchanges } from "@/data/exchanges";
 import {
-  FOCUS_LOCALES,
   FOCUS_PAGE_TYPES,
   getOpportunityFocusLane,
   isFocusExchangeSlug,
@@ -14,6 +13,10 @@ import {
   isFocusPageType,
   type OpportunityFocusLane,
 } from "./focus";
+import {
+  getIndexGrowthPolicy,
+  isDiscoverySprintProtectedPage,
+} from "./index-growth-policy";
 import { getGscFocusPageMonitorTargets } from "./gsc-focus-page-monitor";
 import type {
   AutomationControlPlane,
@@ -59,6 +62,9 @@ const GSC_FOCUS_TARGET_RANK = new Map<string, number>(
     index,
   ] as const)
 );
+
+const DISCOVERY_SPRINT_POLICY = getIndexGrowthPolicy();
+const DISCOVERY_SPRINT_SEED_LOCALE = DISCOVERY_SPRINT_POLICY.seedLocale;
 
 function getPageTypePriority(pageType: string) {
   return PAGE_TYPE_PRIORITY[pageType] ?? 70;
@@ -378,53 +384,55 @@ export function buildInternalLinkManifest(
   const focusGroups = exchangeGroups
     .filter(
       (group) =>
-        isFocusLocale(group.locale) && isFocusExchangeSlug(group.exchangeSlug)
+        group.locale === DISCOVERY_SPRINT_SEED_LOCALE &&
+        DISCOVERY_SPRINT_POLICY.priorityExchanges.includes(group.exchangeSlug)
     )
     .map((group) => ({
       ...group,
-      guides: group.guides.filter((guide) => isFocusPageType(guide.pageType)),
+      guides: group.guides.filter((guide) =>
+        isDiscoverySprintProtectedPage(
+          guide.locale,
+          guide.exchangeSlug,
+          guide.pageType,
+          DISCOVERY_SPRINT_POLICY
+        )
+      ),
     }))
     .filter((group) => group.guides.length > 0);
 
-  const homepageHeroSecondary = FOCUS_LOCALES.map((locale) => ({
-    locale,
-    guides: pickGuidesRoundRobin(
-      focusGroups.filter((group) => group.locale === locale),
-      6,
-      2
-    ),
+  const homepageHeroSecondary = [
+    {
+      locale: DISCOVERY_SPRINT_SEED_LOCALE,
+      guides: pickGuidesRoundRobin(focusGroups, 6, 2),
+    },
+  ].filter((slot) => slot.guides.length > 0);
+
+  const homepageQuestionClusters = FOCUS_PAGE_TYPES.map((pageType) => ({
+    locale: DISCOVERY_SPRINT_SEED_LOCALE,
+    pageType,
+    guides: focusGroups
+      .flatMap((group) => group.guides)
+      .filter((guide) => guide.pageType === pageType)
+      .sort(compareTrackedPriority)
+      .slice(0, 3),
   })).filter((slot) => slot.guides.length > 0);
 
-  const homepageQuestionClusters = FOCUS_LOCALES.flatMap((locale) =>
-    FOCUS_PAGE_TYPES.map((pageType) => ({
-      locale,
-      pageType,
-      guides: focusGroups
-        .filter((group) => group.locale === locale)
-        .flatMap((group) => group.guides)
-        .filter((guide) => guide.pageType === pageType)
-        .sort(compareTrackedPriority)
-        .slice(0, 3),
-    }))
-  ).filter((slot) => slot.guides.length > 0);
-
-  const exchangeHubFocus = FOCUS_LOCALES.map((locale) => ({
-    locale,
-    guides: pickGuidesRoundRobin(
-      focusGroups.filter((group) => group.locale === locale),
-      locale === "en" ? 12 : 9,
-      locale === "en" ? 4 : 3
-    ),
-  })).filter((slot) => slot.guides.length > 0);
+  const exchangeHubFocus = [
+    {
+      locale: DISCOVERY_SPRINT_SEED_LOCALE,
+      guides: pickGuidesRoundRobin(
+        focusGroups,
+        getGscFocusPageMonitorTargets().length,
+        FOCUS_PAGE_TYPES.length
+      ),
+    },
+  ].filter((slot) => slot.guides.length > 0);
 
   const exchangeDetailFocus = focusGroups
     .map((group) => ({
       locale: group.locale,
       exchangeSlug: group.exchangeSlug,
-      guides: group.guides.slice(
-        0,
-        state.controlPlane?.publishDailyLimitPerExchange ?? 6
-      ),
+      guides: group.guides.slice(0, FOCUS_PAGE_TYPES.length),
     }))
     .filter((slot) => slot.guides.length > 0);
 
@@ -432,12 +440,12 @@ export function buildInternalLinkManifest(
     ...homepageHeroSecondary.map((slot) => ({
       locale: slot.locale,
       topic: "cryptorebate",
-      guides: slot.guides.slice(0, 3),
+      guides: slot.guides.slice(0, 2),
     })),
     ...focusGroups.map((group) => ({
       locale: group.locale,
       topic: `cryptorebate-${group.exchangeSlug}`,
-      guides: group.guides.slice(0, 3),
+      guides: group.guides.slice(0, 2),
     })),
   ].filter((slot) => slot.guides.length > 0);
 
@@ -545,11 +553,6 @@ export function getInternalLinkDistributionCandidates(
       slot.guides
         .slice(0, perGroupLimit)
         .map((guide) => ({ guide, slotTag: `exchange-detail-${slot.exchangeSlug}` }))
-    ),
-    ...slots.brandSupporting.flatMap((slot) =>
-      slot.guides
-        .slice(0, perGroupLimit)
-        .map((guide) => ({ guide, slotTag: `brand-support-${slot.topic}` }))
     ),
   ]
     .sort((a, b) => b.guide.score - a.guide.score)

@@ -29,6 +29,9 @@ export type GscFocusPageMonitorTarget = {
 export type GscFocusPageRowMonitorSummary = {
   trackedCount: number;
   seenCount: number;
+  pageRowsSeen: number;
+  impressionPagesSeen: number;
+  clickPagesSeen: number;
   pendingCount: number;
   lastCheckedAt: string;
   monitoringStartedAt: string;
@@ -89,6 +92,12 @@ export function reconcileGscFocusPageRowMonitor(
     const previous = previousByKey.get(target.key);
     const observation = observationsByUrl.get(normaliseUrl(target.url));
     const firstSeenAt = previous?.firstSeenAt ?? (observation ? observedAt : undefined);
+    const firstImpressionAt =
+      previous?.firstImpressionAt ??
+      ((observation?.impressions ?? 0) > 0 ? observedAt : undefined);
+    const firstClickAt =
+      previous?.firstClickAt ??
+      ((observation?.clicks ?? 0) > 0 ? observedAt : undefined);
     const entry: GscFocusPageRowMonitorEntry = {
       key: target.key,
       locale: target.locale,
@@ -97,9 +106,17 @@ export function reconcileGscFocusPageRowMonitor(
       routePath: target.routePath,
       url: target.url,
       seenInPageRows: Boolean(firstSeenAt),
+      seenInImpressions: Boolean(firstImpressionAt),
+      seenInClicks: Boolean(firstClickAt),
       monitoringStartedAt: previous?.monitoringStartedAt ?? observedAt,
       firstSeenAt,
+      firstImpressionAt,
+      firstClickAt,
       lastSeenAt: observation ? observedAt : previous?.lastSeenAt,
+      lastImpressionAt:
+        (observation?.impressions ?? 0) > 0 ? observedAt : previous?.lastImpressionAt,
+      lastClickAt:
+        (observation?.clicks ?? 0) > 0 ? observedAt : previous?.lastClickAt,
       lastCheckedAt: observedAt,
       latestImpressions: observation?.impressions ?? previous?.latestImpressions,
       latestClicks: observation?.clicks ?? previous?.latestClicks,
@@ -139,6 +156,8 @@ export function summarizeGscFocusPageRowMonitor(
     (fallback) => previousByKey.get(fallback.key) ?? fallback
   );
   const seenEntries = resolvedEntries.filter((entry) => entry.seenInPageRows);
+  const impressionEntries = resolvedEntries.filter((entry) => entry.seenInImpressions);
+  const clickEntries = resolvedEntries.filter((entry) => entry.seenInClicks);
   const trackedCount = resolvedEntries.length;
   const seenCount = seenEntries.length;
   const pendingCount = Math.max(0, trackedCount - seenCount);
@@ -176,6 +195,9 @@ export function summarizeGscFocusPageRowMonitor(
   return {
     trackedCount,
     seenCount,
+    pageRowsSeen: seenEntries.length,
+    impressionPagesSeen: impressionEntries.length,
+    clickPagesSeen: clickEntries.length,
     pendingCount,
     lastCheckedAt,
     monitoringStartedAt,

@@ -136,6 +136,8 @@ describe("index-growth-policy", () => {
       indexPolicyAllowPromotion: true,
       indexPolicyAllowExpansion: true,
       indexPolicyScheduledToday: true,
+      discoverySprintStage: "observe" as const,
+      discoverySprintPinned: true,
       qualityScore: 90,
       projectedEpcUsd: 10,
       projectedMonthlyRevenueUsd: 1000 - index,

@@ -10,6 +10,7 @@ import {
 import { regenerateAutomationState } from "../src/lib/automation/persistence";
 import { materializeCoverageRepairArtifact } from "../src/lib/automation/coverage-audit";
 import { runExternalSync } from "../src/lib/automation/external-sync";
+import { buildDiscoverySprintSummary } from "../src/lib/automation/operator-console";
 
 function parseMode() {
   const modeIndex = process.argv.findIndex((arg) => arg === "--mode");
@@ -153,6 +154,18 @@ async function main() {
       }
     );
     await insertSyncRun(internalLinkRun.run, internalLinkRun.meta);
+
+    const discoverySprint = buildDiscoverySprintSummary(state);
+    const discoverySprintRun = createRun(
+      "daily_seed_discovery_refresh",
+      discoverySprint.pageRowsSeen > 0 || discoverySprint.impressionPagesSeen > 0
+        ? "success"
+        : "warning",
+      `Discovery sprint tracked=${discoverySprint.trackedSeedPages} page_rows=${discoverySprint.pageRowsSeen} impressions=${discoverySprint.impressionPagesSeen} clicks=${discoverySprint.clickPagesSeen} surfaced=${discoverySprint.seedPagesSurfaced}`,
+      startedAt,
+      discoverySprint
+    );
+    await insertSyncRun(discoverySprintRun.run, discoverySprintRun.meta);
 
     if (coverageRepair) {
       const coverageRun = createRun(

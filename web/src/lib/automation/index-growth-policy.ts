@@ -9,6 +9,13 @@ import {
 } from "./focus";
 import type { GscFocusPageRowMonitorEntry, QueryOpportunity } from "./types";
 
+export type DiscoverySprintStage =
+  | "observe"
+  | "ctr-refresh"
+  | "template-refresh"
+  | "prune-candidate"
+  | "frozen";
+
 export type IndexGrowthPolicyConfig = {
   maxNewPagesPerDay: number;
   maxRefreshPagesPerDay: number;
@@ -54,6 +61,19 @@ export function getIndexGrowthPolicy(): IndexGrowthPolicyConfig {
   );
 }
 
+export function isDiscoverySprintProtectedPage(
+  locale: string,
+  exchangeSlug: string,
+  pageType: string,
+  policy = getIndexGrowthPolicy()
+) {
+  return (
+    locale === policy.seedLocale &&
+    policy.priorityExchanges.includes(exchangeSlug) &&
+    policy.priorityPageTypes.includes(pageType)
+  );
+}
+
 type EvaluatePolicyInput = {
   locale: string;
   exchangeSlug: string;
@@ -82,6 +102,54 @@ function getObservationDays(entry: GscFocusPageRowMonitorEntry | undefined, now 
   if (!startedAt) return 0;
   const delta = now.getTime() - new Date(startedAt).getTime();
   return Math.max(0, delta / (24 * 60 * 60 * 1000));
+}
+
+export function getDiscoverySprintStage(input: {
+  locale: string;
+  exchangeSlug: string;
+  pageType: string;
+  monitorEntries?: GscFocusPageRowMonitorEntry[];
+  now?: Date;
+}): DiscoverySprintStage {
+  const policy = getIndexGrowthPolicy();
+  if (
+    !isDiscoverySprintProtectedPage(
+      input.locale,
+      input.exchangeSlug,
+      input.pageType,
+      policy
+    )
+  ) {
+    return "frozen";
+  }
+
+  const seedEntry = getSeedEntry(
+    input.monitorEntries,
+    input.exchangeSlug,
+    input.pageType,
+    policy.seedLocale
+  );
+  const observationDays = getObservationDays(seedEntry, input.now);
+  const seenInPageRows = Boolean(seedEntry?.seenInPageRows);
+  const seenInImpressions = Boolean(seedEntry?.seenInImpressions);
+
+  if (
+    observationDays >= policy.observationWindows.day21 &&
+    !seenInPageRows &&
+    !seenInImpressions
+  ) {
+    return "prune-candidate";
+  }
+
+  if (observationDays >= policy.observationWindows.day14 && !seenInImpressions) {
+    return "template-refresh";
+  }
+
+  if (observationDays >= policy.observationWindows.day7 && !seenInPageRows) {
+    return "ctr-refresh";
+  }
+
+  return "observe";
 }
 
 export function evaluateIndexGrowthPolicy({

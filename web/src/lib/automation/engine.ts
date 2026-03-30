@@ -20,7 +20,9 @@ import { getDiscoveryPriority, getOpportunityFocusLane } from "./focus";
 import {
   applyIndexGrowthPolicyBudget,
   evaluateIndexGrowthPolicy,
+  getDiscoverySprintStage,
   getIndexGrowthPolicy,
+  isDiscoverySprintProtectedPage,
 } from "./index-growth-policy";
 import { getAutomationLocaleCopy } from "./locale-copy";
 import { buildInternalLinkManifest } from "./internal-links";
@@ -583,6 +585,17 @@ function buildOpportunity(
     focusLane,
     monitorEntries,
   });
+  const discoverySprintStage = getDiscoverySprintStage({
+    locale: cluster.locale,
+    exchangeSlug: cluster.exchangeSlug,
+    pageType: cluster.pageType,
+    monitorEntries,
+  });
+  const discoverySprintPinned = isDiscoverySprintProtectedPage(
+    cluster.locale,
+    cluster.exchangeSlug,
+    cluster.pageType
+  );
   const projectedEpcUsd =
     realizedCommissionUsd > 0
       ? round(realizedCommissionUsd / Math.max(realizedConversions || realCluster?.clicks || 1, 1), 2)
@@ -639,6 +652,8 @@ function buildOpportunity(
     indexPolicyScheduledToday:
       indexPolicy.allowPromotion &&
       ["publish", "expand", "refresh"].includes(indexPolicy.action),
+    discoverySprintStage,
+    discoverySprintPinned,
     qualityScore,
     projectedEpcUsd,
     projectedMonthlyRevenueUsd,
