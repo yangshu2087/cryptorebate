@@ -445,6 +445,7 @@ export function SeoConsole({
     new Set(state.opportunities.map((item) => item.pageType).concat(state.pages.map((item) => item.pageType)))
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
+  const coverageRepair = dashboardData.operatorSummary.coverageRepair;
   const focusPageRowMonitor = dashboardData.operatorSummary.focusPageRowMonitor;
   const internalLinkSlots = getInternalLinkSlots(state.internalLinks);
   const flattenedSlotGuides = [
@@ -693,6 +694,96 @@ export function SeoConsole({
         />
       </div>
 
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Coverage 修复卡</CardTitle>
+              <Badge variant={coverageRepair.issueCount === 0 ? "secondary" : "destructive"}>
+                {coverageRepair.label}
+              </Badge>
+            </div>
+            <CardDescription>
+              对应 Search Console 邮件里最常见的两类问题：网页会自动重定向、未找到 (404)。这张卡优先读取 daily coverage audit 快照，避免继续靠邮件被动发现。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {[
+                { label: "Redirect 风险", value: formatNumber(coverageRepair.redirectIssueCount) },
+                { label: "404 风险", value: formatNumber(coverageRepair.notFoundIssueCount) },
+                { label: "发现资产风险", value: formatNumber(coverageRepair.discoveryIssueCount) },
+                {
+                  label: "最近检查",
+                  value: coverageRepair.checkedAt ? formatDate(coverageRepair.checkedAt) : "暂无",
+                },
+                {
+                  label: "x-default 目标",
+                  value: coverageRepair.xDefaultHealthy
+                    ? coverageRepair.expectedIndexTarget.replace(SITE_URL, "")
+                    : (coverageRepair.xDefaultTarget ?? "缺失").replace(SITE_URL, ""),
+                },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border/60 px-4 py-3">
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <p className="mt-2 text-lg font-semibold">{item.value}</p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className={cn(
+                "rounded-2xl border px-4 py-3 text-sm leading-6",
+                coverageRepair.issueCount === 0
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-amber-200 bg-amber-50 text-amber-800"
+              )}
+            >
+              {coverageRepair.action}
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              {coverageRepair.checks.map((check) => (
+                <div key={check.key} className="rounded-2xl border border-border/60 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline">
+                          {check.category === "redirect"
+                            ? "Redirect"
+                            : check.category === "not-found"
+                              ? "404"
+                              : check.category === "discovery"
+                                ? "发现资产"
+                                : "观察"}
+                        </Badge>
+                        <Badge
+                          variant={
+                            check.status === "ok"
+                              ? "secondary"
+                              : check.status === "issue"
+                                ? "destructive"
+                                : "outline"
+                          }
+                        >
+                          {check.status === "ok" ? "正常" : check.status === "issue" ? "待修复" : "检查失败"}
+                        </Badge>
+                      </div>
+                      <p className="mt-3 font-semibold">{check.label}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{check.url.replace(SITE_URL, "") || "/"}</p>
+                    </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      <p>HTTP {check.httpStatus ?? "n/a"}</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">{check.detail}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="mt-8 grid gap-4 xl:grid-cols-4">
         <StatusCard
           title="最近一次 CTA Live Audit"
@@ -720,6 +811,18 @@ export function SeoConsole({
             statusCards.gscSync.sitemapSubmitStatus ??
             "未运行"
           }${statusCards.gscSync.note ? ` · ${statusCards.gscSync.note}` : ""}`}
+        />
+        <StatusCard
+          title="Coverage 修复"
+          status={statusCards.coverageRepair.label}
+          description="把 Search Console 邮件里的“网页会自动重定向 / 未找到 (404)”前移成后台自检，不再靠邮件发现。"
+          meta={`最近检查：${
+            statusCards.coverageRepair.checkedAt
+              ? formatDate(statusCards.coverageRepair.checkedAt)
+              : "暂无"
+          } · redirect 风险 ${formatNumber(statusCards.coverageRepair.redirectIssueCount)} · 404 风险 ${formatNumber(
+            statusCards.coverageRepair.notFoundIssueCount
+          )} · 发现资产风险 ${formatNumber(statusCards.coverageRepair.discoveryIssueCount)} · x-default ${statusCards.coverageRepair.xDefaultHealthy ? "→ /en" : statusCards.coverageRepair.xDefaultTarget ?? "缺失"}`}
         />
         <StatusCard
           title="GSC 焦点页首个命中观察"

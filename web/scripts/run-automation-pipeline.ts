@@ -8,6 +8,7 @@ import {
   recordGscFocusPageRowFirstSeenEventsFromDb,
 } from "../src/lib/automation/db-store";
 import { regenerateAutomationState } from "../src/lib/automation/persistence";
+import { materializeCoverageRepairArtifact } from "../src/lib/automation/coverage-audit";
 import { runExternalSync } from "../src/lib/automation/external-sync";
 
 function parseMode() {
@@ -56,6 +57,10 @@ async function main() {
   try {
     const syncResult = syncMode ? await runExternalSync(syncMode) : null;
     const state = syncResult?.state ?? (await regenerateAutomationState());
+    const coverageRepair =
+      mode === "gsc" || mode === "daily" || mode === "all"
+        ? await materializeCoverageRepairArtifact()
+        : null;
 
     if (syncResult?.externalState?.gsc) {
       const gscRun = createRun(
@@ -149,6 +154,17 @@ async function main() {
     );
     await insertSyncRun(internalLinkRun.run, internalLinkRun.meta);
 
+    if (coverageRepair) {
+      const coverageRun = createRun(
+        "daily_coverage_audit",
+        coverageRepair.issueCount > 0 ? "warning" : "success",
+        `Coverage audit redirect=${coverageRepair.redirectIssueCount} 404=${coverageRepair.notFoundIssueCount} discovery=${coverageRepair.discoveryIssueCount}`,
+        startedAt,
+        coverageRepair
+      );
+      await insertSyncRun(coverageRun.run, coverageRun.meta);
+    }
+
     const distributionJobsEnqueued =
       mode === "daily" || mode === "publish" || mode === "distribute"
         ? await enqueueDistributionJobsFromDb(state)
@@ -203,6 +219,14 @@ async function main() {
       projectedRevenue: state.metrics.monthlyProjectedRevenueUsd,
       alerts: state.alerts.length,
       externalSources: state.externalSources,
+      coverageRepair: coverageRepair
+        ? {
+            status: coverageRepair.status,
+            redirectIssueCount: coverageRepair.redirectIssueCount,
+            notFoundIssueCount: coverageRepair.notFoundIssueCount,
+            discoveryIssueCount: coverageRepair.discoveryIssueCount,
+          }
+        : null,
       distributionJobsEnqueued: distributionJobsEnqueued?.length ?? 0,
       distributionJobsPublished:
         distributionJobsPublished?.filter((item) => item.status === "published")

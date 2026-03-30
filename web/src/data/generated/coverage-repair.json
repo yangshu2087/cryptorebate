@@ -1,0 +1,132 @@
+{
+  "status": "healthy",
+  "label": "已修复待验证",
+  "checkedAt": "2026-03-30T01:15:51.275Z",
+  "expectedIndexTarget": "https://cryptorebate.app/en",
+  "xDefaultTarget": "https://cryptorebate.app/en",
+  "xDefaultHealthy": true,
+  "redirectIssueCount": 0,
+  "notFoundIssueCount": 0,
+  "discoveryIssueCount": 0,
+  "issueCount": 0,
+  "checks": [
+    {
+      "key": "x-default-index-target",
+      "label": "x-default 默认入口必须直达可索引首页",
+      "category": "redirect",
+      "status": "ok",
+      "url": "https://cryptorebate.app/en",
+      "httpStatus": 200,
+      "detail": "当前 x-default 指向 https://cryptorebate.app/en"
+    },
+    {
+      "key": "root-entry-redirect",
+      "label": "根路径 / 只应做规范化跳转到默认语言页",
+      "category": "observation",
+      "status": "ok",
+      "url": "https://cryptorebate.app/",
+      "httpStatus": 307,
+      "detail": "当前 307 → https://cryptorebate.app/en"
+    },
+    {
+      "key": "asset--apple-touch-icon-png",
+      "label": "/apple-touch-icon.png 关键资源",
+      "category": "not-found",
+      "status": "ok",
+      "url": "https://cryptorebate.app/apple-touch-icon.png",
+      "httpStatus": 200,
+      "detail": "返回 200，可从浏览器与 Google 资源抓取中正常获取。"
+    },
+    {
+      "key": "asset--favicon-svg",
+      "label": "/favicon.svg 关键资源",
+      "category": "not-found",
+      "status": "ok",
+      "url": "https://cryptorebate.app/favicon.svg",
+      "httpStatus": 200,
+      "detail": "返回 200，可从浏览器与 Google 资源抓取中正常获取。"
+    },
+    {
+      "key": "discovery--robots-txt",
+      "label": "/robots.txt 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/robots.txt",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "discovery--sitemap-xml",
+      "label": "/sitemap.xml 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/sitemap.xml",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "discovery--focus-sitemap-xml",
+      "label": "/focus-sitemap.xml 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/focus-sitemap.xml",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "discovery--brand-sitemap-xml",
+      "label": "/brand-sitemap.xml 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/brand-sitemap.xml",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "discovery--fresh-7d-sitemap-xml",
+      "label": "/fresh-7d-sitemap.xml 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/fresh-7d-sitemap.xml",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "discovery--feed-xml",
+      "label": "/feed.xml 发现资产",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/feed.xml",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为 Google 发现与再抓取信号。"
+    },
+    {
+      "key": "entry--en-exchanges",
+      "label": "/en/exchanges 关键入口页",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/en/exchanges",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为首页 / hub / 焦点页的站内发现入口。"
+    },
+    {
+      "key": "entry--en-exchanges-binance",
+      "label": "/en/exchanges/binance 关键入口页",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/en/exchanges/binance",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为首页 / hub / 焦点页的站内发现入口。"
+    },
+    {
+      "key": "entry--en-exchanges-binance-referral-code",
+      "label": "/en/exchanges/binance/referral-code 关键入口页",
+      "category": "discovery",
+      "status": "ok",
+      "url": "https://cryptorebate.app/en/exchanges/binance/referral-code",
+      "httpStatus": 200,
+      "detail": "返回 200，可继续作为首页 / hub / 焦点页的站内发现入口。"
+    }
+  ],
+  "action": "daily coverage audit 已确认 redirect / 404 / discovery assets 当前健康；现在去 Search Console 对对应问题点“验证修复”，然后等待 Google 重新抓取。"
+}

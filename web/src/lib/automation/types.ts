@@ -500,6 +500,7 @@ export type AutomationRun = {
     | "daily_page_publish"
     | "daily_page_refresh"
     | "daily_internal_link_refresh"
+    | "daily_coverage_audit"
     | "daily_distribution_enqueue"
     | "daily_distribution_publish"
     | "daily_alert_eval"

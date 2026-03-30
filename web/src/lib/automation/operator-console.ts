@@ -4,6 +4,7 @@ import {
   getTopAutomationOpportunities,
   getTopAutomationRoiPages,
 } from "@/lib/automation/catalog";
+import { auditCoverageRepair, readCoverageRepairArtifact } from "@/lib/automation/coverage-audit";
 import { readCompetitorGapSummary } from "@/lib/automation/competitor-gap";
 import { readCompetitorGapActionPlan } from "@/lib/automation/competitor-gap-actions";
 import { readCompetitorGapSerpWinnersArtifact } from "@/lib/automation/competitor-gap-research";
@@ -165,6 +166,7 @@ export type MonetizationLaneSummary = {
 export type GscFocusPageRowMonitorSummary = ReturnType<
   typeof buildGscFocusPageRowMonitorSummary
 >;
+export type CoverageRepairLaneSummary = Awaited<ReturnType<typeof auditCoverageRepair>>;
 
 function isWithinDays(timestamp: string | undefined, days: number) {
   if (!timestamp) return false;
@@ -280,6 +282,7 @@ export type SeoDashboardData = {
   attribution: AutomationState["attribution"];
   discovery: DiscoveryLaneSummary;
   monetization: MonetizationLaneSummary;
+  coverageRepair: CoverageRepairLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
   topRoiPages: ReturnType<typeof getTopAutomationRoiPages>;
@@ -311,6 +314,18 @@ export type SeoDashboardData = {
         sitemapSubmitStatus: string;
         sitemapsSubmitted: string[];
         lastSitemapSubmitAt: string;
+      };
+      coverageRepair: {
+        status: string;
+        label: string;
+        checkedAt: string;
+        redirectIssueCount: number;
+        notFoundIssueCount: number;
+        discoveryIssueCount: number;
+        issueCount: number;
+        expectedIndexTarget: string;
+        xDefaultTarget: string | null;
+        xDefaultHealthy: boolean;
       };
       focusPageRowMonitor: {
         status: string;
@@ -366,6 +381,7 @@ export type SeoDashboardData = {
     };
     discovery: DiscoveryLaneSummary;
     monetization: MonetizationLaneSummary;
+    coverageRepair: CoverageRepairLaneSummary;
     focusPageRowMonitor: GscFocusPageRowMonitorSummary;
     sevenDayChanges: {
       clicks: number;
@@ -406,6 +422,11 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const competitorGapProviderHits = buildCompetitorGapProviderHits(competitorGapSerpWinners);
   const discovery = buildDiscoveryLaneSummary(state);
   const monetization = buildMonetizationLaneSummary(state);
+  const storedCoverageRepair = await readCoverageRepairArtifact();
+  const coverageRepair =
+    storedCoverageRepair.status === "never_run"
+      ? await auditCoverageRepair()
+      : storedCoverageRepair;
   const focusPageRowMonitor = buildGscFocusPageRowMonitorSummary(state);
   const alerts = [
     ...(ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []),
@@ -451,6 +472,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     attribution: state.attribution,
     discovery,
     monetization,
+    coverageRepair,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:
       dbStats?.topOpportunities ?? getTopAutomationOpportunities(locale ?? undefined, 10),
@@ -487,6 +509,18 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           sitemapSubmitStatus: state.externalSources.gsc.sitemapSubmitStatus ?? "skipped",
           sitemapsSubmitted: state.externalSources.gsc.sitemapsSubmitted ?? [],
           lastSitemapSubmitAt: state.externalSources.gsc.lastSitemapSubmitAt ?? "",
+        },
+        coverageRepair: {
+          status: coverageRepair.status,
+          label: coverageRepair.label,
+          checkedAt: coverageRepair.checkedAt,
+          redirectIssueCount: coverageRepair.redirectIssueCount,
+          notFoundIssueCount: coverageRepair.notFoundIssueCount,
+          discoveryIssueCount: coverageRepair.discoveryIssueCount,
+          issueCount: coverageRepair.issueCount,
+          expectedIndexTarget: coverageRepair.expectedIndexTarget,
+          xDefaultTarget: coverageRepair.xDefaultTarget,
+          xDefaultHealthy: coverageRepair.xDefaultHealthy,
         },
         focusPageRowMonitor: {
           status: focusPageRowMonitor.status,
@@ -575,6 +609,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       },
       discovery,
       monetization,
+      coverageRepair,
       focusPageRowMonitor,
       sevenDayChanges: {
         clicks: state.attribution.sevenDayClicks,

@@ -20,6 +20,7 @@
     "automation:revalidate": "tsx ./scripts/revalidate-seo.ts",
     "automation:distribute": "tsx ./scripts/run-automation-pipeline.ts --mode distribute",
     "automation:submit:sitemaps": "tsx ./scripts/submit-search-console-sitemaps.ts",
+    "automation:coverage-audit": "tsx ./scripts/run-coverage-audit.ts",
     "automation:sync-earnings": "tsx ./scripts/run-automation-pipeline.ts --mode earnings",
     "partner:import:csv": "tsx ./scripts/import-partner-csv.ts",
     "partner:import:csv:dry-run": "tsx ./scripts/import-partner-csv.ts --dry-run",
