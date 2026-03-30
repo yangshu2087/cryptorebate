@@ -6,6 +6,7 @@ import {
   buildSeoDashboardData,
   buildDiscoveryLaneSummary,
   buildGscFocusPageRowMonitorSummary,
+  buildIndexGrowthPolicySummary,
   buildMonetizationLaneSummary,
 } from "./operator-console";
 import { buildAutomationState } from "./engine";
@@ -65,10 +66,11 @@ describe("operator console competitor-gap SERP helpers", () => {
     expect(domains).toContainEqual({ domain: "okx.com", count: 1 });
   });
 
-  it("builds separate discovery and monetization lanes", () => {
+  it("builds separate discovery, monetization, and index-growth policy summaries", () => {
     const state = buildAutomationState();
     const discovery = buildDiscoveryLaneSummary(state);
     const monetization = buildMonetizationLaneSummary(state);
+    const indexGrowthPolicy = buildIndexGrowthPolicySummary(state);
     const focusMonitor = buildGscFocusPageRowMonitorSummary(state);
 
     expect(discovery.focusPagesPublished).toBeGreaterThan(0);
@@ -76,6 +78,10 @@ describe("operator console competitor-gap SERP helpers", () => {
     expect(discovery.gscRowsFetched).toBeGreaterThanOrEqual(0);
     expect(monetization.affiliateClicks).toBe(state.attribution.clicks);
     expect(monetization.realCoverageRate).toBe(state.attribution.realCoverageRate);
+    expect(indexGrowthPolicy.publishBudget.max).toBe(12);
+    expect(indexGrowthPolicy.refreshBudget.max).toBe(18);
+    expect(Array.isArray(indexGrowthPolicy.refreshOrPrunePages)).toBe(true);
+    expect(Array.isArray(indexGrowthPolicy.deferredPages)).toBe(true);
     expect(focusMonitor.trackedCount).toBe(12);
     expect(focusMonitor.pendingCount).toBeGreaterThanOrEqual(0);
     expect(focusMonitor.entries).toHaveLength(12);

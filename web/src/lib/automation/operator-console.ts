@@ -11,6 +11,7 @@ import { readCompetitorGapSerpWinnersArtifact } from "@/lib/automation/competito
 import { getAutomationDataReality } from "@/lib/automation/data-reality";
 import { buildSeoStatsFromDb } from "@/lib/automation/db-store";
 import { getInternalLinkSlots } from "@/lib/automation/internal-links";
+import { getIndexGrowthPolicy } from "@/lib/automation/index-growth-policy";
 import {
   isFocusExchangeSlug,
   isFocusLocale,
@@ -163,6 +164,62 @@ export type MonetizationLaneSummary = {
   realCoverageRate: number;
 };
 
+export type IndexGrowthPolicySummary = {
+  config: {
+    maxNewPagesPerDay: number;
+    maxRefreshPagesPerDay: number;
+    publishDailyLimitPerExchange: number;
+    refreshDailyLimitPerExchange: number;
+    seedLocale: string;
+    expansionLocales: string[];
+    observationWindows: {
+      day7: number;
+      day14: number;
+      day21: number;
+    };
+  };
+  publishBudget: {
+    used: number;
+    max: number;
+    remaining: number;
+    byExchange: Array<{
+      exchangeSlug: string;
+      used: number;
+      max: number;
+    }>;
+  };
+  refreshBudget: {
+    used: number;
+    max: number;
+    remaining: number;
+    byExchange: Array<{
+      exchangeSlug: string;
+      used: number;
+      max: number;
+    }>;
+  };
+  deferredPages: Array<{
+    id: string;
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+    action: string;
+    observationDays: number;
+    reason: string;
+    score: number;
+  }>;
+  refreshOrPrunePages: Array<{
+    id: string;
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+    action: "refresh" | "prune";
+    observationDays: number;
+    reason: string;
+    score: number;
+  }>;
+};
+
 export type GscFocusPageRowMonitorSummary = ReturnType<
   typeof buildGscFocusPageRowMonitorSummary
 >;
@@ -240,6 +297,99 @@ export function buildMonetizationLaneSummary(
   };
 }
 
+export function buildIndexGrowthPolicySummary(
+  state: AutomationState
+): IndexGrowthPolicySummary {
+  const config = getIndexGrowthPolicy();
+  const opportunities = [...state.opportunities];
+  const publishScheduled = opportunities.filter(
+    (item) =>
+      item.indexPolicyScheduledToday &&
+      (item.indexPolicyAction === "publish" || item.indexPolicyAction === "expand")
+  );
+  const refreshScheduled = opportunities.filter(
+    (item) => item.indexPolicyScheduledToday && item.indexPolicyAction === "refresh"
+  );
+
+  const buildByExchange = (
+    items: typeof publishScheduled,
+    max: number
+  ): Array<{ exchangeSlug: string; used: number; max: number }> =>
+    Object.entries(
+      items.reduce<Record<string, number>>((acc, item) => {
+        acc[item.exchangeSlug] = (acc[item.exchangeSlug] ?? 0) + 1;
+        return acc;
+      }, {})
+    )
+      .sort((a, b) => b[1] - a[1])
+      .map(([exchangeSlug, used]) => ({ exchangeSlug, used, max }));
+
+  const deferredPages = opportunities
+    .filter(
+      (item) =>
+        !item.indexPolicyScheduledToday &&
+        (item.indexPolicyAction === "publish" ||
+          item.indexPolicyAction === "expand" ||
+          item.indexPolicyAction === "refresh")
+    )
+    .sort(
+      (a, b) =>
+        (b.discoveryPriority ?? 0) - (a.discoveryPriority ?? 0) ||
+        b.score - a.score
+    )
+    .slice(0, 8)
+    .map((item) => ({
+      id: item.id,
+      locale: item.locale,
+      exchangeSlug: item.exchangeSlug,
+      pageType: item.pageType,
+      action: item.indexPolicyAction,
+      observationDays: item.indexPolicyObservationDays,
+      reason: item.indexPolicyReason,
+      score: item.score,
+    }));
+
+  const refreshOrPrunePages = opportunities
+    .filter(
+      (item) =>
+        item.indexPolicyAction === "refresh" || item.indexPolicyAction === "prune"
+    )
+    .sort(
+      (a, b) =>
+        b.indexPolicyObservationDays - a.indexPolicyObservationDays ||
+        b.score - a.score
+    )
+    .slice(0, 8)
+    .map((item) => ({
+      id: item.id,
+      locale: item.locale,
+      exchangeSlug: item.exchangeSlug,
+      pageType: item.pageType,
+      action: item.indexPolicyAction as "refresh" | "prune",
+      observationDays: item.indexPolicyObservationDays,
+      reason: item.indexPolicyReason,
+      score: item.score,
+    }));
+
+  return {
+    config,
+    publishBudget: {
+      used: publishScheduled.length,
+      max: config.maxNewPagesPerDay,
+      remaining: Math.max(0, config.maxNewPagesPerDay - publishScheduled.length),
+      byExchange: buildByExchange(publishScheduled, config.publishDailyLimitPerExchange),
+    },
+    refreshBudget: {
+      used: refreshScheduled.length,
+      max: config.maxRefreshPagesPerDay,
+      remaining: Math.max(0, config.maxRefreshPagesPerDay - refreshScheduled.length),
+      byExchange: buildByExchange(refreshScheduled, config.refreshDailyLimitPerExchange),
+    },
+    deferredPages,
+    refreshOrPrunePages,
+  };
+}
+
 export function buildGscFocusPageRowMonitorSummary(
   state: AutomationState
 ): {
@@ -282,6 +432,7 @@ export type SeoDashboardData = {
   attribution: AutomationState["attribution"];
   discovery: DiscoveryLaneSummary;
   monetization: MonetizationLaneSummary;
+  indexGrowthPolicy: IndexGrowthPolicySummary;
   coverageRepair: CoverageRepairLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
@@ -391,6 +542,7 @@ export type SeoDashboardData = {
     };
     discovery: DiscoveryLaneSummary;
     monetization: MonetizationLaneSummary;
+    indexGrowthPolicy: IndexGrowthPolicySummary;
     coverageRepair: CoverageRepairLaneSummary;
     focusPageRowMonitor: GscFocusPageRowMonitorSummary;
     sevenDayChanges: {
@@ -432,6 +584,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const competitorGapProviderHits = buildCompetitorGapProviderHits(competitorGapSerpWinners);
   const discovery = buildDiscoveryLaneSummary(state);
   const monetization = buildMonetizationLaneSummary(state);
+  const indexGrowthPolicy = buildIndexGrowthPolicySummary(state);
   const storedCoverageRepair = await readCoverageRepairArtifact();
   const coverageRepair =
     storedCoverageRepair.status === "never_run"
@@ -485,6 +638,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     attribution: state.attribution,
     discovery,
     monetization,
+    indexGrowthPolicy,
     coverageRepair,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:
@@ -647,6 +801,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       },
       discovery,
       monetization,
+      indexGrowthPolicy,
       coverageRepair,
       focusPageRowMonitor,
       sevenDayChanges: {

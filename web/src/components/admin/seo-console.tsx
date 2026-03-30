@@ -145,6 +145,41 @@ function formatAutomationJobLabel(job: string) {
   }
 }
 
+function formatIndexPolicyActionLabel(action: string) {
+  switch (action) {
+    case "publish":
+      return "发布";
+    case "expand":
+      return "扩张";
+    case "refresh":
+      return "刷新";
+    case "prune":
+      return "收缩";
+    case "hold":
+      return "冻结";
+    case "observe":
+      return "观察";
+    default:
+      return action;
+  }
+}
+
+function getIndexPolicyActionBadgeClass(action: string) {
+  switch (action) {
+    case "publish":
+    case "expand":
+      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+    case "refresh":
+      return "border-amber-200 bg-amber-50 text-amber-700";
+    case "prune":
+      return "border-rose-200 bg-rose-50 text-rose-700";
+    case "hold":
+      return "border-zinc-200 bg-zinc-50 text-zinc-700";
+    default:
+      return "border-sky-200 bg-sky-50 text-sky-700";
+  }
+}
+
 function buildHref(locale: string, params: Record<string, string | undefined>) {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -459,6 +494,7 @@ export function SeoConsole({
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
   const coverageRepair = dashboardData.operatorSummary.coverageRepair;
+  const indexGrowthPolicy = dashboardData.indexGrowthPolicy;
   const recentRuns = (() => {
     const syntheticCoverageAuditRun = {
       id: "synthetic-daily_coverage_audit",
@@ -726,6 +762,171 @@ export function SeoConsole({
             { label: "真实覆盖率", value: `${(dashboardData.monetization.realCoverageRate * 100).toFixed(1)}%` },
           ]}
         />
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Index Growth Policy（可执行版）</CardTitle>
+              <Badge variant="outline">seed {indexGrowthPolicy.config.seedLocale}</Badge>
+              <Badge variant="secondary">扩张 {indexGrowthPolicy.config.expansionLocales.join(" / ")}</Badge>
+            </div>
+            <CardDescription>
+              当前自动化执行的是“先打穿 en 种子页，再放量 hi / th”的索引增长策略。下面直接展示今天 publish / refresh 预算、被 defer 的页面，以及因为 7 / 14 / 21 天观察规则进入 refresh / prune 的 cohort。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                {
+                  label: "今日 publish budget",
+                  value: `${formatNumber(indexGrowthPolicy.publishBudget.used)} / ${formatNumber(indexGrowthPolicy.publishBudget.max)}`,
+                  helper: `剩余 ${formatNumber(indexGrowthPolicy.publishBudget.remaining)} · 单交易所上限 ${formatNumber(indexGrowthPolicy.config.publishDailyLimitPerExchange)}`,
+                },
+                {
+                  label: "今日 refresh budget",
+                  value: `${formatNumber(indexGrowthPolicy.refreshBudget.used)} / ${formatNumber(indexGrowthPolicy.refreshBudget.max)}`,
+                  helper: `剩余 ${formatNumber(indexGrowthPolicy.refreshBudget.remaining)} · 单交易所上限 ${formatNumber(indexGrowthPolicy.config.refreshDailyLimitPerExchange)}`,
+                },
+                {
+                  label: "观察窗",
+                  value: `${indexGrowthPolicy.config.observationWindows.day7}/${indexGrowthPolicy.config.observationWindows.day14}/${indexGrowthPolicy.config.observationWindows.day21} 天`,
+                  helper: "7 天转 refresh，21 天仍无 page rows 则 prune",
+                },
+                {
+                  label: "Budget defer / refresh-prune",
+                  value: `${formatNumber(indexGrowthPolicy.deferredPages.length)} / ${formatNumber(indexGrowthPolicy.refreshOrPrunePages.length)}`,
+                  helper: "分别代表被预算顺延的页面与进入 refresh/prune 的页面",
+                },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border/60 px-4 py-3">
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <p className="mt-2 text-lg font-semibold">{item.value}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">{item.helper}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-2">
+              <SummaryList
+                title="今日预算使用（按交易所）"
+                description="publish / refresh 预算只投给当前允许 promotion 的焦点页。"
+                items={[
+                  ...indexGrowthPolicy.publishBudget.byExchange.map((item) => ({
+                    label: `${item.exchangeSlug} publish`,
+                    value: `${formatNumber(item.used)} / ${formatNumber(item.max)}`,
+                  })),
+                  ...indexGrowthPolicy.refreshBudget.byExchange.map((item) => ({
+                    label: `${item.exchangeSlug} refresh`,
+                    value: `${formatNumber(item.used)} / ${formatNumber(item.max)}`,
+                  })),
+                ].slice(0, 8)}
+              />
+              <SummaryList
+                title="规则摘要"
+                description="当前策略不会再按“每天几百页”盲扩，而是优先追求 page rows 命中。"
+                items={[
+                  { label: "种子语种", value: indexGrowthPolicy.config.seedLocale },
+                  { label: "扩张语种", value: indexGrowthPolicy.config.expansionLocales.join(" / ") },
+                  { label: "每日新发上限", value: `${formatNumber(indexGrowthPolicy.config.maxNewPagesPerDay)} 页` },
+                  { label: "每日刷新上限", value: `${formatNumber(indexGrowthPolicy.config.maxRefreshPagesPerDay)} 页` },
+                  { label: "第 7 天", value: "继续观察或进入 refresh" },
+                  { label: "第 14 天", value: "强化 refresh，不扩语种" },
+                  { label: "第 21 天", value: "仍无 page rows 则 prune" },
+                ]}
+              />
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-2">
+              <Card className="border-border/70">
+                <CardHeader>
+                  <CardTitle>Budget defer 页面</CardTitle>
+                  <CardDescription>
+                    这些页面本来符合 publish / expand / refresh 条件，但因为当天预算已满被自动顺延。
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {indexGrowthPolicy.deferredPages.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">当前没有被 budget defer 的页面。</p>
+                  ) : (
+                    indexGrowthPolicy.deferredPages.map((item) => {
+                      const href = `/${item.locale}${getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}`;
+                      const labels = getUnifiedSeoPageLabels(labelsLocale, item.pageType);
+                      return (
+                        <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", getIndexPolicyActionBadgeClass(item.action))}>
+                                  {formatIndexPolicyActionLabel(item.action)}
+                                </span>
+                                <Badge variant="outline">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
+                              </div>
+                              <p className="mt-3 font-semibold">{item.exchangeSlug} · {labels.short}</p>
+                            </div>
+                            <div className="text-right text-xs text-muted-foreground">
+                              <p>观察 {formatObservationDays(item.observationDays)}</p>
+                              <p>Score {item.score}</p>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-sm text-muted-foreground">{item.reason}</p>
+                          <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                            查看页面
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </div>
+                      );
+                    })
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/70">
+                <CardHeader>
+                  <CardTitle>7 / 14 / 21 天进入 refresh / prune 的页面</CardTitle>
+                  <CardDescription>
+                    这些页面因为观察窗推进，已进入模板刷新或收缩队列；在它们命中 page rows 前，不会继续盲目放量。
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {indexGrowthPolicy.refreshOrPrunePages.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">当前还没有进入 refresh / prune 的页面。</p>
+                  ) : (
+                    indexGrowthPolicy.refreshOrPrunePages.map((item) => {
+                      const href = `/${item.locale}${getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}`;
+                      const labels = getUnifiedSeoPageLabels(labelsLocale, item.pageType);
+                      return (
+                        <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", getIndexPolicyActionBadgeClass(item.action))}>
+                                  {formatIndexPolicyActionLabel(item.action)}
+                                </span>
+                                <Badge variant="outline">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
+                              </div>
+                              <p className="mt-3 font-semibold">{item.exchangeSlug} · {labels.short}</p>
+                            </div>
+                            <div className="text-right text-xs text-muted-foreground">
+                              <p>观察 {formatObservationDays(item.observationDays)}</p>
+                              <p>Score {item.score}</p>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-sm text-muted-foreground">{item.reason}</p>
+                          <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                            查看页面
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </div>
+                      );
+                    })
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="mt-8">
