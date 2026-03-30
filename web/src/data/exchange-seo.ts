@@ -3941,6 +3941,23 @@ function buildEntry(
           description: `${pageContent.heroDescription} 当前邀请码 ${exchange.referralCode}，最近复核 ${exchange.lastReviewed}。`,
           keywords,
         }
+      : locale === "en" &&
+          (pageType === "official-site" ||
+            pageType === "referral-code" ||
+            pageType === "signup-kyc" ||
+            pageType === "fees-rebate")
+        ? {
+            title: `${primaryQuery} | CryptoRebate`,
+            description:
+              pageType === "official-site"
+                ? `${pageContent.heroDescription} Verify the official domain, region restrictions, safe signup route, and alternative exchange paths before you register. Last reviewed ${exchange.lastReviewed}.`
+                : pageType === "referral-code"
+                  ? `${pageContent.heroDescription} Check the live referral code, official signup route, rebate terms, and activation risks before you create the account. Last reviewed ${exchange.lastReviewed}.`
+                  : pageType === "signup-kyc"
+                    ? `${pageContent.heroDescription} Confirm the signup flow, KYC documents, rebate activation timing, and funding prerequisites before you finish onboarding. Last reviewed ${exchange.lastReviewed}.`
+                    : `${pageContent.heroDescription} Review trading fees, rebate math, effective cost, and compare alternatives before you choose this exchange. Last reviewed ${exchange.lastReviewed}.`,
+            keywords,
+          }
       : {
           title: `${exchange.name} ${pageLabels.nav} | CryptoRebate`,
           description:

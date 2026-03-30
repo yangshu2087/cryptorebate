@@ -495,6 +495,27 @@ export function SeoConsole({
   const statusCards = dashboardData.operatorSummary.statusCards;
   const coverageRepair = dashboardData.operatorSummary.coverageRepair;
   const indexGrowthPolicy = dashboardData.indexGrowthPolicy;
+  const searchVisibilityActionPlan = dashboardData.searchVisibilityActionPlan;
+  const matchesActionPlanFilters = (item: {
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+  }) => {
+    const exchangePass =
+      selectedExchange === "all" ? true : item.exchangeSlug === selectedExchange;
+    const localePass =
+      selectedDataLocale === "all" ? true : item.locale === selectedDataLocale;
+    const pageTypePass =
+      !pageType || pageType === "all" ? true : item.pageType === pageType;
+    return exchangePass && localePass && pageTypePass;
+  };
+  const filteredSearchVisibilityActionPlan = {
+    continuePush: searchVisibilityActionPlan.continuePush.filter(matchesActionPlanFilters),
+    titleDescriptionRefresh:
+      searchVisibilityActionPlan.titleDescriptionRefresh.filter(matchesActionPlanFilters),
+    refreshInsteadOfExpand:
+      searchVisibilityActionPlan.refreshInsteadOfExpand.filter(matchesActionPlanFilters),
+  };
   const recentRuns = (() => {
     const syntheticCoverageAuditRun = {
       id: "synthetic-daily_coverage_audit",
@@ -925,6 +946,150 @@ export function SeoConsole({
                 </CardContent>
               </Card>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <Card className="border-border/70">
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Search Visibility Action Plan</CardTitle>
+              <Badge variant="outline">直接落地版</Badge>
+            </div>
+            <CardDescription>
+              基于当前 GSC 可见度、焦点矩阵和索引增长规则，把“继续推 / 改标题描述 / 先 refresh 不扩页”三类动作直接排出来，方便你每天照着执行，而不是继续盲扩。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 xl:grid-cols-3">
+            <Card className="border-border/70">
+              <CardHeader>
+                <CardTitle>最值得继续推</CardTitle>
+                <CardDescription>
+                  这些是当前最该继续加内链、feed、focus sitemap 和首页曝光的 seed 页。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {filteredSearchVisibilityActionPlan.continuePush.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">当前筛选条件下，没有继续推的焦点页。</p>
+                ) : (
+                  filteredSearchVisibilityActionPlan.continuePush.map((item) => {
+                    const href = `/${item.locale}${getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}`;
+                    return (
+                      <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge variant="outline">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
+                              <Badge variant="secondary">{item.pageType}</Badge>
+                            </div>
+                            <p className="mt-3 font-semibold">{item.primaryQuery}</p>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>Score {item.score}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm font-medium text-foreground">{item.title}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+                        <p className="mt-2 text-xs text-muted-foreground">{item.why}</p>
+                        <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                          查看页面
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/70">
+              <CardHeader>
+                <CardTitle>最值得改标题 / 描述</CardTitle>
+                <CardDescription>
+                  这些页的 query 命中和 CTR 文案优先级最高，先改标题和描述再等下一轮 impressions。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {filteredSearchVisibilityActionPlan.titleDescriptionRefresh.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">当前筛选条件下，没有需要优先改标题/描述的页面。</p>
+                ) : (
+                  filteredSearchVisibilityActionPlan.titleDescriptionRefresh.map((item) => {
+                    const href = `/${item.locale}${getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}`;
+                    return (
+                      <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge variant="outline">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
+                              <Badge variant="secondary">{item.pageType}</Badge>
+                            </div>
+                            <p className="mt-3 font-semibold">{item.primaryQuery}</p>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>Score {item.score}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-xs text-muted-foreground">当前标题</p>
+                        <p className="mt-1 text-sm font-medium text-foreground">{item.title}</p>
+                        <p className="mt-3 text-xs text-muted-foreground">当前描述</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
+                        <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                          {item.copyFocus}
+                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">{item.why}</p>
+                        <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                          查看页面
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/70">
+              <CardHeader>
+                <CardTitle>先 refresh，不继续扩页</CardTitle>
+                <CardDescription>
+                  这些页已经进入 7 / 14 / 21 天观察窗动作，优先 refresh 或 prune，不再直接扩更多 locale。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {filteredSearchVisibilityActionPlan.refreshInsteadOfExpand.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">当前筛选条件下，没有进入 refresh / prune 的页面。</p>
+                ) : (
+                  filteredSearchVisibilityActionPlan.refreshInsteadOfExpand.map((item) => {
+                    const href = `/${item.locale}${getUnifiedSeoPageHref(item.exchangeSlug, item.pageType)}`;
+                    return (
+                      <div key={item.id} className="rounded-2xl border border-border/60 p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", getIndexPolicyActionBadgeClass(item.action))}>
+                                {formatIndexPolicyActionLabel(item.action)}
+                              </span>
+                              <Badge variant="outline">{ZH_LOCALE_LABELS[item.locale] ?? item.locale}</Badge>
+                            </div>
+                            <p className="mt-3 font-semibold">{item.primaryQuery}</p>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>观察 {formatObservationDays(item.observationDays)}</p>
+                            <p>Score {item.score}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">{item.why}</p>
+                        <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                          查看页面
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
           </CardContent>
         </Card>
       </div>

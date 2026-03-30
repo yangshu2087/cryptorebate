@@ -220,6 +220,43 @@ export type IndexGrowthPolicySummary = {
   }>;
 };
 
+export type SearchVisibilityActionPlan = {
+  continuePush: Array<{
+    id: string;
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+    primaryQuery: string;
+    score: number;
+    title: string;
+    description: string;
+    why: string;
+  }>;
+  titleDescriptionRefresh: Array<{
+    id: string;
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+    primaryQuery: string;
+    score: number;
+    title: string;
+    description: string;
+    why: string;
+    copyFocus: string;
+  }>;
+  refreshInsteadOfExpand: Array<{
+    id: string;
+    locale: string;
+    exchangeSlug: string;
+    pageType: string;
+    primaryQuery: string;
+    score: number;
+    action: string;
+    observationDays: number;
+    why: string;
+  }>;
+};
+
 export type GscFocusPageRowMonitorSummary = ReturnType<
   typeof buildGscFocusPageRowMonitorSummary
 >;
@@ -390,6 +427,124 @@ export function buildIndexGrowthPolicySummary(
   };
 }
 
+
+function getActionPlanCopyFocus(pageType: string) {
+  switch (pageType) {
+    case "official-site":
+      return "把主 query 放到标题前半段，并在描述里明确 official domain / safe signup route / region restrictions / alternatives。";
+    case "referral-code":
+      return "把 referral code / official signup route / rebate terms 放进 description，避免只写泛泛返佣。";
+    case "signup-kyc":
+      return "在描述里直接写 signup / KYC documents / rebate active timing / funding prerequisites。";
+    case "fees-rebate":
+      return "在描述里直接写 fees / rebate / effective trading cost / compare alternatives。";
+    default:
+      return "把主 query 放到标题前半段，并让 description 直接回答用户的注册前问题。";
+  }
+}
+
+export function buildSearchVisibilityActionPlan(
+  state: AutomationState
+): SearchVisibilityActionPlan {
+  const policy = getIndexGrowthPolicy();
+  const pageMap = new Map(
+    state.pages.map((page) => [
+      `${page.locale}:${page.exchangeSlug}:${page.pageType}`,
+      page,
+    ] as const)
+  );
+  const priorityPageTypes = new Set(policy.priorityPageTypes);
+  const seedLocale = policy.seedLocale;
+  const scoreSort = (a: AutomationState["opportunities"][number], b: AutomationState["opportunities"][number]) =>
+    (b.discoveryPriority ?? 0) - (a.discoveryPriority ?? 0) || b.score - a.score;
+
+  const continuePush = state.opportunities
+    .filter(
+      (item) =>
+        item.focusLane === "focus" &&
+        item.locale === seedLocale &&
+        priorityPageTypes.has(item.pageType) &&
+        item.indexPolicyAllowPromotion
+    )
+    .sort(scoreSort)
+    .slice(0, 8)
+    .map((item) => {
+      const page = pageMap.get(`${item.locale}:${item.exchangeSlug}:${item.pageType}`);
+      return {
+        id: item.id,
+        locale: item.locale,
+        exchangeSlug: item.exchangeSlug,
+        pageType: item.pageType,
+        primaryQuery: item.primaryQuery,
+        score: item.score,
+        title: page?.metadata.title ?? item.primaryQuery,
+        description: page?.metadata.description ?? item.indexPolicyReason,
+        why:
+          item.indexPolicyAction === "refresh"
+            ? "这是焦点 seed 页，虽然还没进 page rows，但当前仍应继续推并同步刷新模板/内链。"
+            : "这是当前最该继续推的焦点 seed 页，优先争取先进入 GSC page rows。",
+      };
+    });
+
+  const titleDescriptionRefresh = state.opportunities
+    .filter(
+      (item) =>
+        item.focusLane === "focus" &&
+        item.locale === seedLocale &&
+        priorityPageTypes.has(item.pageType)
+    )
+    .sort(scoreSort)
+    .slice(0, 8)
+    .map((item) => {
+      const page = pageMap.get(`${item.locale}:${item.exchangeSlug}:${item.pageType}`);
+      return {
+        id: item.id,
+        locale: item.locale,
+        exchangeSlug: item.exchangeSlug,
+        pageType: item.pageType,
+        primaryQuery: item.primaryQuery,
+        score: item.score,
+        title: page?.metadata.title ?? item.primaryQuery,
+        description: page?.metadata.description ?? item.indexPolicyReason,
+        why: "这是高意图 seed 页，标题/描述的 query 命中和 CTR 文案优先级最高。",
+        copyFocus: getActionPlanCopyFocus(item.pageType),
+      };
+    });
+
+  const refreshInsteadOfExpand = state.opportunities
+    .filter(
+      (item) =>
+        item.indexPolicyAction === "refresh" ||
+        item.indexPolicyAction === "prune" ||
+        (item.locale !== seedLocale &&
+          policy.expansionLocales.includes(item.locale) &&
+          item.indexPolicyAction === "hold")
+    )
+    .sort(
+      (a, b) =>
+        b.indexPolicyObservationDays - a.indexPolicyObservationDays ||
+        scoreSort(a, b)
+    )
+    .slice(0, 8)
+    .map((item) => ({
+      id: item.id,
+      locale: item.locale,
+      exchangeSlug: item.exchangeSlug,
+      pageType: item.pageType,
+      primaryQuery: item.primaryQuery,
+      score: item.score,
+      action: item.indexPolicyAction,
+      observationDays: item.indexPolicyObservationDays,
+      why: item.indexPolicyReason,
+    }));
+
+  return {
+    continuePush,
+    titleDescriptionRefresh,
+    refreshInsteadOfExpand,
+  };
+}
+
 export function buildGscFocusPageRowMonitorSummary(
   state: AutomationState
 ): {
@@ -433,6 +588,7 @@ export type SeoDashboardData = {
   discovery: DiscoveryLaneSummary;
   monetization: MonetizationLaneSummary;
   indexGrowthPolicy: IndexGrowthPolicySummary;
+  searchVisibilityActionPlan: SearchVisibilityActionPlan;
   coverageRepair: CoverageRepairLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
@@ -585,6 +741,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
   const discovery = buildDiscoveryLaneSummary(state);
   const monetization = buildMonetizationLaneSummary(state);
   const indexGrowthPolicy = buildIndexGrowthPolicySummary(state);
+  const searchVisibilityActionPlan = buildSearchVisibilityActionPlan(state);
   const storedCoverageRepair = await readCoverageRepairArtifact();
   const coverageRepair =
     storedCoverageRepair.status === "never_run"
@@ -639,6 +796,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     discovery,
     monetization,
     indexGrowthPolicy,
+    searchVisibilityActionPlan,
     coverageRepair,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:

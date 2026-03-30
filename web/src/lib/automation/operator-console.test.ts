@@ -8,6 +8,7 @@ import {
   buildGscFocusPageRowMonitorSummary,
   buildIndexGrowthPolicySummary,
   buildMonetizationLaneSummary,
+  buildSearchVisibilityActionPlan,
 } from "./operator-console";
 import { buildAutomationState } from "./engine";
 
@@ -97,5 +98,24 @@ describe("operator console competitor-gap SERP helpers", () => {
       discoveryIssueCount: dashboard.coverageRepair.discoveryIssueCount,
     });
     expect(dashboard.operatorSummary.statusCards.coverageAudit.summary).toContain("Coverage audit");
+  });
+
+  it("builds a ranked search visibility action plan for push, copy refresh, and refresh-before-expand", () => {
+    const state = buildAutomationState();
+    const actionPlan = buildSearchVisibilityActionPlan(state);
+
+    expect(actionPlan.continuePush.length).toBeGreaterThan(0);
+    expect(actionPlan.continuePush.every((item) => item.locale === "en")).toBe(true);
+    expect(actionPlan.continuePush.every((item) => item.why.length > 0)).toBe(true);
+
+    expect(actionPlan.titleDescriptionRefresh.length).toBeGreaterThan(0);
+    expect(actionPlan.titleDescriptionRefresh.some((item) => item.copyFocus.length > 0)).toBe(true);
+
+    expect(actionPlan.refreshInsteadOfExpand.length).toBeGreaterThan(0);
+    expect(
+      actionPlan.refreshInsteadOfExpand.every(
+        (item) => item.observationDays >= 0 && item.why.length > 0
+      )
+    ).toBe(true);
   });
 });

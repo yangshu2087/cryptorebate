@@ -111,4 +111,27 @@ describe("exchange GEO content", () => {
       }
     }
   });
+
+  it("leads with the primary query and stronger CTR copy on english focus pages", () => {
+    const expectedByPageType = {
+      "official-site": ["official", "region", "alternative"],
+      "referral-code": ["referral code", "signup", "rebate"],
+      "signup-kyc": ["signup", "kyc", "rebate"],
+      "fees-rebate": ["fees", "rebate", "compare"],
+    } as const;
+
+    const entries = getExchangeSeoEntriesForExchange("en", "binance");
+
+    for (const [pageType, expectedTerms] of Object.entries(expectedByPageType)) {
+      const entry = entries.find((item) => item.pageType === pageType);
+
+      expect(entry).toBeDefined();
+      expect(entry?.metadata.title.toLowerCase().startsWith(entry?.primaryQuery.toLowerCase() ?? "")).toBe(true);
+
+      const description = entry?.metadata.description.toLowerCase() ?? "";
+      for (const expected of expectedTerms) {
+        expect(description).toContain(expected);
+      }
+    }
+  });
 });
