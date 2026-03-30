@@ -288,9 +288,17 @@ export type DiscoverySprintSummary = {
     pruneCandidate: DiscoverySprintEntry[];
     frozen: DiscoverySprintEntry[];
   };
+  firstImpressionForecast: {
+    day3: DiscoverySprintForecastEntry[];
+    day7: DiscoverySprintForecastEntry[];
+    day14: DiscoverySprintForecastEntry[];
+  };
   summary: {
     topTargetPage: DiscoverySprintEntry | null;
     topRefreshPage: DiscoverySprintEntry | null;
+    topImpressionPage3d: DiscoverySprintForecastEntry | null;
+    topImpressionPage7d: DiscoverySprintForecastEntry | null;
+    topImpressionPage14d: DiscoverySprintForecastEntry | null;
     blockedExpansionExample: {
       locale: string;
       exchangeSlug: string;
@@ -311,6 +319,14 @@ type DiscoverySprintEntry = {
   stage: string;
   reason: string;
   observationDays: number;
+};
+
+type DiscoverySprintForecastEntry = DiscoverySprintEntry & {
+  horizonDays: 3 | 7 | 14;
+  likelihoodScore: number;
+  pinCount: number;
+  pinSources: string[];
+  why: string;
 };
 
 type DiscoverySprintSurfaceSummary = {
@@ -638,10 +654,127 @@ function buildDiscoverySprintSurfaceSummary(
   };
 }
 
+function getDiscoverySprintPageTypeWeight(pageType: string, horizonDays: 3 | 7 | 14) {
+  switch (pageType) {
+    case "referral-code":
+      return horizonDays === 3 ? 11 : horizonDays === 7 ? 10 : 8;
+    case "official-site":
+      return horizonDays === 3 ? 10 : horizonDays === 7 ? 9 : 7;
+    case "fees-rebate":
+      return horizonDays === 14 ? 10 : horizonDays === 7 ? 7 : 6;
+    case "signup-kyc":
+      return horizonDays === 14 ? 9 : horizonDays === 7 ? 7 : 5;
+    default:
+      return 4;
+  }
+}
+
+function getDiscoverySprintStageWeight(stage: string, horizonDays: 3 | 7 | 14) {
+  switch (stage) {
+    case "observe":
+      return horizonDays === 3 ? 18 : horizonDays === 7 ? 14 : 10;
+    case "ctr-refresh":
+      return horizonDays === 3 ? 11 : horizonDays === 7 ? 18 : 16;
+    case "template-refresh":
+      return horizonDays === 3 ? 3 : horizonDays === 7 ? 9 : 18;
+    case "prune-candidate":
+      return horizonDays === 14 ? 4 : -12;
+    case "frozen":
+      return -80;
+    default:
+      return 0;
+  }
+}
+
+function buildDiscoverySprintForecastEntry(
+  item: AutomationState["opportunities"][number],
+  monitorEntry: GscFocusPageRowMonitorEntry | undefined,
+  horizonDays: 3 | 7 | 14,
+  pinSources: string[]
+): DiscoverySprintForecastEntry {
+  const baseEntry = toDiscoverySprintEntry(item);
+  const scoreBase = item.discoveryPriority ?? item.score;
+  const pinCount = pinSources.length;
+  const alreadySeenPenalty =
+    monitorEntry?.seenInImpressions || monitorEntry?.seenInClicks ? -120 : 0;
+  const score =
+    scoreBase +
+    getDiscoverySprintStageWeight(item.discoverySprintStage, horizonDays) +
+    getDiscoverySprintPageTypeWeight(item.pageType, horizonDays) +
+    pinCount * 6 +
+    (item.indexPolicyAllowPromotion ? 10 : -100) +
+    alreadySeenPenalty;
+
+  const reasons = [
+    `当前 stage = ${item.discoverySprintStage}`,
+    `${pinCount} 个站内 surface 正在主推`,
+    item.indexPolicyAllowPromotion ? "仍在 promotion 主链" : "已退出 promotion 主链",
+  ];
+
+  if (monitorEntry?.seenInPageRows) {
+    reasons.push("已进 page rows，下一步重点是拿 impression/click");
+  } else {
+    reasons.push("尚未进 page rows，仍在争取首个展示资格");
+  }
+
+  return {
+    ...baseEntry,
+    horizonDays,
+    likelihoodScore: Math.round(score),
+    pinCount,
+    pinSources,
+    why: reasons.join(" · "),
+  };
+}
+
+function sortDiscoverySprintForecastEntries(
+  a: DiscoverySprintForecastEntry,
+  b: DiscoverySprintForecastEntry
+) {
+  return (
+    b.likelihoodScore - a.likelihoodScore ||
+    b.pinCount - a.pinCount ||
+    sortDiscoverySprintEntries(a, b)
+  );
+}
+
+function buildDiscoverySprintForecast(
+  trackedSeedOpportunities: AutomationState["opportunities"],
+  monitorByKey: Map<string, GscFocusPageRowMonitorEntry>,
+  pinSourcesByKey: Map<string, string[]>,
+  horizonDays: 3 | 7 | 14
+) {
+  return trackedSeedOpportunities
+    .map((item) => {
+      const key = `${item.locale}:${item.exchangeSlug}:${item.pageType}`;
+      const monitorEntry = monitorByKey.get(key);
+      if (monitorEntry?.seenInImpressions || monitorEntry?.seenInClicks) {
+        return null;
+      }
+      return buildDiscoverySprintForecastEntry(
+        item,
+        monitorEntry,
+        horizonDays,
+        pinSourcesByKey.get(key) ?? []
+      );
+    })
+    .filter((item): item is DiscoverySprintForecastEntry => Boolean(item))
+    .filter((item) => item.likelihoodScore > -100)
+    .sort(sortDiscoverySprintForecastEntries)
+    .slice(0, 12);
+}
+
 export function buildDiscoverySprintSummary(
   state: AutomationState
 ): DiscoverySprintSummary {
-  const focusMonitor = summarizeGscFocusPageRowMonitor(state.externalSources.gsc.focusPageRows);
+  const focusPageRows = state.externalSources.gsc.focusPageRows ?? [];
+  const focusMonitor = summarizeGscFocusPageRowMonitor(focusPageRows);
+  const monitorByKey = new Map(
+    focusPageRows.map((entry) => [
+      `${entry.locale}:${entry.exchangeSlug}:${entry.pageType}`,
+      entry,
+    ] as const)
+  );
   const opportunitiesByKey = new Map(
     state.opportunities.map((item) => [
       `${item.locale}:${item.exchangeSlug}:${item.pageType}`,
@@ -671,6 +804,22 @@ export function buildDiscoverySprintSummary(
   const discoveryAssetKeys = activeSeedOpportunities.map(
     (item) => `${item.locale}:${item.exchangeSlug}:${item.pageType}`
   );
+  const pinSourcesByKey = new Map<string, string[]>();
+  const addPinSources = (label: string, keys: string[]) => {
+    for (const key of new Set(keys)) {
+      const existing = pinSourcesByKey.get(key) ?? [];
+      if (!existing.includes(label)) {
+        existing.push(label);
+      }
+      pinSourcesByKey.set(key, existing);
+    }
+  };
+  addPinSources("homepage", homepageKeys);
+  addPinSources("exchange-hub", exchangeHubKeys);
+  addPinSources("exchange-detail", exchangeDetailKeys);
+  addPinSources("feed", discoveryAssetKeys);
+  addPinSources("fresh-sitemap", discoveryAssetKeys);
+  addPinSources("focus-sitemap", discoveryAssetKeys);
 
   const observe = trackedSeedOpportunities
     .filter((item) => item.discoverySprintStage === "observe")
@@ -704,6 +853,24 @@ export function buildDiscoverySprintSummary(
     ...exchangeDetailKeys,
     ...discoveryAssetKeys,
   ]).size;
+  const forecastDay3 = buildDiscoverySprintForecast(
+    trackedSeedOpportunities,
+    monitorByKey,
+    pinSourcesByKey,
+    3
+  );
+  const forecastDay7 = buildDiscoverySprintForecast(
+    trackedSeedOpportunities,
+    monitorByKey,
+    pinSourcesByKey,
+    7
+  );
+  const forecastDay14 = buildDiscoverySprintForecast(
+    trackedSeedOpportunities,
+    monitorByKey,
+    pinSourcesByKey,
+    14
+  );
 
   return {
     status:
@@ -749,9 +916,17 @@ export function buildDiscoverySprintSummary(
       pruneCandidate,
       frozen,
     },
+    firstImpressionForecast: {
+      day3: forecastDay3,
+      day7: forecastDay7,
+      day14: forecastDay14,
+    },
     summary: {
       topTargetPage: observe[0] ?? ctrRefresh[0] ?? templateRefresh[0] ?? null,
       topRefreshPage: ctrRefresh[0] ?? templateRefresh[0] ?? pruneCandidate[0] ?? null,
+      topImpressionPage3d: forecastDay3[0] ?? null,
+      topImpressionPage7d: forecastDay7[0] ?? null,
+      topImpressionPage14d: forecastDay14[0] ?? null,
       blockedExpansionExample: blockedExpansionExample
         ? {
             locale: blockedExpansionExample.locale,

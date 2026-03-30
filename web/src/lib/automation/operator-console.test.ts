@@ -91,6 +91,16 @@ describe("operator console competitor-gap SERP helpers", () => {
     expect(discoverySprint.trackedSeedPages).toBe(12);
     expect(discoverySprint.pinnedSurfaces.exchangeHub.count).toBe(12);
     expect(Array.isArray(discoverySprint.stageBuckets.observe)).toBe(true);
+    expect(discoverySprint.firstImpressionForecast.day3).toHaveLength(12);
+    expect(discoverySprint.firstImpressionForecast.day7).toHaveLength(12);
+    expect(discoverySprint.firstImpressionForecast.day14).toHaveLength(12);
+    expect(discoverySprint.firstImpressionForecast.day3[0].likelihoodScore).toBeGreaterThanOrEqual(
+      discoverySprint.firstImpressionForecast.day3[1].likelihoodScore
+    );
+    expect(discoverySprint.firstImpressionForecast.day3[0].why.length).toBeGreaterThan(0);
+    expect(discoverySprint.summary.topImpressionPage3d?.id).toBe(
+      discoverySprint.firstImpressionForecast.day3[0].id
+    );
   });
 
   it("surfaces the latest coverage audit run in status cards", async () => {

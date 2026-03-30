@@ -1068,6 +1068,48 @@ export function SeoConsole({
               />
             </div>
 
+            <div className="grid gap-4 xl:grid-cols-3">
+              {[
+                { label: "未来 3 天", items: discoverySprint.firstImpressionForecast.day3, tone: "border-sky-200 bg-sky-50/60" },
+                { label: "未来 7 天", items: discoverySprint.firstImpressionForecast.day7, tone: "border-indigo-200 bg-indigo-50/60" },
+                { label: "未来 14 天", items: discoverySprint.firstImpressionForecast.day14, tone: "border-violet-200 bg-violet-50/60" },
+              ].map((bucket) => (
+                <Card key={bucket.label} className="border-border/70">
+                  <CardHeader>
+                    <CardTitle>{bucket.label}最可能拿到首个 impression</CardTitle>
+                    <CardDescription>按当前 score、stage、pinned surfaces 与 promotion 状态综合排序。</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {bucket.items.slice(0, 4).map((item, index) => (
+                      <div key={`${bucket.label}:${item.id}`} className={cn("rounded-2xl border p-4", bucket.tone)}>
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge variant={index === 0 ? "default" : "outline"}>#{index + 1}</Badge>
+                              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", getDiscoverySprintStageBadgeClass(item.stage))}>
+                                {formatDiscoverySprintStageLabel(item.stage)}
+                              </span>
+                            </div>
+                            <p className="mt-3 font-semibold">{item.primaryQuery}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{item.exchangeSlug} · {getUnifiedSeoPageLabels(labelsLocale, item.pageType).short}</p>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>Likelihood {item.likelihoodScore}</p>
+                            <p>{formatNumber(item.pinCount)} 个 surfaces</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-xs text-muted-foreground">{item.why}</p>
+                        <a href={item.routePath} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+                          查看页面
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
             <div className="grid gap-4 xl:grid-cols-2">
               <Card className="border-border/70">
                 <CardHeader>
