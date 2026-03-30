@@ -1057,13 +1057,21 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
 
   const brandPages = buildBrandPages(state).slice(0, 12);
   const internalLinkCandidates = getInternalLinkDistributionCandidates(state, 24, 2);
+  const opportunityMap = new Map(
+    state.opportunities.map((item) => [
+      `${item.locale}:${item.exchangeSlug}:${item.pageType}`,
+      item,
+    ] as const)
+  );
   const candidatePages = state.pages
     .filter(
       (page: AutomationSeoPage) =>
         page.stage === "published" &&
         isFocusLocale(page.locale) &&
         isFocusExchangeSlug(page.exchangeSlug) &&
-        isFocusPageType(page.pageType)
+        isFocusPageType(page.pageType) &&
+        opportunityMap.get(`${page.locale}:${page.exchangeSlug}:${page.pageType}`)
+          ?.indexPolicyAllowPromotion !== false
     )
     .sort((a: AutomationSeoPage, b: AutomationSeoPage) => b.qualityScore - a.qualityScore)
     .slice(0, 20);

@@ -100,4 +100,25 @@ describe("automation engine", () => {
       )
     ).toBe(true);
   });
+
+  it("holds expansion locales until english seed pages first enter page rows", () => {
+    const state = getAutomationState();
+    const enSeed = state.opportunities.find(
+      (item) =>
+        item.locale === "en" &&
+        item.exchangeSlug === "binance" &&
+        item.pageType === "referral-code"
+    );
+    const hiExpansion = state.opportunities.find(
+      (item) =>
+        item.locale === "hi" &&
+        item.exchangeSlug === "binance" &&
+        item.pageType === "referral-code"
+    );
+
+    expect(enSeed?.indexPolicyAction).toMatch(/observe|refresh|prune/);
+    expect(enSeed?.indexPolicyAllowPromotion).toBe(true);
+    expect(hiExpansion?.indexPolicyAction).toMatch(/hold|prune/);
+    expect(hiExpansion?.indexPolicyAllowPromotion).toBe(false);
+  });
 });

@@ -31,6 +31,7 @@ describe("gsc-focus-page-monitor", () => {
       locale: "en",
       exchangeSlug: "binance",
       pageType: "referral-code",
+      monitoringStartedAt: observedAt,
       firstSeenAt: observedAt,
       seenInPageRows: true,
       latestImpressions: 5,
@@ -75,11 +76,27 @@ describe("gsc-focus-page-monitor", () => {
     expect(
       next.entries.find((entry) => entry.key === "focus-page-row:en:binance:referral-code")
     ).toMatchObject({
+      monitoringStartedAt: firstSeenAt,
       firstSeenAt,
       lastSeenAt: observedAt,
       latestImpressions: 9,
       latestClicks: 1,
     });
+  });
+
+  it("keeps monitoring start stable so 7/14/21 day policy windows do not reset on each sync", () => {
+    const firstObservedAt = "2026-03-01T00:00:00.000Z";
+    const observedAt = "2026-03-15T00:00:00.000Z";
+    const previous = reconcileGscFocusPageRowMonitor([], [], firstObservedAt).entries;
+    const next = reconcileGscFocusPageRowMonitor(previous, [], observedAt);
+    const summary = summarizeGscFocusPageRowMonitor(next.entries);
+
+    expect(
+      next.entries.find((entry) => entry.key === "focus-page-row:en:binance:referral-code")
+        ?.monitoringStartedAt
+    ).toBe(firstObservedAt);
+    expect(summary.monitoringStartedAt).toBe(firstObservedAt);
+    expect(summary.observationDays).toBeGreaterThanOrEqual(13);
   });
 
   it("builds admin alerts and telegram reminder payloads for first-seen events", () => {

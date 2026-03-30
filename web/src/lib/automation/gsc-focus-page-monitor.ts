@@ -97,6 +97,7 @@ export function reconcileGscFocusPageRowMonitor(
       routePath: target.routePath,
       url: target.url,
       seenInPageRows: Boolean(firstSeenAt),
+      monitoringStartedAt: previous?.monitoringStartedAt ?? observedAt,
       firstSeenAt,
       lastSeenAt: observation ? observedAt : previous?.lastSeenAt,
       lastCheckedAt: observedAt,
@@ -157,7 +158,10 @@ export function summarizeGscFocusPageRowMonitor(
       .at(0) ?? null;
   const monitoringStartedAt =
     resolvedEntries
-      .map((entry) => entry.firstSeenAt ?? entry.lastCheckedAt)
+      .map(
+        (entry) =>
+          entry.monitoringStartedAt ?? entry.firstSeenAt ?? entry.lastCheckedAt
+      )
       .filter(Boolean)
       .sort()
       .at(0) ?? "";

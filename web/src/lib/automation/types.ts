@@ -78,10 +78,22 @@ export type QueryOpportunity = {
   pageType: string;
   primaryQuery: string;
   score: number;
-  recommendedAction: "publish" | "refresh" | "expand" | "prune";
+  recommendedAction: "publish" | "refresh" | "expand" | "prune" | "hold";
   stage: AutomationLifecycleStage;
   focusLane: OpportunityFocusLane;
   discoveryPriority: number;
+  indexPolicyAction:
+    | "publish"
+    | "observe"
+    | "refresh"
+    | "expand"
+    | "prune"
+    | "hold";
+  indexPolicyReason: string;
+  indexPolicyObservationDays: number;
+  indexPolicyAllowPromotion: boolean;
+  indexPolicyAllowExpansion: boolean;
+  indexPolicyScheduledToday: boolean;
   qualityScore: number;
   projectedEpcUsd: number;
   projectedMonthlyRevenueUsd: number;
@@ -343,6 +355,7 @@ export type GscFocusPageRowMonitorEntry = {
   routePath: string;
   url: string;
   seenInPageRows: boolean;
+  monitoringStartedAt?: string;
   firstSeenAt?: string;
   lastSeenAt?: string;
   lastCheckedAt: string;

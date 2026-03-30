@@ -1,8 +1,8 @@
 {
   "paused": false,
   "rolloutMode": "full-automatic",
-  "publishDailyLimitPerExchange": 8,
-  "refreshDailyLimitPerExchange": 12,
+  "publishDailyLimitPerExchange": 4,
+  "refreshDailyLimitPerExchange": 6,
   "quarantinedLocales": [],
   "quarantinedExchanges": [],
   "quarantinedPageTypes": [],

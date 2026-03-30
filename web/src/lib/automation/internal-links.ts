@@ -16,6 +16,7 @@ import {
 } from "./focus";
 import { getGscFocusPageMonitorTargets } from "./gsc-focus-page-monitor";
 import type {
+  AutomationControlPlane,
   AutomationInternalLinkGroup,
   AutomationInternalLinkManifest,
   AutomationInternalLinkTarget,
@@ -107,7 +108,19 @@ function freshnessBonus(timestamp?: string) {
   return 0;
 }
 
-function baseCandidateFromEntry(entry: ExchangeSeoContentEntry): Candidate {
+function baseCandidateFromEntry(
+  entry: ExchangeSeoContentEntry,
+  opportunity?: {
+    score: number;
+    discoveryPriority?: number;
+    focusLane?: OpportunityFocusLane;
+    indexPolicyAllowPromotion?: boolean;
+    indexPolicyAction?: string;
+  }
+): Candidate | null {
+  if (opportunity && opportunity.indexPolicyAllowPromotion === false) {
+    return null;
+  }
   const focusLane = getOpportunityFocusLane({
     locale: entry.locale,
     exchangeSlug: entry.exchange.slug,
@@ -124,7 +137,10 @@ function baseCandidateFromEntry(entry: ExchangeSeoContentEntry): Candidate {
     source: "base",
     score:
       getPageTypePriority(entry.pageType) +
+      (opportunity?.score ?? 0) * 0.03 +
+      (opportunity?.discoveryPriority ?? 0) * 0.015 +
       freshnessBonus(entry.lastReviewed) +
+      (opportunity?.indexPolicyAction === "refresh" ? 10 : 0) +
       (focusLane === "focus" ? 24 : focusLane === "background" ? 4 : -12),
     focusLane,
   };
@@ -132,9 +148,18 @@ function baseCandidateFromEntry(entry: ExchangeSeoContentEntry): Candidate {
 
 function dynamicCandidateFromPage(
   page: AutomationSeoPage,
-  opportunity?: { score: number; discoveryPriority?: number; focusLane?: OpportunityFocusLane },
+  opportunity?: {
+    score: number;
+    discoveryPriority?: number;
+    focusLane?: OpportunityFocusLane;
+    indexPolicyAllowPromotion?: boolean;
+    indexPolicyAction?: string;
+  },
   roi?: RoiEntry
-): Candidate {
+): Candidate | null {
+  if (opportunity && opportunity.indexPolicyAllowPromotion === false) {
+    return null;
+  }
   const clicksBonus = roi ? Math.log1p(roi.clicks) * 2 : 0;
   const commissionBonus = roi ? Math.min(20, roi.commissionsUsd / 5) : 0;
   const focusLane =
@@ -160,6 +185,7 @@ function dynamicCandidateFromPage(
       clicksBonus +
       commissionBonus +
       freshnessBonus(page.publishedAt ?? page.lastReviewed) +
+      (opportunity?.indexPolicyAction === "refresh" ? 12 : 0) +
       (focusLane === "focus" ? 30 : focusLane === "background" ? 6 : -20),
     focusLane,
   };
@@ -232,9 +258,20 @@ function buildExchangeGroup(
   exchangeSlug: string,
   roiMap: Map<string, RoiEntry>
 ): AutomationInternalLinkGroup {
-  const baseCandidates = getExchangeSeoEntriesForExchange(locale, exchangeSlug).map(
-    baseCandidateFromEntry
+  const opportunityMap = new Map(
+    state.opportunities.map((item) => [
+      `${item.locale}:${item.exchangeSlug}:${item.pageType}`,
+      item,
+    ] as const)
   );
+  const baseCandidates = getExchangeSeoEntriesForExchange(locale, exchangeSlug)
+    .map((entry) =>
+      baseCandidateFromEntry(
+        entry,
+        opportunityMap.get(`${entry.locale}:${entry.exchange.slug}:${entry.pageType}`)
+      )
+    )
+    .filter((item): item is Candidate => Boolean(item));
   const dynamicCandidates = state.pages
     .filter(
       (page) =>
@@ -252,7 +289,8 @@ function buildExchangeGroup(
       );
       const roi = roiMap.get(`${page.locale}:${page.exchangeSlug}:${page.pageType}`);
       return dynamicCandidateFromPage(page, opportunity, roi);
-    });
+    })
+    .filter((item): item is Candidate => Boolean(item));
 
   const guides = uniqueByPageType([...baseCandidates, ...dynamicCandidates])
     .sort(compareTrackedPriority)
@@ -275,8 +313,11 @@ type InternalLinkState = {
     score: number;
     focusLane?: OpportunityFocusLane;
     discoveryPriority?: number;
+    indexPolicyAllowPromotion?: boolean;
+    indexPolicyAction?: string;
   }>;
   pageRoiDaily: RoiEntry[];
+  controlPlane?: AutomationControlPlane;
 };
 
 type InternalLinkDistributionState = InternalLinkState & {
@@ -380,7 +421,10 @@ export function buildInternalLinkManifest(
     .map((group) => ({
       locale: group.locale,
       exchangeSlug: group.exchangeSlug,
-      guides: group.guides.slice(0, 6),
+      guides: group.guides.slice(
+        0,
+        state.controlPlane?.publishDailyLimitPerExchange ?? 6
+      ),
     }))
     .filter((slot) => slot.guides.length > 0);
 

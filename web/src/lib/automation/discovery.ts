@@ -193,6 +193,12 @@ function buildTrackedFocusDiscoveryPages(
   state: AutomationState,
   refreshedAt: string
 ) {
+  const opportunityMap = new Map(
+    state.opportunities.map((item) => [
+      `${item.locale}:${item.exchangeSlug}:${item.pageType}`,
+      item,
+    ] as const)
+  );
   const dynamicPages = new Map(
     state.pages
       .filter((page) => page.stage === "published")
@@ -201,6 +207,12 @@ function buildTrackedFocusDiscoveryPages(
 
   return getGscFocusPageMonitorTargets()
     .map((target) => {
+      const opportunity = opportunityMap.get(
+        `${target.locale}:${target.exchangeSlug}:${target.pageType}`
+      );
+      if (opportunity && opportunity.indexPolicyAllowPromotion === false) {
+        return null;
+      }
       const dynamicPage = dynamicPages.get(
         `${target.locale}:${target.exchangeSlug}:${target.pageType}`
       );

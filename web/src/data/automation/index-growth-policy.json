@@ -1,0 +1,15 @@
+{
+  "maxNewPagesPerDay": 12,
+  "maxRefreshPagesPerDay": 18,
+  "publishDailyLimitPerExchange": 4,
+  "refreshDailyLimitPerExchange": 6,
+  "seedLocale": "en",
+  "expansionLocales": ["hi", "th"],
+  "priorityExchanges": ["binance", "kucoin", "okx"],
+  "priorityPageTypes": ["official-site", "referral-code", "signup-kyc", "fees-rebate"],
+  "observationWindows": {
+    "day7": 7,
+    "day14": 14,
+    "day21": 21
+  }
+}

@@ -17,6 +17,11 @@ import {
 import { exchanges, getExchangeBySlug } from "@/data/exchanges";
 import { LOCALES, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { getDiscoveryPriority, getOpportunityFocusLane } from "./focus";
+import {
+  applyIndexGrowthPolicyBudget,
+  evaluateIndexGrowthPolicy,
+  getIndexGrowthPolicy,
+} from "./index-growth-policy";
 import { getAutomationLocaleCopy } from "./locale-copy";
 import { buildInternalLinkManifest } from "./internal-links";
 import type {
@@ -108,10 +113,16 @@ function readAutomationJsonSync<T>(parts: string[], fallback: T): T {
 }
 
 function getControlPlaneSeed() {
-  return readAutomationJsonSync(
+  const controlPlane = readAutomationJsonSync(
     ["automation", "control-plane.json"],
     controlPlaneSeed as AutomationControlPlane
   );
+  const indexGrowthPolicy = getIndexGrowthPolicy();
+  return {
+    ...controlPlane,
+    publishDailyLimitPerExchange: indexGrowthPolicy.publishDailyLimitPerExchange,
+    refreshDailyLimitPerExchange: indexGrowthPolicy.refreshDailyLimitPerExchange,
+  };
 }
 
 function getManualQuerySeeds() {
@@ -545,7 +556,11 @@ function getRecommendedAction(score: number): QueryOpportunity["recommendedActio
   return "prune";
 }
 
-function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): QueryOpportunity {
+function buildOpportunity(
+  cluster: QueryCluster,
+  context: RealRevenueContext,
+  monitorEntries: ExternalSourcesState["gsc"]["focusPageRows"]
+): QueryOpportunity {
   const realCluster = context.byClusterId.get(cluster.id);
   const realizedCommissionUsd = realCluster?.commissionsUsd ?? 0;
   const realizedConversions = realCluster?.conversions ?? 0;
@@ -560,6 +575,13 @@ function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): Q
     exchangeSlug: cluster.exchangeSlug,
     pageType: cluster.pageType,
     score: cluster.score,
+  });
+  const indexPolicy = evaluateIndexGrowthPolicy({
+    locale: cluster.locale,
+    exchangeSlug: cluster.exchangeSlug,
+    pageType: cluster.pageType,
+    focusLane,
+    monitorEntries,
   });
   const projectedEpcUsd =
     realizedCommissionUsd > 0
@@ -577,6 +599,24 @@ function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): Q
     ),
     1
   );
+  const scoreBasedStage = getStage(cluster.score);
+  const scoreBasedAction = getRecommendedAction(cluster.score);
+  const stage =
+    indexPolicy.action === "hold"
+      ? "generated"
+      : indexPolicy.action === "refresh"
+        ? "refresh_due"
+        : indexPolicy.action === "prune"
+          ? "underperforming"
+          : scoreBasedStage;
+  const recommendedAction =
+    indexPolicy.action === "hold"
+      ? "hold"
+      : indexPolicy.action === "refresh"
+        ? "refresh"
+        : indexPolicy.action === "prune"
+          ? "prune"
+          : scoreBasedAction;
 
   return {
     id: `opp-${cluster.locale}-${cluster.exchangeSlug}-${cluster.pageType}`,
@@ -587,10 +627,18 @@ function buildOpportunity(cluster: QueryCluster, context: RealRevenueContext): Q
     pageType: cluster.pageType,
     primaryQuery: cluster.queries[0],
     score: cluster.score,
-    recommendedAction: getRecommendedAction(cluster.score),
-    stage: getStage(cluster.score),
+    recommendedAction,
+    stage,
     focusLane,
     discoveryPriority,
+    indexPolicyAction: indexPolicy.action,
+    indexPolicyReason: indexPolicy.reason,
+    indexPolicyObservationDays: round(indexPolicy.observationDays, 1),
+    indexPolicyAllowPromotion: indexPolicy.allowPromotion,
+    indexPolicyAllowExpansion: indexPolicy.allowExpansion,
+    indexPolicyScheduledToday:
+      indexPolicy.allowPromotion &&
+      ["publish", "expand", "refresh"].includes(indexPolicy.action),
     qualityScore,
     projectedEpcUsd,
     projectedMonthlyRevenueUsd,
@@ -1389,9 +1437,10 @@ export function buildAutomationState(): AutomationState {
   const signals = buildSignals();
   const realRevenueContext = buildRealRevenueContext();
   const clusters = signals.map((signal) => buildCluster(signal, realRevenueContext));
-  const opportunities = clusters.map((cluster) =>
-    buildOpportunity(cluster, realRevenueContext)
+  const uncappedOpportunities = clusters.map((cluster) =>
+    buildOpportunity(cluster, realRevenueContext, externalSources.gsc.focusPageRows)
   );
+  const opportunities = applyIndexGrowthPolicyBudget(uncappedOpportunities);
   const briefs = opportunities.map(buildBrief);
 
   const basePages = SEO_CONTENT_LOCALES.flatMap((locale) =>
@@ -1490,6 +1539,7 @@ export function buildAutomationState(): AutomationState {
     pages,
     opportunities,
     pageRoiDaily,
+    controlPlane,
   });
   const alerts = buildAlerts(opportunities, controlPlane, externalSources, attribution);
   const averageQualityScore = round(
