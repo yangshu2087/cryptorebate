@@ -3,6 +3,7 @@ import type { CompetitorGapSerpWinnersArtifact } from "./types";
 import {
   buildCompetitorGapDominantDomains,
   buildCompetitorGapProviderHits,
+  buildSeoDashboardData,
   buildDiscoveryLaneSummary,
   buildGscFocusPageRowMonitorSummary,
   buildMonetizationLaneSummary,
@@ -78,5 +79,17 @@ describe("operator console competitor-gap SERP helpers", () => {
     expect(focusMonitor.trackedCount).toBe(12);
     expect(focusMonitor.pendingCount).toBeGreaterThanOrEqual(0);
     expect(focusMonitor.entries).toHaveLength(12);
+  });
+
+  it("surfaces the latest coverage audit run in status cards", async () => {
+    const dashboard = await buildSeoDashboardData("en");
+
+    expect(dashboard.operatorSummary.statusCards.coverageAudit).toMatchObject({
+      issueCount: dashboard.coverageRepair.issueCount,
+      redirectIssueCount: dashboard.coverageRepair.redirectIssueCount,
+      notFoundIssueCount: dashboard.coverageRepair.notFoundIssueCount,
+      discoveryIssueCount: dashboard.coverageRepair.discoveryIssueCount,
+    });
+    expect(dashboard.operatorSummary.statusCards.coverageAudit.summary).toContain("Coverage audit");
   });
 });

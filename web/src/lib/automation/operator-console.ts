@@ -315,6 +315,16 @@ export type SeoDashboardData = {
         sitemapsSubmitted: string[];
         lastSitemapSubmitAt: string;
       };
+      coverageAudit: {
+        status: string;
+        label: string;
+        updatedAt: string;
+        issueCount: number;
+        redirectIssueCount: number;
+        notFoundIssueCount: number;
+        discoveryIssueCount: number;
+        summary: string;
+      };
       coverageRepair: {
         status: string;
         label: string;
@@ -439,6 +449,9 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     .slice(0, 10);
 
   const latestGscRun = state.runs.find((item) => item.job === "daily_gsc_ingest");
+  const latestCoverageAuditRun = state.runs.find(
+    (item) => item.job === "daily_coverage_audit"
+  );
   const latestPartnerRun = state.runs.find(
     (item) => item.job === "daily_revenue_sync" || item.job === "monthly_partner_csv_import"
   );
@@ -509,6 +522,31 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
           sitemapSubmitStatus: state.externalSources.gsc.sitemapSubmitStatus ?? "skipped",
           sitemapsSubmitted: state.externalSources.gsc.sitemapsSubmitted ?? [],
           lastSitemapSubmitAt: state.externalSources.gsc.lastSitemapSubmitAt ?? "",
+        },
+        coverageAudit: {
+          status:
+            latestCoverageAuditRun?.status ??
+            (coverageRepair.status === "never_run"
+              ? "never_run"
+              : coverageRepair.issueCount > 0
+                ? "warning"
+                : "success"),
+          label: toStatusLabel(
+            latestCoverageAuditRun?.status ??
+              (coverageRepair.status === "never_run"
+                ? "never_run"
+                : coverageRepair.issueCount > 0
+                  ? "warning"
+                  : "success")
+          ),
+          updatedAt: latestCoverageAuditRun?.completedAt ?? coverageRepair.checkedAt,
+          issueCount: coverageRepair.issueCount,
+          redirectIssueCount: coverageRepair.redirectIssueCount,
+          notFoundIssueCount: coverageRepair.notFoundIssueCount,
+          discoveryIssueCount: coverageRepair.discoveryIssueCount,
+          summary:
+            latestCoverageAuditRun?.summary ??
+            `Coverage audit redirect=${coverageRepair.redirectIssueCount} 404=${coverageRepair.notFoundIssueCount} discovery=${coverageRepair.discoveryIssueCount}`,
         },
         coverageRepair: {
           status: coverageRepair.status,

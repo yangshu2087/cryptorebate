@@ -132,6 +132,19 @@ function formatGscAnalyticsMode(mode: string) {
   }
 }
 
+function formatAutomationJobLabel(job: string) {
+  switch (job) {
+    case "daily_gsc_ingest":
+      return "daily_gsc_ingest · GSC Sync";
+    case "daily_coverage_audit":
+      return "daily_coverage_audit · Coverage Audit";
+    case "daily_internal_link_refresh":
+      return "daily_internal_link_refresh · 内链刷新";
+    default:
+      return job;
+  }
+}
+
 function buildHref(locale: string, params: Record<string, string | undefined>) {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -446,6 +459,27 @@ export function SeoConsole({
   ).sort();
   const statusCards = dashboardData.operatorSummary.statusCards;
   const coverageRepair = dashboardData.operatorSummary.coverageRepair;
+  const recentRuns = (() => {
+    const syntheticCoverageAuditRun = {
+      id: "synthetic-daily_coverage_audit",
+      job: "daily_coverage_audit",
+      status: statusCards.coverageAudit.status,
+      summary: statusCards.coverageAudit.summary,
+      completedAt: statusCards.coverageAudit.updatedAt || coverageRepair.checkedAt || "",
+    };
+
+    const runsWithCoverageAudit = state.runs.some((run) => run.job === "daily_coverage_audit")
+      ? state.runs
+      : [syntheticCoverageAuditRun, ...state.runs];
+
+    return runsWithCoverageAudit
+      .filter((run) =>
+        ["daily_gsc_ingest", "daily_coverage_audit"].includes(run.job)
+          ? true
+          : true
+      )
+      .slice(0, 8);
+  })();
   const focusPageRowMonitor = dashboardData.operatorSummary.focusPageRowMonitor;
   const internalLinkSlots = getInternalLinkSlots(state.internalLinks);
   const flattenedSlotGuides = [
@@ -784,7 +818,7 @@ export function SeoConsole({
         </Card>
       </div>
 
-      <div className="mt-8 grid gap-4 xl:grid-cols-4">
+      <div className="mt-8 grid gap-4 xl:grid-cols-5">
         <StatusCard
           title="最近一次 CTA Live Audit"
           status={statusCards.ctaLiveAudit.label}
@@ -811,6 +845,20 @@ export function SeoConsole({
             statusCards.gscSync.sitemapSubmitStatus ??
             "未运行"
           }${statusCards.gscSync.note ? ` · ${statusCards.gscSync.note}` : ""}`}
+        />
+        <StatusCard
+          title="最近一次 Coverage Audit"
+          status={statusCards.coverageAudit.label}
+          description="显示 daily_coverage_audit 最近一次运行结果，确认 redirect / 404 / 发现资产自检是否按日完成。"
+          meta={`最近运行：${
+            statusCards.coverageAudit.updatedAt
+              ? formatDate(statusCards.coverageAudit.updatedAt)
+              : "暂无"
+          } · redirect 风险 ${formatNumber(statusCards.coverageAudit.redirectIssueCount)} · 404 风险 ${formatNumber(
+            statusCards.coverageAudit.notFoundIssueCount
+          )} · 发现资产风险 ${formatNumber(statusCards.coverageAudit.discoveryIssueCount)} · 总风险 ${formatNumber(
+            statusCards.coverageAudit.issueCount
+          )}`}
         />
         <StatusCard
           title="Coverage 修复"
@@ -1423,11 +1471,11 @@ export function SeoConsole({
             <CardDescription>当前快照里记录的最新 pipeline 任务结果。</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {state.runs.slice(0, 8).map((run) => (
+            {recentRuns.map((run) => (
               <div key={run.id} className="rounded-2xl border border-border/60 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold">{run.job}</p>
+                    <p className="text-sm font-semibold">{formatAutomationJobLabel(run.job)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{run.summary}</p>
                   </div>
                   <Badge variant={run.status === "failed" ? "destructive" : run.status === "warning" ? "outline" : "secondary"}>
