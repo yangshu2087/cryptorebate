@@ -9,6 +9,7 @@ import {
   buildGscFocusPageRowMonitorSummary,
   buildIndexGrowthPolicySummary,
   buildMonetizationLaneSummary,
+  buildSearchDiscoveryBreakthroughSummary,
   buildSearchVisibilityActionPlan,
 } from "./operator-console";
 import { buildAutomationState } from "./engine";
@@ -134,5 +135,51 @@ describe("operator console competitor-gap SERP helpers", () => {
         (item) => item.observationDays >= 0 && item.why.length > 0
       )
     ).toBe(true);
+  });
+
+  it("surfaces the strongest search breakthrough and otherwise falls back to the next discovery target", () => {
+    const state = buildAutomationState();
+    const discoverySprint = buildDiscoverySprintSummary(state);
+
+    const pending = buildSearchDiscoveryBreakthroughSummary({
+      alerts: [],
+      discoverySprint,
+    });
+
+    expect(pending.status).toBe("pending");
+    expect(pending.nextTarget?.id).toBe(discoverySprint.summary.topImpressionPage3d?.id);
+    expect(pending.summary).toContain("3 天窗口");
+
+    const breakthrough = buildSearchDiscoveryBreakthroughSummary({
+      alerts: [
+        {
+          id: "alert-impression",
+          level: "info",
+          type: "gsc_impression_first_seen",
+          message: "KuCoin official site 首次拿到 Search Console impression",
+          scope: { locale: "en", exchangeSlug: "kucoin", pageType: "official-site" },
+          triggeredAt: "2026-03-30T08:00:00.000Z",
+          href: "https://cryptorebate.app/en/exchanges/kucoin/official-site",
+          source: "external",
+          sourceLabel: "GSC 首次 impression",
+        },
+        {
+          id: "alert-click",
+          level: "info",
+          type: "gsc_click_first_seen",
+          message: "Binance referral code 首次拿到自然搜索 click",
+          scope: { locale: "en", exchangeSlug: "binance", pageType: "referral-code" },
+          triggeredAt: "2026-03-30T09:00:00.000Z",
+          href: "https://cryptorebate.app/en/exchanges/binance/referral-code",
+          source: "external",
+          sourceLabel: "GSC 首次 click",
+        },
+      ],
+      discoverySprint,
+    });
+
+    expect(breakthrough.status).toBe("click");
+    expect(breakthrough.label).toBe("首次 click 突破");
+    expect(breakthrough.href).toContain("/en/exchanges/binance/referral-code");
   });
 });

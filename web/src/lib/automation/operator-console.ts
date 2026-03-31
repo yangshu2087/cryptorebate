@@ -20,6 +20,7 @@ import {
 import { getGscFocusPageMonitorTargets } from "@/lib/automation/gsc-focus-page-monitor";
 import { summarizeGscFocusPageRowMonitor } from "@/lib/automation/gsc-focus-page-monitor";
 import { deriveCtaLiveAuditAlert, getCtaLiveAuditStatus } from "@/lib/automation/github-actions";
+import { SITE_URL } from "@/lib/constants";
 import type {
   AutomationAlert,
   AutomationState,
@@ -333,6 +334,76 @@ type DiscoverySprintSurfaceSummary = {
   count: number;
   items: DiscoverySprintEntry[];
 };
+
+export type SearchDiscoveryBreakthroughSummary = {
+  status: "pending" | "impression" | "click";
+  label: string;
+  title: string;
+  summary: string;
+  triggeredAt: string;
+  href: string | null;
+  scope: AutomationAlert["scope"] | null;
+  trackedSeedPages: number;
+  impressionPagesSeen: number;
+  clickPagesSeen: number;
+  nextTarget: DiscoverySprintForecastEntry | null;
+};
+
+export function buildSearchDiscoveryBreakthroughSummary(input: {
+  alerts: AutomationAlert[];
+  discoverySprint: DiscoverySprintSummary;
+}): SearchDiscoveryBreakthroughSummary {
+  const clickAlert = input.alerts
+    .filter((item) => item.type === "gsc_click_first_seen")
+    .sort((a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime())[0] ?? null;
+  const impressionAlert = input.alerts
+    .filter((item) => item.type === "gsc_impression_first_seen")
+    .sort((a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime())[0] ?? null;
+  const breakthroughAlert = clickAlert ?? impressionAlert;
+
+  if (breakthroughAlert) {
+    const status = breakthroughAlert.type === "gsc_click_first_seen" ? "click" : "impression";
+    return {
+      status,
+      label: status === "click" ? "首次 click 突破" : "首次 impression 突破",
+      title:
+        status === "click"
+          ? "自然搜索点击已经开始突破"
+          : "自然搜索展示已经开始突破",
+      summary: breakthroughAlert.message,
+      triggeredAt: breakthroughAlert.triggeredAt,
+      href: breakthroughAlert.href ?? null,
+      scope: breakthroughAlert.scope ?? null,
+      trackedSeedPages: input.discoverySprint.trackedSeedPages,
+      impressionPagesSeen: input.discoverySprint.impressionPagesSeen,
+      clickPagesSeen: input.discoverySprint.clickPagesSeen,
+      nextTarget: input.discoverySprint.summary.topImpressionPage3d,
+    };
+  }
+
+  const nextTarget = input.discoverySprint.summary.topImpressionPage3d;
+  return {
+    status: "pending",
+    label: "待首个 impression / click",
+    title: "Discovery Sprint 仍在等待首个自然搜索突破",
+    summary: nextTarget
+      ? `当前 3 天窗口最值得继续顶住的页面是 ${nextTarget.primaryQuery}。保持 pinned surfaces、exact-match 锚文本与 refresh 节奏，不要分散到非 seed 页。`
+      : "当前 12 个英文 seed 页仍未拿到首个 impression / click，继续把资源集中到 Discovery Sprint。",
+    triggeredAt: "",
+    href: nextTarget ? `${SITE_URL}/en${nextTarget.routePath}` : null,
+    scope: nextTarget
+      ? {
+          locale: nextTarget.locale,
+          exchangeSlug: nextTarget.exchangeSlug,
+          pageType: nextTarget.pageType,
+        }
+      : null,
+    trackedSeedPages: input.discoverySprint.trackedSeedPages,
+    impressionPagesSeen: input.discoverySprint.impressionPagesSeen,
+    clickPagesSeen: input.discoverySprint.clickPagesSeen,
+    nextTarget,
+  };
+}
 
 function isWithinDays(timestamp: string | undefined, days: number) {
   if (!timestamp) return false;
@@ -984,6 +1055,7 @@ export type SeoDashboardData = {
   indexGrowthPolicy: IndexGrowthPolicySummary;
   searchVisibilityActionPlan: SearchVisibilityActionPlan;
   discoverySprint: DiscoverySprintSummary;
+  searchDiscoveryBreakthrough: SearchDiscoveryBreakthroughSummary;
   coverageRepair: CoverageRepairLaneSummary;
   ctaLiveAudit: Awaited<ReturnType<typeof getCtaLiveAuditStatus>>;
   topOpportunities: ReturnType<typeof getTopAutomationOpportunities>;
@@ -1156,15 +1228,18 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
       ? await auditCoverageRepair()
       : storedCoverageRepair;
   const focusPageRowMonitor = buildGscFocusPageRowMonitorSummary(state);
-  const alerts = [
+  const allAlerts = [
     ...(ctaLiveAuditAlert ? [ctaLiveAuditAlert] : []),
     ...(dbStats?.state.alerts ?? getAutomationAlerts(locale ?? undefined, 10)),
-  ]
-    .sort(
-      (a, b) =>
-        new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime()
-    )
-    .slice(0, 10);
+  ].sort(
+    (a, b) =>
+      new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime()
+  );
+  const searchDiscoveryBreakthrough = buildSearchDiscoveryBreakthroughSummary({
+    alerts: allAlerts,
+    discoverySprint,
+  });
+  const alerts = allAlerts.slice(0, 10);
 
   const latestGscRun = state.runs.find((item) => item.job === "daily_gsc_ingest");
   const latestCoverageAuditRun = state.runs.find(
@@ -1206,6 +1281,7 @@ export async function buildSeoDashboardData(locale?: string | null): Promise<Seo
     indexGrowthPolicy,
     searchVisibilityActionPlan,
     discoverySprint,
+    searchDiscoveryBreakthrough,
     coverageRepair,
     ctaLiveAudit: ctaLiveAuditStatus,
     topOpportunities:

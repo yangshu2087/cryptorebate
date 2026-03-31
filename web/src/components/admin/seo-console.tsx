@@ -119,6 +119,37 @@ function formatObservationDays(value: number) {
   return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} 天`;
 }
 
+function isGscBreakthroughAlertType(type: AutomationAlert["type"]) {
+  return (
+    type === "gsc_page_row_first_seen" ||
+    type === "gsc_impression_first_seen" ||
+    type === "gsc_click_first_seen"
+  );
+}
+
+function formatGscBreakthroughType(type: AutomationAlert["type"]) {
+  switch (type) {
+    case "gsc_click_first_seen":
+      return "GSC 首次 click 命中";
+    case "gsc_impression_first_seen":
+      return "GSC 首次 impression 命中";
+    case "gsc_page_row_first_seen":
+      return "GSC 首次 page-row 命中";
+    default:
+      return type;
+  }
+}
+
+function formatGscBreakthroughScope(scope: AutomationAlert["scope"], labelsLocale: string) {
+  return [
+    scope.exchangeSlug ? `交易所：${scope.exchangeSlug}` : null,
+    scope.locale ? `语言：${ZH_LOCALE_LABELS[scope.locale] ?? scope.locale}` : null,
+    scope.pageType ? `类型：${getUnifiedSeoPageLabels(labelsLocale, scope.pageType).short}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 function formatGscAnalyticsMode(mode: string) {
   switch (mode) {
     case "query-page":
@@ -531,6 +562,7 @@ export function SeoConsole({
   const indexGrowthPolicy = dashboardData.indexGrowthPolicy;
   const searchVisibilityActionPlan = dashboardData.searchVisibilityActionPlan;
   const discoverySprint = dashboardData.discoverySprint;
+  const searchDiscoveryBreakthrough = dashboardData.searchDiscoveryBreakthrough;
   const matchesActionPlanFilters = (item: {
     locale: string;
     exchangeSlug: string;
@@ -683,9 +715,6 @@ export function SeoConsole({
     partnerFailed: dashboardData.operatorSummary.failureTrend.partnerFailures,
     distributionFailed: dashboardData.operatorSummary.failureTrend.distributionFailures,
   };
-  const firstSeenAlerts = filteredAlerts.filter(
-    (item) => item.type === "gsc_page_row_first_seen"
-  );
   const filteredFocusPageMonitorEntries = focusPageRowMonitor.entries.filter((entry) => {
     const exchangePass =
       selectedExchange === "all" ? true : entry.exchangeSlug === selectedExchange;
@@ -695,6 +724,39 @@ export function SeoConsole({
       !pageType || pageType === "all" ? true : entry.pageType === pageType;
     return exchangePass && localePass && pageTypePass;
   });
+  const breakthroughCardTone =
+    searchDiscoveryBreakthrough.status === "click"
+      ? {
+          card: "border-emerald-300/80 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/40 shadow-[0_0_0_1px_rgba(16,185,129,0.12)]",
+          badge: "border-emerald-200 bg-emerald-100 text-emerald-800",
+          iconWrap: "bg-emerald-100 text-emerald-700",
+          dot: "bg-emerald-500 shadow-[0_0_0_6px_rgba(16,185,129,0.12)]",
+        }
+      : searchDiscoveryBreakthrough.status === "impression"
+        ? {
+            card: "border-sky-300/80 bg-gradient-to-br from-sky-50 via-white to-brand/10 shadow-[0_0_0_1px_rgba(14,165,233,0.12)]",
+            badge: "border-sky-200 bg-sky-100 text-sky-800",
+            iconWrap: "bg-sky-100 text-sky-700",
+            dot: "bg-sky-500 shadow-[0_0_0_6px_rgba(14,165,233,0.12)]",
+          }
+        : {
+            card: "border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-muted/30",
+            badge: "border-amber-200 bg-amber-100 text-amber-800",
+            iconWrap: "bg-amber-100 text-amber-700",
+            dot: "bg-amber-500 shadow-[0_0_0_6px_rgba(245,158,11,0.12)]",
+          };
+  const breakthroughScope = searchDiscoveryBreakthrough.scope
+    ? formatGscBreakthroughScope(searchDiscoveryBreakthrough.scope, labelsLocale)
+    : "";
+  const BreakthroughIcon =
+    searchDiscoveryBreakthrough.status === "click"
+      ? TrendingUp
+      : searchDiscoveryBreakthrough.status === "impression"
+        ? LineChart
+        : Sparkles;
+  const breakthroughAlerts = filteredAlerts.filter((item) =>
+    isGscBreakthroughAlertType(item.type)
+  );
 
   const statsApiHref = buildApiHref("/api/stats/seo", {
     locale: selectedDataLocale === "all" ? undefined : selectedDataLocale,
@@ -749,6 +811,71 @@ export function SeoConsole({
           </CardContent>
         </Card>
       </div>
+
+      <Card className={cn("mb-8 overflow-hidden border-2", breakthroughCardTone.card)}>
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">置顶突破卡</Badge>
+                <Badge className={cn("border", breakthroughCardTone.badge)}>
+                  {searchDiscoveryBreakthrough.label}
+                </Badge>
+                <Badge variant="outline">
+                  {formatNumber(searchDiscoveryBreakthrough.trackedSeedPages)} tracked
+                </Badge>
+                <Badge variant="outline">
+                  impressions {formatNumber(searchDiscoveryBreakthrough.impressionPagesSeen)}
+                </Badge>
+                <Badge variant="outline">
+                  clicks {formatNumber(searchDiscoveryBreakthrough.clickPagesSeen)}
+                </Badge>
+              </div>
+              <div className="mt-4 flex items-start gap-4">
+                <div className={cn("rounded-2xl p-3", breakthroughCardTone.iconWrap)}>
+                  <BreakthroughIcon className="h-6 w-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-semibold tracking-tight">
+                      {searchDiscoveryBreakthrough.title}
+                    </h2>
+                    <span className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <span className={cn("inline-flex h-2.5 w-2.5 rounded-full", breakthroughCardTone.dot)} />
+                      {searchDiscoveryBreakthrough.status === "pending" ? "持续观察中" : "已出现真实突破"}
+                    </span>
+                  </div>
+                  <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
+                    {searchDiscoveryBreakthrough.summary}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    {breakthroughScope ? <span>{breakthroughScope}</span> : null}
+                    {searchDiscoveryBreakthrough.triggeredAt ? (
+                      <span>触发时间：{formatDate(searchDiscoveryBreakthrough.triggeredAt)}</span>
+                    ) : null}
+                    {searchDiscoveryBreakthrough.nextTarget ? (
+                      <span>
+                        3 天窗口主攻：{searchDiscoveryBreakthrough.nextTarget.primaryQuery}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {searchDiscoveryBreakthrough.href ? (
+              <a
+                href={searchDiscoveryBreakthrough.href}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background px-4 py-2 text-sm font-medium text-brand transition-colors hover:bg-muted"
+              >
+                {searchDiscoveryBreakthrough.status === "pending" ? "打开当前主攻页" : "查看突破页面"}
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <MetricCard
@@ -2003,27 +2130,27 @@ export function SeoConsole({
       </div>
 
       <div className="mt-8 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        {firstSeenAlerts.length ? (
+        {breakthroughAlerts.length ? (
           <Card className="border-destructive/50 bg-destructive/5 xl:col-span-2">
             <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-4">
                 <div className="mt-1 flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-destructive">
                   <span className="inline-flex h-2.5 w-2.5 rounded-full bg-destructive shadow-[0_0_0_6px_rgba(239,68,68,0.18)]" />
                   <span className="text-xs font-semibold uppercase tracking-wide">
-                    首个命中提醒
+                    突破提醒
                   </span>
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-foreground">
-                    已有焦点页首次进入 GSC page rows
+                    已有焦点页出现首个搜索突破
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    一旦首个命中出现，这张卡会置顶提醒。当前命中 {formatNumber(firstSeenAlerts.length)} 条，建议立即复核页面抓取、内链与后续 query 曝光变化。
+                    一旦首个命中出现，这张卡会置顶提醒。当前突破 {formatNumber(breakthroughAlerts.length)} 条，建议立即复核标题摘要、内链与 query 曝光变化。
                   </p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {firstSeenAlerts.slice(0, 3).map((alert) => (
+                {breakthroughAlerts.slice(0, 3).map((alert) => (
                   <a
                     key={alert.id}
                     href={alert.href ?? `/${locale}/admin/seo?view=alerts`}
@@ -2456,7 +2583,7 @@ export function SeoConsole({
                     key={item.id}
                     className={cn(
                       "border-border/70",
-                      item.type === "gsc_page_row_first_seen" &&
+                      isGscBreakthroughAlertType(item.type) &&
                         "border-destructive/40 bg-destructive/5 shadow-[0_0_0_1px_rgba(239,68,68,0.12)]"
                     )}
                   >
@@ -2465,7 +2592,7 @@ export function SeoConsole({
                         <div className="flex items-start gap-3">
                           <div className={cn(
                             "mt-0.5 rounded-xl p-2",
-                            item.type === "gsc_page_row_first_seen"
+                            isGscBreakthroughAlertType(item.type)
                               ? "bg-destructive/10 text-destructive"
                               : item.level === "critical"
                                 ? "bg-destructive/10 text-destructive"
@@ -2473,7 +2600,7 @@ export function SeoConsole({
                                   ? "bg-amber-100 text-amber-700"
                                   : "bg-muted text-foreground"
                           )}>
-                            {item.type === "gsc_page_row_first_seen" ? (
+                            {isGscBreakthroughAlertType(item.type) ? (
                               <span className="inline-flex h-4 w-4 items-center justify-center">
                                 <span className="inline-flex h-2.5 w-2.5 rounded-full bg-destructive shadow-[0_0_0_4px_rgba(239,68,68,0.16)]" />
                               </span>
@@ -2483,8 +2610,8 @@ export function SeoConsole({
                           </div>
                           <div>
                             <p className="font-semibold">
-                              {item.type === "gsc_page_row_first_seen"
-                                ? "GSC 首次 page-row 命中"
+                              {isGscBreakthroughAlertType(item.type)
+                                ? formatGscBreakthroughType(item.type)
                                 : item.type}
                             </p>
                             <p className="mt-1 text-sm text-muted-foreground">{item.message}</p>
