@@ -6,6 +6,7 @@ import {
   submitSearchConsoleSitemaps,
 } from "./external-search-console";
 import {
+  buildGscFocusPageMilestoneEvents,
   getGscFocusPageMonitorTargets,
   reconcileGscFocusPageRowMonitor,
 } from "./gsc-focus-page-monitor";
@@ -74,6 +75,8 @@ export async function runExternalSync(
       : {
           entries: previous.gsc.focusPageRows ?? [],
           newlySeen: [],
+          newlyImpressions: [],
+          newlyClicks: [],
         };
   const gscSitemapSubmission =
     (mode === "gsc" || mode === "daily" || mode === "all") &&
@@ -109,12 +112,20 @@ export async function runExternalSync(
 
   await writeExternalSyncStateToDisk(externalState);
   const state = await regenerateAutomationState();
+  const gscFocusPageMilestoneEvents = buildGscFocusPageMilestoneEvents({
+    pageRows: gscFocusPageRowMonitor.newlySeen,
+    impressions: gscFocusPageRowMonitor.newlyImpressions,
+    clicks: gscFocusPageRowMonitor.newlyClicks,
+  });
 
   return {
     state,
     externalState,
     gsc,
     gscFocusPageRowFirstSeen: gscFocusPageRowMonitor.newlySeen,
+    gscFocusPageImpressionFirstSeen: gscFocusPageRowMonitor.newlyImpressions,
+    gscFocusPageClickFirstSeen: gscFocusPageRowMonitor.newlyClicks,
+    gscFocusPageMilestoneEvents,
     partners,
   };
 }

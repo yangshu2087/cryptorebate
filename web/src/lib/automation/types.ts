@@ -340,6 +340,8 @@ export type AutomationAlert = {
     | "ctr_collapse"
     | "index_no_click"
     | "gsc_page_row_first_seen"
+    | "gsc_impression_first_seen"
+    | "gsc_click_first_seen"
     | "earnings_anomaly"
     | "dead_link";
   message: string;

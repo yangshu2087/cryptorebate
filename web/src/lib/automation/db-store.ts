@@ -15,10 +15,9 @@ import {
   isFocusPageType,
 } from "./focus";
 import {
-  buildGscFocusPageRowFirstSeenAlert,
-  buildGscFocusPageRowDailyTelegramSummary,
-  buildGscFocusPageRowTelegramReminder,
-  summarizeGscFocusPageRowMonitor,
+  buildGscFocusPageMilestoneAlert,
+  buildGscFocusPageMilestoneTelegramReminder,
+  type GscFocusPageMilestoneEvent,
 } from "./gsc-focus-page-monitor";
 import { getInternalLinkDistributionCandidates } from "./internal-links";
 import type {
@@ -1192,11 +1191,11 @@ export async function enqueueDistributionJobsFromDb(state: AutomationState) {
   });
 }
 
-export async function recordGscFocusPageRowFirstSeenEventsFromDb(
-  entries: GscFocusPageRowMonitorEntry[]
+export async function recordGscFocusPageMilestoneEventsFromDb(
+  events: GscFocusPageMilestoneEvent[]
 ) {
-  if (!isAutomationDbEnabled() || entries.length === 0) {
-    return { alertsRecorded: 0, jobs: [] as DistributionJob[] };
+  if (!isAutomationDbEnabled() || events.length === 0) {
+    return { alertsRecorded: 0, jobs: 0 };
   }
 
   return withAutomationDb(async (client) => {
@@ -1204,10 +1203,10 @@ export async function recordGscFocusPageRowFirstSeenEventsFromDb(
     try {
       const jobIds: string[] = [];
 
-      for (const entry of entries) {
-        await upsertOperatorAlert(client, buildGscFocusPageRowFirstSeenAlert(entry));
+      for (const event of events) {
+        await upsertOperatorAlert(client, buildGscFocusPageMilestoneAlert(event));
 
-        const reminder = buildGscFocusPageRowTelegramReminder(entry);
+        const reminder = buildGscFocusPageMilestoneTelegramReminder(event);
         const result = await upsertDistributionJobRecord(client, {
           channel: "telegram",
           locale: reminder.locale,
@@ -1237,43 +1236,9 @@ export async function recordGscFocusPageRowFirstSeenEventsFromDb(
       await syncDistributionFailureAlerts(client);
       await client.query("COMMIT");
       return {
-        alertsRecorded: entries.length,
+        alertsRecorded: events.length,
         jobs: jobs.length,
       };
-    } catch (error) {
-      await client.query("ROLLBACK");
-      throw error;
-    }
-  });
-}
-
-export async function enqueueGscFocusPageRowDailySummaryFromDb(
-  entries: GscFocusPageRowMonitorEntry[],
-  reportDate: string
-) {
-  if (!isAutomationDbEnabled()) {
-    return { enqueued: 0 };
-  }
-
-  return withAutomationDb(async (client) => {
-    await client.query("BEGIN");
-    try {
-      const summary = summarizeGscFocusPageRowMonitor(entries);
-      const dailyReport = buildGscFocusPageRowDailyTelegramSummary(
-        summary,
-        reportDate
-      );
-      await upsertDistributionJobRecord(client, {
-        channel: "telegram",
-        locale: dailyReport.locale,
-        exchangeSlug: null,
-        pageType: null,
-        topic: null,
-        routePath: dailyReport.routePath,
-        payload: dailyReport.payload,
-      });
-      await client.query("COMMIT");
-      return { enqueued: 1 };
     } catch (error) {
       await client.query("ROLLBACK");
       throw error;

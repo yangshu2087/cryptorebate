@@ -137,6 +137,17 @@ describe('runExternalSync', () => {
     const result = await runExternalSync('gsc');
 
     expect(result.gscFocusPageRowFirstSeen).toHaveLength(1);
+    expect(result.gscFocusPageImpressionFirstSeen).toHaveLength(1);
+    expect(result.gscFocusPageClickFirstSeen).toHaveLength(0);
+    expect(result.gscFocusPageMilestoneEvents).toHaveLength(1);
+    expect(result.gscFocusPageMilestoneEvents?.[0]).toMatchObject({
+      milestone: 'impression',
+      entry: expect.objectContaining({
+        exchangeSlug: 'binance',
+        pageType: 'referral-code',
+        locale: 'en',
+      }),
+    });
     expect(result.gscFocusPageRowFirstSeen?.[0]).toMatchObject({
       exchangeSlug: 'binance',
       pageType: 'referral-code',

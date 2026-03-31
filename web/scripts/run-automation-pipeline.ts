@@ -1,11 +1,10 @@
 #!/usr/bin/env tsx
 
 import {
-  enqueueGscFocusPageRowDailySummaryFromDb,
   enqueueDistributionJobsFromDb,
   insertSyncRun,
   publishQueuedDistributionJobsFromDb,
-  recordGscFocusPageRowFirstSeenEventsFromDb,
+  recordGscFocusPageMilestoneEventsFromDb,
 } from "../src/lib/automation/db-store";
 import { regenerateAutomationState } from "../src/lib/automation/persistence";
 import { materializeCoverageRepairArtifact } from "../src/lib/automation/coverage-audit";
@@ -77,46 +76,24 @@ async function main() {
       );
       await insertSyncRun(gscRun.run, gscRun.meta);
 
-      if (syncResult.gscFocusPageRowFirstSeen?.length) {
-        const firstSeenEntries = syncResult.gscFocusPageRowFirstSeen;
+      if (syncResult.gscFocusPageMilestoneEvents?.length) {
+        const milestoneEvents = syncResult.gscFocusPageMilestoneEvents;
         const reminderResult =
-          await recordGscFocusPageRowFirstSeenEventsFromDb(firstSeenEntries);
+          await recordGscFocusPageMilestoneEventsFromDb(milestoneEvents);
         const reminderRun = createRun(
           "daily_alert_eval",
           "success",
-          `GSC focus page-row first-seen entries=${firstSeenEntries.length} telegram_jobs=${reminderResult?.jobs ?? 0}`,
+          `GSC focus milestone alerts events=${milestoneEvents.length} telegram_jobs=${reminderResult?.jobs ?? 0}`,
           startedAt,
           {
-            entries: firstSeenEntries,
+            milestones: milestoneEvents.map((event) => ({
+              milestone: event.milestone,
+              key: event.entry.key,
+            })),
             reminderResult,
           }
         );
         await insertSyncRun(reminderRun.run, reminderRun.meta);
-      }
-
-      if (mode === "daily" || mode === "all") {
-        const dailySummaryResult =
-          await enqueueGscFocusPageRowDailySummaryFromDb(
-            syncResult.externalState.gsc.focusPageRows ?? [],
-            startedAt.slice(0, 10)
-          );
-        if (dailySummaryResult?.enqueued) {
-          const summaryRun = createRun(
-            "daily_alert_eval",
-            "success",
-            `GSC focus monitor daily summary enqueued=${dailySummaryResult.enqueued}`,
-            startedAt,
-            {
-              tracked:
-                syncResult.externalState.gsc.focusPageRows?.length ?? 0,
-              seen:
-                syncResult.externalState.gsc.focusPageRows?.filter(
-                  (entry) => entry.seenInPageRows
-                ).length ?? 0,
-            }
-          );
-          await insertSyncRun(summaryRun.run, summaryRun.meta);
-        }
       }
     }
 
