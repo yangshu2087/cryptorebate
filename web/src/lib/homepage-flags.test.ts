@@ -6,4 +6,9 @@ describe("getHomepageSectionFlags", () => {
     expect(getHomepageSectionFlags("en").showAutomationQueue).toBe(false);
     expect(getHomepageSectionFlags("zh").showAutomationQueue).toBe(false);
   });
+
+  it("hides the browse-by-question hub from the public homepage", () => {
+    expect(getHomepageSectionFlags("en").showQuestionHub).toBe(false);
+    expect(getHomepageSectionFlags("zh").showQuestionHub).toBe(false);
+  });
 });

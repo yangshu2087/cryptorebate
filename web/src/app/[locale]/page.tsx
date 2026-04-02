@@ -23,6 +23,7 @@ import { ExchangeCard } from "@/components/exchanges/exchange-card";
 import { SavingsEstimator } from "@/components/home/savings-estimator";
 import { FAQJsonLd } from "@/components/seo/json-ld";
 import { TrackedExternalLink } from "@/components/analytics/tracked-external-link";
+import { getHomepageSectionFlags } from "@/lib/homepage-flags";
 import { getLocalizedUrl, getOpenGraphLocale } from "@/lib/i18n";
 import { getPageAlternates } from "@/lib/metadata";
 import { SITE_NAME } from "@/lib/constants";
@@ -70,6 +71,7 @@ export default function HomePage() {
   const t = useTranslations("home");
   const sortedExchanges = [...exchanges].sort((a, b) => a.order - b.order);
   const seoLocale = isSeoContentLocale(locale) ? locale : null;
+  const homepageFlags = getHomepageSectionFlags(locale);
   const geoGuides = seoLocale ? getUnifiedSeoGuidesForLocale(seoLocale) : [];
   const geoLabels = seoLocale ? getUnifiedSeoClusterLabels(seoLocale) : null;
   const questionGroups = seoLocale ? getOpportunityQuestionGroupsForLocale(seoLocale, 8, 6) : [];
@@ -198,55 +200,57 @@ export default function HomePage() {
             </div>
           </section>
 
-          <section className="pb-16">
-            <div className="mb-8 text-center">
-              <h2 className="text-2xl font-bold md:text-3xl">
-                {geoLabels.browseByQuestionTitle}
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                {geoLabels.browseByQuestionSubtitle}
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {questionGroups.map(({ pageType, guides }) => {
-                const pageLabels = getUnifiedSeoPageLabels(seoLocale!, pageType);
+          {homepageFlags.showQuestionHub ? (
+            <section className="pb-16">
+              <div className="mb-8 text-center">
+                <h2 className="text-2xl font-bold md:text-3xl">
+                  {geoLabels.browseByQuestionTitle}
+                </h2>
+                <p className="mt-2 text-muted-foreground">
+                  {geoLabels.browseByQuestionSubtitle}
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {questionGroups.map(({ pageType, guides }) => {
+                  const pageLabels = getUnifiedSeoPageLabels(seoLocale!, pageType);
 
-                return (
-                  <Card key={pageType} className="border-border/70">
-                    <CardContent className="p-5">
-                      <h3 className="font-semibold">{pageLabels.nav}</h3>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {pageLabels.question}
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {guides.map((guide) => {
-                          return (
-                            <TrackedInternalLink
-                              key={`${guide.exchange.slug}-${pageType}`}
-                              href={getUnifiedSeoPageHref(guide.exchange.slug, pageType)}
-                              analytics={{
-                                content_locale: locale,
-                                content_exchange_slug: guide.exchange.slug,
-                                content_page_type: pageType,
-                                content_cluster: "exchange_geo",
-                                content_primary_query: guide.primaryQuery,
-                                hub_page_type: "home_question_hub",
-                                cta_target_type: pageType,
-                              }}
-                              className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
-                            >
-                              {guide.primaryQuery}
-                              <ArrowRight className="h-3 w-3" />
-                            </TrackedInternalLink>
-                          );
-                        })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </section>
+                  return (
+                    <Card key={pageType} className="border-border/70">
+                      <CardContent className="p-5">
+                        <h3 className="font-semibold">{pageLabels.nav}</h3>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {pageLabels.question}
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {guides.map((guide) => {
+                            return (
+                              <TrackedInternalLink
+                                key={`${guide.exchange.slug}-${pageType}`}
+                                href={getUnifiedSeoPageHref(guide.exchange.slug, pageType)}
+                                analytics={{
+                                  content_locale: locale,
+                                  content_exchange_slug: guide.exchange.slug,
+                                  content_page_type: pageType,
+                                  content_cluster: "exchange_geo",
+                                  content_primary_query: guide.primaryQuery,
+                                  hub_page_type: "home_question_hub",
+                                  cta_target_type: pageType,
+                                }}
+                                className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs font-medium transition-colors hover:border-brand/30 hover:text-brand"
+                              >
+                                {guide.primaryQuery}
+                                <ArrowRight className="h-3 w-3" />
+                              </TrackedInternalLink>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
         </>
       ) : null}
 
