@@ -1,10 +1,10 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import { routing } from "./i18n/routing";
+import { getIntlMiddlewareRouting } from "./i18n/middleware-config";
 import { DEFAULT_LOCALE } from "./lib/constants";
 import { rewriteXDefaultAlternateLinkHeader } from "./lib/alternate-links";
 
-const intlMiddleware = createMiddleware(routing);
+const intlMiddleware = createMiddleware(getIntlMiddlewareRouting());
 const CANONICAL_HOST = "cryptorebate.app";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
 

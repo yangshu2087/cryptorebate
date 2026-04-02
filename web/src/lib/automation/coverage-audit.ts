@@ -35,7 +35,11 @@ export const COVERAGE_REPAIR_ARTIFACT_PATH = path.join(
   "coverage-repair.json"
 );
 
-const CRITICAL_404_PATHS = ["/apple-touch-icon.png", "/favicon.svg"] as const;
+const CRITICAL_404_PATHS = [
+  "/apple-touch-icon.png",
+  "/apple-icon.svg",
+  "/favicon.svg",
+] as const;
 const DISCOVERY_ASSET_PATHS = [
   "/robots.txt",
   "/sitemap.xml",

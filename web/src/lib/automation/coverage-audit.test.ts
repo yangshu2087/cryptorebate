@@ -42,7 +42,7 @@ describe("auditCoverageRepair", () => {
     const summary = await auditCoverageRepair(SITE_URL, DEFAULT_LOCALE, fetchMock as typeof fetch);
 
     expect(summary.redirectIssueCount).toBe(1);
-    expect(summary.notFoundIssueCount).toBe(2);
+    expect(summary.notFoundIssueCount).toBe(3);
     expect(summary.discoveryIssueCount).toBeGreaterThan(0);
     expect(summary.xDefaultHealthy).toBe(false);
     expect(summary.status).toBe("failed");
