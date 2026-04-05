@@ -1,0 +1,20 @@
+---
+description: Shared Codex and Cursor workflow for the CryptoRebate repository, with extra guardrails for front-end design work in web/.
+alwaysApply: true
+---
+
+- Read `AGENTS.md` first. If the task touches UI in `web/`, also read `web/AGENTS.md`.
+- If `docs/agent-handoff.md` exists, read it before continuing work started in another tool.
+- Start each session by checking:
+  - `git branch --show-current`
+  - `git status --short`
+  - `git diff --stat`
+- For front-end tasks, inspect:
+  - `web/design/README.md`
+  - `web/design/design-system.md`
+  - `web/docs/ui-acceptance-checklist.md`
+- Keep design inputs checked in instead of relying on chat-only descriptions.
+- When pausing or handing off, update `docs/agent-handoff.md`. Prefer `./scripts/handoff-refresh.sh` when available.
+- Do not let Codex and Cursor share one dirty working tree in parallel; use separate branches or worktrees.
+- Treat changes under `web/src/data/generated/` as potentially automation-owned. Avoid unrelated edits there during UI work.
+- For front-end work, read repository `DESIGN.md` (and web `DESIGN.md` when present) before implementation.
