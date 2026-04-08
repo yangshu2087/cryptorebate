@@ -48,8 +48,9 @@ Before continuing existing UI work, read these files in order:
 - Run the smallest useful web verification from `web/`:
   - `npm run lint` for most component and style edits
   - `npm run test` when UI logic or helpers changed
+  - `npm run ui:browser -- --url <url>` for standalone real browser verification
   - `npm run build` when routes, layouts, metadata, or rendering boundaries changed
-  - `npm run ui:review` for the default review path before handoff or PR
+  - `npm run ui:review -- --url <url>` for the default lint + test + browser + handoff path
 - If the change is visual, prefer browser verification over static code inspection alone.
 - If browser verification is skipped, state the gap explicitly in the handoff or PR summary.
 
