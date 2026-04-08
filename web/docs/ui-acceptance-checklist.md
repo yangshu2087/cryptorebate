@@ -4,9 +4,11 @@ Use this before calling a front-end task complete.
 
 ## Design inputs
 
+- [ ] Repo `DESIGN.md` was reviewed
 - [ ] Figma / screenshot / design notes were reviewed
 - [ ] `web/design/` guidance was reviewed
 - [ ] Existing components and tokens were preferred over one-off values
+- [ ] External inspirations, if used, were translated rather than copied
 
 ## Visual quality
 
@@ -44,3 +46,4 @@ Use this before calling a front-end task complete.
 - [ ] Browser verification was run
 - [ ] Console errors were checked
 - [ ] Remaining visual gaps, if any, are documented
+- [ ] Handoff was refreshed when the task spans sessions or tools
