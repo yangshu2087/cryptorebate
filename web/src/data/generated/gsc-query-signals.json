@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "gsc-vi-gate-new-listings-0",
+    "source": "gsc",
+    "locale": "vi",
+    "exchangeSlug": "gate",
+    "query": "gate io new listing",
+    "intent": "new-listings",
+    "pageType": "new-listings",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 64,
+    "growthRate": 0.02,
+    "observedAt": "2026-04-10T05:08:57.344Z",
+    "monetizationPotential": 2.1
+  }
+]
