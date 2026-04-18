@@ -1,6 +1,22 @@
 [
   {
-    "id": "gsc-vi-gate-new-listings-0",
+    "id": "gsc-zh-tw-bitget-country-availability-0",
+    "source": "gsc",
+    "locale": "zh-tw",
+    "exchangeSlug": "bitget",
+    "query": "bitget supported countries",
+    "intent": "country-availability",
+    "pageType": "country-availability",
+    "impressions": 2,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 90.5,
+    "growthRate": 0.02,
+    "observedAt": "2026-04-18T04:41:34.610Z",
+    "monetizationPotential": 2.3
+  },
+  {
+    "id": "gsc-vi-gate-new-listings-1",
     "source": "gsc",
     "locale": "vi",
     "exchangeSlug": "gate",
@@ -12,7 +28,7 @@
     "ctr": 0,
     "position": 64,
     "growthRate": 0.02,
-    "observedAt": "2026-04-17T05:11:04.016Z",
+    "observedAt": "2026-04-18T04:41:34.610Z",
     "monetizationPotential": 2.1
   }
 ]
