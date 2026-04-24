@@ -12,7 +12,7 @@
     "ctr": 0,
     "position": 90.5,
     "growthRate": 0.02,
-    "observedAt": "2026-04-23T05:11:38.022Z",
+    "observedAt": "2026-04-24T05:17:15.197Z",
     "monetizationPotential": 2.3
   },
   {
@@ -28,7 +28,55 @@
     "ctr": 0,
     "position": 64,
     "growthRate": 0.02,
-    "observedAt": "2026-04-23T05:11:38.022Z",
+    "observedAt": "2026-04-24T05:17:15.197Z",
     "monetizationPotential": 2.1
+  },
+  {
+    "id": "gsc-en-huobi-app-download-2",
+    "source": "gsc",
+    "locale": "en",
+    "exchangeSlug": "huobi",
+    "query": "huobi app download",
+    "intent": "app-download",
+    "pageType": "app-download",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 89,
+    "growthRate": 0.02,
+    "observedAt": "2026-04-24T05:17:15.197Z",
+    "monetizationPotential": 3.18
+  },
+  {
+    "id": "gsc-en-huobi-app-download-3",
+    "source": "gsc",
+    "locale": "en",
+    "exchangeSlug": "huobi",
+    "query": "huobi download",
+    "intent": "app-download",
+    "pageType": "app-download",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 92,
+    "growthRate": 0.02,
+    "observedAt": "2026-04-24T05:17:15.197Z",
+    "monetizationPotential": 3.18
+  },
+  {
+    "id": "gsc-en-huobi-app-download-4",
+    "source": "gsc",
+    "locale": "en",
+    "exchangeSlug": "huobi",
+    "query": "huobi wallet app",
+    "intent": "app-download",
+    "pageType": "app-download",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 45,
+    "growthRate": 0.02,
+    "observedAt": "2026-04-24T05:17:15.197Z",
+    "monetizationPotential": 3.18
   }
 ]
