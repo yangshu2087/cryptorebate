@@ -1,6 +1,22 @@
 [
   {
-    "id": "gsc-zh-tw-bitget-country-availability-0",
+    "id": "gsc-ko-bitget-app-download-0",
+    "source": "gsc",
+    "locale": "ko",
+    "exchangeSlug": "bitget",
+    "query": "bitget download",
+    "intent": "app-download",
+    "pageType": "app-download",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 41,
+    "growthRate": 0.02,
+    "observedAt": "2026-05-07T05:41:27.908Z",
+    "monetizationPotential": 2.12
+  },
+  {
+    "id": "gsc-zh-tw-bitget-country-availability-1",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "bitget",
@@ -12,11 +28,11 @@
     "ctr": 0,
     "position": 90.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-06T05:37:58.857Z",
+    "observedAt": "2026-05-07T05:41:27.908Z",
     "monetizationPotential": 2.3
   },
   {
-    "id": "gsc-zh-tw-gate-new-listings-1",
+    "id": "gsc-zh-tw-gate-new-listings-2",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "gate",
@@ -28,11 +44,11 @@
     "ctr": 0,
     "position": 98,
     "growthRate": 0.02,
-    "observedAt": "2026-05-06T05:37:58.858Z",
+    "observedAt": "2026-05-07T05:41:27.908Z",
     "monetizationPotential": 2.1
   },
   {
-    "id": "gsc-en-huobi-app-download-2",
+    "id": "gsc-en-huobi-app-download-3",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -44,11 +60,11 @@
     "ctr": 0,
     "position": 65.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-06T05:37:58.858Z",
+    "observedAt": "2026-05-07T05:41:27.908Z",
     "monetizationPotential": 3.18
   },
   {
-    "id": "gsc-en-huobi-app-download-3",
+    "id": "gsc-en-huobi-app-download-4",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -60,11 +76,11 @@
     "ctr": 0,
     "position": 89,
     "growthRate": 0.02,
-    "observedAt": "2026-05-06T05:37:58.858Z",
+    "observedAt": "2026-05-07T05:41:27.908Z",
     "monetizationPotential": 3.18
   },
   {
-    "id": "gsc-en-huobi-app-download-4",
+    "id": "gsc-en-huobi-app-download-5",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -76,7 +92,7 @@
     "ctr": 0,
     "position": 45,
     "growthRate": 0.02,
-    "observedAt": "2026-05-06T05:37:58.858Z",
+    "observedAt": "2026-05-07T05:41:27.908Z",
     "monetizationPotential": 3.18
   }
 ]
