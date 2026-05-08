@@ -7,12 +7,12 @@
     "query": "bitget download",
     "intent": "app-download",
     "pageType": "app-download",
-    "impressions": 1,
+    "impressions": 2,
     "clicks": 0,
     "ctr": 0,
-    "position": 41,
+    "position": 68.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 2.12
   },
   {
@@ -28,7 +28,7 @@
     "ctr": 0,
     "position": 90.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 2.3
   },
   {
@@ -44,7 +44,7 @@
     "ctr": 0,
     "position": 98,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 2.1
   },
   {
@@ -55,12 +55,12 @@
     "query": "huobi app download",
     "intent": "app-download",
     "pageType": "app-download",
-    "impressions": 2,
+    "impressions": 3,
     "clicks": 0,
     "ctr": 0,
-    "position": 65.5,
+    "position": 74.67,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 3.18
   },
   {
@@ -76,7 +76,7 @@
     "ctr": 0,
     "position": 89,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 3.18
   },
   {
@@ -92,7 +92,7 @@
     "ctr": 0,
     "position": 45,
     "growthRate": 0.02,
-    "observedAt": "2026-05-07T05:41:27.908Z",
+    "observedAt": "2026-05-08T05:11:59.108Z",
     "monetizationPotential": 3.18
   }
 ]
