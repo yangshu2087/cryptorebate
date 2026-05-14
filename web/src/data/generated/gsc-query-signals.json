@@ -12,27 +12,11 @@
     "ctr": 0,
     "position": 68.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.837Z",
+    "observedAt": "2026-05-14T05:56:20.522Z",
     "monetizationPotential": 2.12
   },
   {
-    "id": "gsc-zh-tw-bitget-country-availability-1",
-    "source": "gsc",
-    "locale": "zh-tw",
-    "exchangeSlug": "bitget",
-    "query": "bitget supported countries",
-    "intent": "country-availability",
-    "pageType": "country-availability",
-    "impressions": 2,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 90.5,
-    "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.838Z",
-    "monetizationPotential": 2.3
-  },
-  {
-    "id": "gsc-zh-tw-gate-new-listings-2",
+    "id": "gsc-zh-tw-gate-new-listings-1",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "gate",
@@ -44,11 +28,11 @@
     "ctr": 0,
     "position": 98,
     "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.838Z",
+    "observedAt": "2026-05-14T05:56:20.522Z",
     "monetizationPotential": 2.1
   },
   {
-    "id": "gsc-en-huobi-app-download-3",
+    "id": "gsc-en-huobi-app-download-2",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -60,11 +44,11 @@
     "ctr": 0,
     "position": 74.67,
     "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.838Z",
+    "observedAt": "2026-05-14T05:56:20.522Z",
     "monetizationPotential": 3.18
   },
   {
-    "id": "gsc-en-huobi-app-download-4",
+    "id": "gsc-en-huobi-app-download-3",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -76,11 +60,11 @@
     "ctr": 0,
     "position": 89,
     "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.838Z",
+    "observedAt": "2026-05-14T05:56:20.522Z",
     "monetizationPotential": 3.18
   },
   {
-    "id": "gsc-en-huobi-app-download-5",
+    "id": "gsc-en-huobi-app-download-4",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
@@ -92,7 +76,7 @@
     "ctr": 0,
     "position": 45,
     "growthRate": 0.02,
-    "observedAt": "2026-05-13T05:57:13.838Z",
+    "observedAt": "2026-05-14T05:56:20.522Z",
     "monetizationPotential": 3.18
   }
 ]
