@@ -12,7 +12,7 @@
     "ctr": 0,
     "position": 76,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 2.08
   },
   {
@@ -28,7 +28,7 @@
     "ctr": 0,
     "position": 68.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 2.12
   },
   {
@@ -44,7 +44,7 @@
     "ctr": 0,
     "position": 15,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 2.24
   },
   {
@@ -60,7 +60,7 @@
     "ctr": 0,
     "position": 26,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 4.158
   },
   {
@@ -76,43 +76,27 @@
     "ctr": 0,
     "position": 110.5,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 4.158
   },
   {
-    "id": "gsc-zh-tw-gate-new-listings-5",
-    "source": "gsc",
-    "locale": "zh-tw",
-    "exchangeSlug": "gate",
-    "query": "gate io new listing",
-    "intent": "new-listings",
-    "pageType": "new-listings",
-    "impressions": 1,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 98,
-    "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
-    "monetizationPotential": 2.1
-  },
-  {
-    "id": "gsc-en-huobi-app-download-6",
+    "id": "gsc-en-huobi-app-download-5",
     "source": "gsc",
     "locale": "en",
     "exchangeSlug": "huobi",
     "query": "huobi app download",
     "intent": "app-download",
     "pageType": "app-download",
-    "impressions": 2,
+    "impressions": 1,
     "clicks": 0,
     "ctr": 0,
-    "position": 67.5,
+    "position": 93,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 3.18
   },
   {
-    "id": "gsc-zh-tw-huobi-app-download-7",
+    "id": "gsc-zh-tw-huobi-app-download-6",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "huobi",
@@ -124,23 +108,7 @@
     "ctr": 0,
     "position": 48,
     "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
-    "monetizationPotential": 3.18
-  },
-  {
-    "id": "gsc-en-huobi-app-download-8",
-    "source": "gsc",
-    "locale": "en",
-    "exchangeSlug": "huobi",
-    "query": "huobi download",
-    "intent": "app-download",
-    "pageType": "app-download",
-    "impressions": 1,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 86,
-    "growthRate": 0.02,
-    "observedAt": "2026-05-26T03:26:25.735Z",
+    "observedAt": "2026-05-27T03:26:55.399Z",
     "monetizationPotential": 3.18
   }
 ]
