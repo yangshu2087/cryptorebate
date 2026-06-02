@@ -12,7 +12,7 @@
     "ctr": 0,
     "position": 76,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 2.08
   },
   {
@@ -23,12 +23,12 @@
     "query": "bitget download",
     "intent": "app-download",
     "pageType": "app-download",
-    "impressions": 2,
+    "impressions": 1,
     "clicks": 0,
     "ctr": 0,
-    "position": 68.5,
+    "position": 96,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 2.12
   },
   {
@@ -44,7 +44,7 @@
     "ctr": 0,
     "position": 15,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 2.24
   },
   {
@@ -60,7 +60,7 @@
     "ctr": 0,
     "position": 26,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 4.158
   },
   {
@@ -76,7 +76,7 @@
     "ctr": 0,
     "position": 110.5,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 4.158
   },
   {
@@ -92,7 +92,7 @@
     "ctr": 0,
     "position": 93,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 3.18
   },
   {
@@ -108,7 +108,7 @@
     "ctr": 0,
     "position": 48,
     "growthRate": 0.02,
-    "observedAt": "2026-06-01T03:27:15.965Z",
+    "observedAt": "2026-06-02T03:27:06.302Z",
     "monetizationPotential": 3.18
   }
 ]
