@@ -1,22 +1,6 @@
 [
   {
-    "id": "gsc-zh-tw-binance-trading-bot-0",
-    "source": "gsc",
-    "locale": "zh-tw",
-    "exchangeSlug": "binance",
-    "query": "binance trading bots",
-    "intent": "trading-bot",
-    "pageType": "trading-bot",
-    "impressions": 1,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 76,
-    "growthRate": 0.02,
-    "observedAt": "2026-06-09T03:26:18.821Z",
-    "monetizationPotential": 2.08
-  },
-  {
-    "id": "gsc-zh-bitget-fees-rebate-1",
+    "id": "gsc-zh-bitget-fees-rebate-0",
     "source": "gsc",
     "locale": "zh",
     "exchangeSlug": "bitget",
@@ -28,11 +12,11 @@
     "ctr": 0,
     "position": 15,
     "growthRate": 0.02,
-    "observedAt": "2026-06-09T03:26:18.821Z",
+    "observedAt": "2026-06-10T03:26:34.042Z",
     "monetizationPotential": 2.24
   },
   {
-    "id": "gsc-zh-tw-bybit-referral-code-2",
+    "id": "gsc-zh-tw-bybit-referral-code-1",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "bybit",
@@ -44,11 +28,11 @@
     "ctr": 0,
     "position": 26,
     "growthRate": 0.02,
-    "observedAt": "2026-06-09T03:26:18.822Z",
+    "observedAt": "2026-06-10T03:26:34.042Z",
     "monetizationPotential": 4.158
   },
   {
-    "id": "gsc-zh-bybit-referral-code-3",
+    "id": "gsc-zh-bybit-referral-code-2",
     "source": "gsc",
     "locale": "zh",
     "exchangeSlug": "bybit",
@@ -60,23 +44,7 @@
     "ctr": 0,
     "position": 110.5,
     "growthRate": 0.02,
-    "observedAt": "2026-06-09T03:26:18.822Z",
+    "observedAt": "2026-06-10T03:26:34.042Z",
     "monetizationPotential": 4.158
-  },
-  {
-    "id": "gsc-zh-tw-huobi-app-download-4",
-    "source": "gsc",
-    "locale": "zh-tw",
-    "exchangeSlug": "huobi",
-    "query": "huobi app download",
-    "intent": "app-download",
-    "pageType": "app-download",
-    "impressions": 1,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 48,
-    "growthRate": 0.02,
-    "observedAt": "2026-06-09T03:26:18.822Z",
-    "monetizationPotential": 3.18
   }
 ]
