@@ -1,22 +1,6 @@
 [
   {
-    "id": "gsc-zh-bitget-fees-rebate-0",
-    "source": "gsc",
-    "locale": "zh",
-    "exchangeSlug": "bitget",
-    "query": "bitget返佣比例",
-    "intent": "fees-rebate",
-    "pageType": "fees-rebate",
-    "impressions": 1,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 15,
-    "growthRate": 0.02,
-    "observedAt": "2026-06-18T03:27:16.161Z",
-    "monetizationPotential": 2.24
-  },
-  {
-    "id": "gsc-zh-tw-bybit-referral-code-1",
+    "id": "gsc-zh-tw-bybit-referral-code-0",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "bybit",
@@ -28,11 +12,11 @@
     "ctr": 0,
     "position": 28,
     "growthRate": 0.02,
-    "observedAt": "2026-06-18T03:27:16.162Z",
+    "observedAt": "2026-06-19T03:27:42.139Z",
     "monetizationPotential": 4.158
   },
   {
-    "id": "gsc-zh-bybit-referral-code-2",
+    "id": "gsc-zh-bybit-referral-code-1",
     "source": "gsc",
     "locale": "zh",
     "exchangeSlug": "bybit",
@@ -44,7 +28,7 @@
     "ctr": 0,
     "position": 26,
     "growthRate": 0.02,
-    "observedAt": "2026-06-18T03:27:16.162Z",
+    "observedAt": "2026-06-19T03:27:42.139Z",
     "monetizationPotential": 4.158
   }
 ]
