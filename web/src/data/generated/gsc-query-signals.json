@@ -1,6 +1,22 @@
 [
   {
-    "id": "gsc-zh-tw-bybit-referral-code-0",
+    "id": "gsc-zh-bybit-referral-code-0",
+    "source": "gsc",
+    "locale": "zh",
+    "exchangeSlug": "bybit",
+    "query": "bybit 邀请码",
+    "intent": "referral-code",
+    "pageType": "referral-code",
+    "impressions": 1,
+    "clicks": 0,
+    "ctr": 0,
+    "position": 25,
+    "growthRate": 0.02,
+    "observedAt": "2026-06-27T03:26:02.397Z",
+    "monetizationPotential": 4.158
+  },
+  {
+    "id": "gsc-zh-tw-bybit-referral-code-1",
     "source": "gsc",
     "locale": "zh-tw",
     "exchangeSlug": "bybit",
@@ -12,23 +28,23 @@
     "ctr": 0,
     "position": 28,
     "growthRate": 0.02,
-    "observedAt": "2026-06-26T03:26:27.784Z",
+    "observedAt": "2026-06-27T03:26:02.397Z",
     "monetizationPotential": 4.158
   },
   {
-    "id": "gsc-zh-bybit-referral-code-1",
+    "id": "gsc-zh-bybit-referral-code-2",
     "source": "gsc",
     "locale": "zh",
     "exchangeSlug": "bybit",
     "query": "bybit邀请码",
     "intent": "referral-code",
     "pageType": "referral-code",
-    "impressions": 1,
+    "impressions": 2,
     "clicks": 0,
     "ctr": 0,
-    "position": 26,
+    "position": 25,
     "growthRate": 0.02,
-    "observedAt": "2026-06-26T03:26:27.784Z",
+    "observedAt": "2026-06-27T03:26:02.397Z",
     "monetizationPotential": 4.158
   }
 ]
