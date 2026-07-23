@@ -7,28 +7,12 @@
     "query": "bybit 邀请码",
     "intent": "referral-code",
     "pageType": "referral-code",
-    "impressions": 2,
-    "clicks": 0,
-    "ctr": 0,
-    "position": 21.5,
-    "growthRate": 0.02,
-    "observedAt": "2026-07-22T03:24:42.668Z",
-    "monetizationPotential": 4.158
-  },
-  {
-    "id": "gsc-zh-bybit-referral-code-1",
-    "source": "gsc",
-    "locale": "zh",
-    "exchangeSlug": "bybit",
-    "query": "bybit邀请码",
-    "intent": "referral-code",
-    "pageType": "referral-code",
     "impressions": 1,
     "clicks": 0,
     "ctr": 0,
-    "position": 24,
+    "position": 18,
     "growthRate": 0.02,
-    "observedAt": "2026-07-22T03:24:42.668Z",
+    "observedAt": "2026-07-23T03:25:04.667Z",
     "monetizationPotential": 4.158
   }
 ]
