@@ -7,12 +7,12 @@
     "query": "bybit 邀请码",
     "intent": "referral-code",
     "pageType": "referral-code",
-    "impressions": 2,
+    "impressions": 1,
     "clicks": 0,
     "ctr": 0,
-    "position": 21,
+    "position": 24,
     "growthRate": 0.02,
-    "observedAt": "2026-08-14T03:08:57.950Z",
+    "observedAt": "2026-08-15T02:37:00.543Z",
     "monetizationPotential": 4.158
   },
   {
@@ -28,7 +28,7 @@
     "ctr": 0,
     "position": 21.5,
     "growthRate": 0.02,
-    "observedAt": "2026-08-14T03:08:57.950Z",
+    "observedAt": "2026-08-15T02:37:00.543Z",
     "monetizationPotential": 4.158
   }
 ]
