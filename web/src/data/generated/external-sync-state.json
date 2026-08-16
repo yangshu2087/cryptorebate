@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-15T02:37:00.718Z",
+  "generatedAt": "2026-08-16T02:41:02.711Z",
   "gsc": {
     "enabled": true,
     "status": "success",
     "configured": true,
     "property": "https://cryptorebate.app/",
     "authMode": "service-account",
-    "lastSyncAt": "2026-08-15T02:37:00.543Z",
+    "lastSyncAt": "2026-08-16T02:41:02.591Z",
     "rowsFetched": 2,
     "signalsWritten": 2,
     "sitemapSubmitStatus": "failed",
