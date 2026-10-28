@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-27T07:51:13.097Z",
+  "generatedAt": "2026-10-28T08:30:00.555Z",
   "gsc": {
     "enabled": true,
-    "status": "success",
+    "status": "failed",
     "configured": true,
     "property": "https://cryptorebate.app/",
     "authMode": "service-account",
-    "lastSyncAt": "2026-10-27T07:51:12.999Z",
-    "rowsFetched": 1,
+    "rowsFetched": 0,
     "signalsWritten": 0,
+    "error": "invalid_grant: Invalid grant: account not found",
     "sitemapSubmitStatus": "failed",
     "sitemapsSubmitted": [],
     "lastSitemapSubmitAt": "2026-03-26T14:57:44.377Z",
